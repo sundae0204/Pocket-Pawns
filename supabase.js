@@ -5,6 +5,7 @@
 (function () {
   const LS_KEY = "pocket_pawns_character_stats_v1";
   const LS_BATTLES = "pocket_pawns_battle_log_v1";
+  let sbClient = null;
 
   function readLocalMap() {
     try {
@@ -19,11 +20,13 @@
   }
 
   function getSupabase() {
+    if (sbClient) return sbClient;
     const url = typeof window !== "undefined" ? window.POCKET_PAWNS_SUPABASE_URL : "";
     const key = typeof window !== "undefined" ? window.POCKET_PAWNS_SUPABASE_ANON_KEY : "";
     const createClient = window.supabase?.createClient;
     if (!url || !key || typeof createClient !== "function") return null;
-    return createClient(url, key);
+    sbClient = createClient(url, key);
+    return sbClient;
   }
 
   /**
