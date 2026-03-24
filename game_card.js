@@ -13,9 +13,13 @@ const FIELDS = [
   { id: "wind", name: "風", boost: "AGI" },
   { id: "earth", name: "土", boost: "VIT" },
   { id: "metal", name: "金", boost: "LUK" },
-  { id: "light", name: "光", boost: "AGI" },
-  { id: "dark", name: "闇", boost: "STR" },
+  { id: "light", name: "光", boost: null },
+  { id: "dark", name: "闇", boost: null },
 ];
+
+/** 整場戰鬥固定：光 AGI·VIT·LUK、闇 STR·DEX·INT 為 X2，其餘場景見 FIELDS.boost */
+const FIELD_LIGHT_STATS = new Set(["AGI", "VIT", "LUK"]);
+const FIELD_DARK_STATS = new Set(["STR", "DEX", "INT"]);
 
 const SPECIALS = ["heal", "boost", "zero", "seven77", "redheart", "phloss", "showy"];
 const SPECIAL_CARD_FILE = {
@@ -161,6 +165,14 @@ function emitBattleFx(type, payload = {}) {
     return;
   }
   if (type === "attack") {
+    // 僅 777 特殊攻擊、且實際命中扣血、且最終攻擊值破 777 時震動（一般數值卡命中不震）
+    const pf = payload.playerFinal;
+    const is777 =
+      payload.attacker === "player" &&
+      payload.special === "seven77" &&
+      typeof pf === "number" &&
+      Math.round(pf) > 777;
+    if (!is777) return;
     els.viewport.classList.remove("screen-shake");
     void els.viewport.offsetWidth;
     els.viewport.classList.add("screen-shake");
@@ -170,6 +182,191 @@ function emitBattleFx(type, payload = {}) {
 
 function asset(rel) {
   return new URL(rel, location.href).href;
+}
+
+/** 上次 renderHearts 成功畫出的 HP／上限（用與本次比對亮→暗、暗→亮） */
+const lastRenderedHeartState = { player: null, enemy: null };
+
+let heartFxCachePromise = null;
+
+function loadImageForHeartFx(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`heart fx image: ${src}`));
+    img.src = src;
+  });
+}
+
+function sortHeartFxFrameKeys(frames) {
+  return Object.keys(frames).sort((a, b) => {
+    const na = parseInt((a.match(/\d+/) || ["0"])[0], 10);
+    const nb = parseInt((b.match(/\d+/) || ["0"])[0], 10);
+    return na - nb;
+  });
+}
+
+/** 先裁 atlas 子區塊再旋轉，減少 drawImage+rotate 組合的偏差 */
+let heartFxPatchCanvas = null;
+function getHeartFxPatchCanvas(sw, sh) {
+  let c = heartFxPatchCanvas;
+  if (!c) {
+    c = document.createElement("canvas");
+    heartFxPatchCanvas = c;
+  }
+  const w = Math.ceil(sw);
+  const h = Math.ceil(sh);
+  if (c.width < w) c.width = w;
+  if (c.height < h) c.height = h;
+  return c;
+}
+
+/**
+ * 圖集裡 rotated:true 的還原角度（弧度）。TexturePacker／多數文件假設「順時針轉進 atlas」→ 用 -π/2 還原。
+ * free-tex-packer（Jimp）版本不同時方向可能相反；若特效仍歪，請在出圖時關閉 Allow rotation（最穩），
+ * 或於載入遊戲前設：window.POCKET_PAWNS_HEARTFX_ROTATED_UNWIND = Math.PI / 2（或 -Math.PI / 2）試另一邊。
+ */
+function heartFxRotatedUnwindRad() {
+  const w = typeof window !== "undefined" ? window.POCKET_PAWNS_HEARTFX_ROTATED_UNWIND : undefined;
+  if (typeof w === "number" && Number.isFinite(w)) return w;
+  return -Math.PI / 2;
+}
+
+/** 與當前 max 對齊；prev 為 null 或空則不與上一幀比對（不播特效） */
+function alignPrevHeartSlots(prev, max) {
+  if (prev == null || !Array.isArray(prev) || prev.length === 0) return null;
+  return Array.from({ length: max }, (_, i) => (i < prev.length ? !!prev[i] : false));
+}
+
+/** 由當前 HP 數值推導每格是否亮起（與 renderHearts 的 i < cur 一致） */
+function buildHeartSlots(hearts, max) {
+  const m = Math.max(0, max | 0);
+  const h = Math.max(0, Math.min(hearts | 0, m));
+  return Array.from({ length: m }, (_, i) => i < h);
+}
+
+/** TexturePacker JSON hash：畫入與 sourceSize 同大的透明畫布（此專案為 256×256） */
+function drawHeartFxFrame(ctx, image, frameData) {
+  const { frame, rotated, spriteSourceSize, sourceSize } = frameData;
+  const sx = frame.x;
+  const sy = frame.y;
+  const sw = frame.w;
+  const sh = frame.h;
+  const dx = spriteSourceSize.x;
+  const dy = spriteSourceSize.y;
+  const dw = spriteSourceSize.w;
+  const dh = spriteSourceSize.h;
+  ctx.clearRect(0, 0, sourceSize.w, sourceSize.h);
+  if (!rotated) {
+    ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+  } else {
+    const patch = getHeartFxPatchCanvas(sw, sh);
+    const pctx = patch.getContext("2d");
+    if (!pctx) return;
+    pctx.imageSmoothingEnabled = false;
+    pctx.clearRect(0, 0, patch.width, patch.height);
+    pctx.drawImage(image, sx, sy, sw, sh, 0, 0, sw, sh);
+    ctx.save();
+    ctx.translate(dx + dw / 2, dy + dh / 2);
+    ctx.rotate(heartFxRotatedUnwindRad());
+    ctx.drawImage(patch, 0, 0, sw, sh, -dh / 2, -dw / 2, dh, dw);
+    ctx.restore();
+  }
+}
+
+function ensureHeartFxCache() {
+  if (!heartFxCachePromise) {
+    heartFxCachePromise = (async () => {
+      let jsonU;
+      let jsonD;
+      const embedded =
+        typeof window !== "undefined" && window.POCKET_PAWNS_HEARTFX && window.POCKET_PAWNS_HEARTFX.u && window.POCKET_PAWNS_HEARTFX.d;
+      if (embedded) {
+        jsonU = window.POCKET_PAWNS_HEARTFX.u;
+        jsonD = window.POCKET_PAWNS_HEARTFX.d;
+      } else {
+        const [u, d] = await Promise.all([
+          fetch(asset("assets/fx/heartfx_u.json")).then((r) => {
+            if (!r.ok) throw new Error("heartfx_u.json");
+            return r.json();
+          }),
+          fetch(asset("assets/fx/heartfx_d.json")).then((r) => {
+            if (!r.ok) throw new Error("heartfx_d.json");
+            return r.json();
+          }),
+        ]);
+        jsonU = u;
+        jsonD = d;
+      }
+      const [imgU, imgD] = await Promise.all([
+        loadImageForHeartFx(asset("assets/fx/heartfx_u.png")),
+        loadImageForHeartFx(asset("assets/fx/heartfx_d.png")),
+      ]);
+      return {
+        jsonU,
+        jsonD,
+        imgU,
+        imgD,
+        keysU: sortHeartFxFrameKeys(jsonU.frames),
+        keysD: sortHeartFxFrameKeys(jsonD.frames),
+      };
+    })();
+  }
+  return heartFxCachePromise;
+}
+
+function runHeartFxOnCanvas(canvas, kind, onDone) {
+  if (canvas._heartFxRaf) {
+    cancelAnimationFrame(canvas._heartFxRaf);
+    canvas._heartFxRaf = 0;
+  }
+  canvas.style.display = "block";
+  const finish = () => {
+    if (typeof onDone === "function") onDone();
+  };
+  ensureHeartFxCache()
+    .then((cache) => {
+      const keys = kind === "u" ? cache.keysU : cache.keysD;
+      const json = kind === "u" ? cache.jsonU : cache.jsonD;
+      const img = kind === "u" ? cache.imgU : cache.imgD;
+      const ctx = canvas.getContext("2d");
+      if (!ctx || !keys.length) {
+        canvas.style.display = "none";
+        finish();
+        return;
+      }
+      ctx.imageSmoothingEnabled = false;
+      if (kind === "u") {
+        window.PocketPawnsAudio?.playHpUp?.();
+      }
+      const duration = 500;
+      const frameDur = duration / keys.length;
+      const start = performance.now();
+      const tick = (now) => {
+        if (!canvas.isConnected) {
+          canvas._heartFxRaf = 0;
+          finish();
+          return;
+        }
+        const elapsed = now - start;
+        const idx = Math.min(Math.floor(elapsed / frameDur), keys.length - 1);
+        const key = keys[idx];
+        drawHeartFxFrame(ctx, img, json.frames[key]);
+        if (elapsed < duration) {
+          canvas._heartFxRaf = requestAnimationFrame(tick);
+        } else {
+          canvas._heartFxRaf = 0;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          canvas.style.display = "none";
+          finish();
+        }
+      };
+      canvas._heartFxRaf = requestAnimationFrame(tick);
+    })
+    .catch(() => {
+      canvas.style.display = "none";
+      finish();
+    });
 }
 
 function sleep(ms) {
@@ -360,7 +557,7 @@ function hideCardHoverTip() {
   if (els.cardHoverTooltip) els.cardHoverTooltip.hidden = true;
 }
 
-function showCardHoverTip(text, evt) {
+function showCardHoverTip(text, evt, anchorEl) {
   if (!text) return;
   ensureTipEls();
   if (!els.cardHoverTooltip) return;
@@ -370,12 +567,39 @@ function showCardHoverTip(text, evt) {
   const vw = window.innerWidth || document.documentElement.clientWidth || 0;
   const vh = window.innerHeight || document.documentElement.clientHeight || 0;
   const margin = 12;
-  let left = (evt?.clientX || margin) + 16;
-  let top = (evt?.clientY || margin) + 16;
   const w = tip.offsetWidth || 260;
   const h = tip.offsetHeight || 64;
+  const hasPointer =
+    evt &&
+    typeof evt.clientX === "number" &&
+    typeof evt.clientY === "number" &&
+    !Number.isNaN(evt.clientX) &&
+    !Number.isNaN(evt.clientY);
+  let left;
+  let top;
+  if (hasPointer) {
+    left = evt.clientX + 16;
+    top = evt.clientY + 16;
+  } else if (anchorEl && typeof anchorEl.getBoundingClientRect === "function") {
+    const r = anchorEl.getBoundingClientRect();
+    left = r.left + r.width / 2 - w / 2;
+    top = r.bottom + 8;
+  } else {
+    left = margin + 16;
+    top = margin + 16;
+  }
   if (left + w + margin > vw) left = Math.max(margin, vw - w - margin);
-  if (top + h + margin > vh) top = Math.max(margin, (evt?.clientY || margin) - h - 16);
+  if (left < margin) left = margin;
+  if (top + h + margin > vh) {
+    if (hasPointer) {
+      top = Math.max(margin, evt.clientY - h - 16);
+    } else if (anchorEl && typeof anchorEl.getBoundingClientRect === "function") {
+      const r = anchorEl.getBoundingClientRect();
+      top = Math.max(margin, r.top - h - 8);
+    } else {
+      top = Math.max(margin, vh - h - margin);
+    }
+  }
   tip.style.left = `${left}px`;
   tip.style.top = `${top}px`;
 }
@@ -401,16 +625,16 @@ function attachCardTooltip(btn, getText) {
   if (!btn || typeof getText !== "function") return;
   btn.dataset.longPressShown = "0";
   btn.addEventListener("mouseenter", (evt) => {
-    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt, btn);
   });
   btn.addEventListener("mousemove", (evt) => {
-    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt, btn);
   });
   btn.addEventListener("mouseleave", () => {
     if (preferCardHoverTip()) hideCardHoverTip();
   });
   btn.addEventListener("focus", (evt) => {
-    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt, btn);
   });
   btn.addEventListener("blur", () => {
     if (preferCardHoverTip()) hideCardHoverTip();
@@ -441,22 +665,17 @@ function formatEnemySpecialSettlement(on, kind, stat) {
 
 function boostValue(stat) {
   if (!state.field) return 1;
-  const phase = state.phase;
-  const attackStats = ["STR", "INT", "DEX"];
-  const defenseStats = ["AGI", "VIT", "LUK"];
-  const isAttackStat = attackStats.includes(stat);
-  const isDefenseStat = defenseStats.includes(stat);
-
-  if (state.field.id === "light") return phase === "defense" && isDefenseStat ? 2 : 1;
-  if (state.field.id === "dark") return phase === "attack" && isAttackStat ? 2 : 1;
-  return state.field.boost === stat ? 2 : 1;
+  const f = state.field;
+  if (f.id === "light") return FIELD_LIGHT_STATS.has(stat) ? 2 : 1;
+  if (f.id === "dark") return FIELD_DARK_STATS.has(stat) ? 2 : 1;
+  return f.boost === stat ? 2 : 1;
 }
 
 function fieldBonusText(field) {
-  if (!field) return "直接屬性X2";
-  if (field.id === "light") return "防守三屬性X2";
-  if (field.id === "dark") return "攻擊三屬性X2";
-  return `${field.boost}X2`;
+  if (!field) return "—";
+  if (field.id === "light") return "AGI·VIT·LUK X2";
+  if (field.id === "dark") return "STR·DEX·INT X2";
+  return `${field.boost} X2`;
 }
 
 /** 僅統計玩家抽到的 777（makeSpecial），不含敵方 makeEnemySpecial。 */
@@ -550,6 +769,9 @@ async function submitBattleSummary(outcome) {
 async function finishBattle(outcome) {
   state.over = true;
   state.resolving = false;
+  // 結束後若不重置，下一場或幕後 refresh 仍用「上一戰最後一幀」比對，特效會誤判為不該播
+  lastRenderedHeartState.player = null;
+  lastRenderedHeartState.enemy = null;
   syncCardsDeckVisibility();
   if (outcome === "win") {
     window.PocketPawnsAudio?.playWin?.();
@@ -568,9 +790,19 @@ function pickAndConsumeNextOpponent() {
   return next;
 }
 
+/** 玩家回血僅兩種：治癒卡、戰鬥段落開始時 0 HP → 補到 1（不超過上限）。 */
+function ensurePlayerNotZeroHpAtBattleEntry() {
+  if (!state.player) return;
+  if ((state.player.hearts || 0) > 0) return;
+  const cap = Math.max(0, state.player.maxHearts || 4);
+  state.player.hearts = Math.min(cap, 1);
+}
+
 function setupRoundForCurrentOpponent() {
   if (!session.opponent?.initial) return false;
+  ensurePlayerNotZeroHpAtBattleEntry();
   state.enemy = clone(session.opponent.initial);
+  state.field = rand(FIELDS);
   state.phase = "attack";
   state.hand = makeHandForPhase(state.phase);
   const sp = makeSpecial(state.phase, state.hand);
@@ -584,6 +816,8 @@ function setupRoundForCurrentOpponent() {
   state.specialOn = false;
   state.resolving = false;
   state.over = false;
+  lastRenderedHeartState.player = null;
+  lastRenderedHeartState.enemy = null;
   renderValueCards();
   renderSpecialColumn();
   refreshBattleUI();
@@ -592,6 +826,10 @@ function setupRoundForCurrentOpponent() {
 }
 
 function setVisibleById(id) {
+  if (id !== "viewport") {
+    lastRenderedHeartState.player = null;
+    lastRenderedHeartState.enemy = null;
+  }
   const ids = ["title-screen", "credits-screen", "character-select", "character-detail", "viewport", "menu-overlay", "settlement"];
   ids.forEach((x) => {
     const el = document.getElementById(x);
@@ -654,11 +892,42 @@ function renderStats(el, stats) {
   });
 }
 
-function renderHearts(container, cur, max) {
+function renderHearts(container, cur, max, side) {
   if (!container) return;
+  const maxH = Math.max(0, max | 0);
+  const curH = Math.max(0, Math.min(maxH, Math.floor(Number(cur) || 0)));
+  const curSlots = Array.from({ length: maxH }, (_, i) => i < curH);
+  const prevState = lastRenderedHeartState[side];
+  const pendingFx = [];
+
+  if (prevState && prevState.max === maxH) {
+    const ph = prevState.hearts;
+    for (let i = 0; i < maxH; i += 1) {
+      const wasOn = i < ph;
+      const isOn = i < curH;
+      if (wasOn && !isOn) pendingFx.push({ i, kind: "d" });
+      if (!wasOn && isOn) pendingFx.push({ i, kind: "u" });
+    }
+  } else if (prevState && prevState.max !== maxH) {
+    const prevSlots = buildHeartSlots(prevState.hearts, prevState.max);
+    const prevAligned = alignPrevHeartSlots(prevSlots, maxH);
+    if (prevAligned) {
+      for (let i = 0; i < maxH; i += 1) {
+        if (prevAligned[i] && !curSlots[i]) pendingFx.push({ i, kind: "d" });
+        if (!prevAligned[i] && curSlots[i]) pendingFx.push({ i, kind: "u" });
+      }
+    }
+  }
+
+  lastRenderedHeartState[side] = { hearts: curH, max: maxH };
+
   container.innerHTML = "";
-  for (let i = 0; i < max; i += 1) {
-    const isOn = i < cur;
+  for (let i = 0; i < maxH; i += 1) {
+    const isOn = i < curH;
+    const wrap = document.createElement("div");
+    wrap.className = "heart-wrap";
+    wrap.style.zIndex = String(2 + i);
+
     const img = document.createElement("img");
     img.width = 100;
     img.height = 88;
@@ -667,13 +936,39 @@ function renderHearts(container, cur, max) {
     img.alt = "";
     img.setAttribute("aria-hidden", "true");
     img.src = asset(`assets/${isOn ? "hp_1" : "hp_0"}.png`);
+
+    const fxLayer = document.createElement("div");
+    fxLayer.className = "heart-fx-layer";
+    fxLayer.setAttribute("aria-hidden", "true");
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    canvas.className = "heart-fx-canvas";
+    canvas.style.display = "none";
+    fxLayer.appendChild(canvas);
+
+    const play = pendingFx.find((p) => p.i === i);
     img.onerror = () => {
       img.remove();
+      fxLayer.remove();
       const span = document.createElement("span");
       span.className = `heart${isOn ? " on" : ""}`;
-      container.appendChild(span);
+      wrap.appendChild(span);
     };
-    container.appendChild(img);
+
+    wrap.appendChild(img);
+    wrap.appendChild(fxLayer);
+    container.appendChild(wrap);
+
+    if (play) {
+      wrap.classList.add("heart-wrap--fx-playing");
+      wrap.style.setProperty("z-index", "120", "important");
+      runHeartFxOnCanvas(canvas, play.kind, () => {
+        wrap.classList.remove("heart-wrap--fx-playing");
+        wrap.style.removeProperty("z-index");
+        if (wrap.isConnected) wrap.style.zIndex = String(2 + i);
+      });
+    }
   }
 }
 
@@ -695,7 +990,14 @@ function syncCardsDeckVisibility() {
   els.cardsDeck.setAttribute("aria-hidden", show ? "false" : "true");
 }
 
-function refreshBattleUI() {
+/**
+ * @param {{ skipHearts?: boolean, skipPlayerHearts?: boolean, skipEnemyHearts?: boolean }} [options]
+ * skipHearts：兩側愛心都不重畫。skipPlayerHearts／skipEnemyHearts：只跳過該側（比拚後僅敵方扣血時勿重畫玩家，避免拆掉回血 FX）。
+ */
+function refreshBattleUI(options = {}) {
+  const skipBoth = options.skipHearts === true;
+  const skipEnemy = skipBoth || options.skipEnemyHearts === true;
+  const skipPlayer = skipBoth || options.skipPlayerHearts === true;
   if (!state.player || !state.enemy || !state.field) {
     syncCardsDeckVisibility();
     return;
@@ -705,10 +1007,16 @@ function refreshBattleUI() {
   renderStats(els.enemyStats, state.enemy.stats || state.enemy.initial?.stats || []);
   renderStats(els.playerStats, state.player.stats || state.player.initial?.stats || []);
 
-  renderHearts(els.enemyHearts, state.enemy.hearts ?? 0, state.enemy.maxHearts ?? 0);
-  renderHearts(els.playerHearts, state.player.hearts ?? 0, state.player.maxHearts ?? 0);
+  if (!skipEnemy) {
+    renderHearts(els.enemyHearts, state.enemy.hearts ?? 0, state.enemy.maxHearts ?? 0, "enemy");
+  }
+  if (!skipPlayer) {
+    renderHearts(els.playerHearts, state.player.hearts ?? 0, state.player.maxHearts ?? 0, "player");
+  }
 
-  if (els.fieldLabel) els.fieldLabel.textContent = `場景：${state.field.name}（${fieldBonusText(state.field)}）`;
+  if (els.fieldLabel) {
+    els.fieldLabel.textContent = `場景：${state.field.name}（${fieldBonusText(state.field)}）`;
+  }
   if (els.phaseBadge) els.phaseBadge.textContent = state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段";
 
   if (els.npcPanel) els.npcPanel.hidden = false;
@@ -1107,7 +1415,7 @@ function applyPlayerSpecialEffect(ctx) {
       res.note = "777 卡啟動：玩家本回合最終值 +777";
       break;
     case "phloss":
-      state.player.hearts = Math.max(0, (state.player.hearts || 0) - 1);
+      res.selfDamage = 1;
       res.note = "HP Loss 啟動：玩家失去 1 點 HP";
       break;
     case "showy":
@@ -1230,6 +1538,10 @@ async function playRound(card) {
   if (enemySpecialRes.selfDamage) state.enemy.hearts = Math.max(0, (state.enemy.hearts || 0) - enemySpecialRes.selfDamage);
   if (enemySpecialRes.enemyDamage) state.player.hearts = Math.max(0, (state.player.hearts || 0) - enemySpecialRes.enemyDamage);
   refreshBattleUI();
+  const preClashPlayerH = state.player.hearts ?? 0;
+  const preClashEnemyH = state.enemy.hearts ?? 0;
+  const preClashPlayerM = state.player.maxHearts ?? 0;
+  const preClashEnemyM = state.enemy.maxHearts ?? 0;
 
   // Attack windup: step forward and back in 1 second.
   await playAttackStepMotion(isPlayerAttacking);
@@ -1268,6 +1580,7 @@ async function playRound(card) {
         target: "enemy",
         special: state.specialOn ? state.special : null,
         intensity: specialRes.attackFxBoost || 1,
+        playerFinal: Math.round(playerFinal),
       });
       roundNote = roundNote || `命中成功：敵方失去 ${damage} 點 HP`;
       if (usedSpecialKind === "seven77" && state.enemy.hearts <= 0) session.match.used777Kill = true;
@@ -1283,13 +1596,6 @@ async function playRound(card) {
     if (!roundNote) roundNote = "防禦失敗：玩家失去 1 點 HP";
   } else if (!roundNote) {
     roundNote = "防禦成功，未受到傷害";
-  }
-
-  // 平手：先被自傷類特殊扣到 0 HP 時，本回合仍算平手（攻／防皆不造成比拚傷害），補 1 心避免帶 0 HP 進下一回合
-  const clashTie = Math.round(playerFinal) === Math.round(enemyFinal);
-  if (clashTie && (state.player.hearts || 0) <= 0) {
-    const cap = state.player.maxHearts || 4;
-    state.player.hearts = Math.min(cap, 1);
   }
 
   state.player = clone(state.player);
@@ -1309,14 +1615,15 @@ async function playRound(card) {
   } else {
     session.match.oneHpStreak = 0;
   }
-  refreshBattleUI();
+  refreshBattleUI({
+    skipPlayerHearts:
+      (state.player.hearts ?? 0) === preClashPlayerH && (state.player.maxHearts ?? 0) === preClashPlayerM,
+    skipEnemyHearts:
+      (state.enemy.hearts ?? 0) === preClashEnemyH && (state.enemy.maxHearts ?? 0) === preClashEnemyM,
+  });
   if (els.npcMessage && roundNote) els.npcMessage.textContent = roundNote;
 
   if ((state.enemy.hearts || 0) <= 0) {
-    if ((state.player.hearts || 0) <= 0) {
-      const cap = state.player.maxHearts || 4;
-      state.player.hearts = Math.min(cap, 1);
-    }
     await playDeathFade("enemy");
     setNpcSpeech("victory");
     session.wins += 1;
@@ -1367,7 +1674,7 @@ async function playRound(card) {
   state.resolving = false;
   renderValueCards();
   renderSpecialColumn();
-  refreshBattleUI();
+  refreshBattleUI({ skipPlayerHearts: true, skipEnemyHearts: true });
 }
 
 async function startBattle() {
@@ -1391,6 +1698,7 @@ async function startBattle() {
     if (!session.opponent?.initial) throw new Error("對手資料不完整（opponent.initial 缺失）。");
 
     state.player = clone(session.playerChar.initial);
+    ensurePlayerNotZeroHpAtBattleEntry();
     state.enemy = clone(session.opponent.initial);
     state.field = rand(FIELDS);
     state.phase = "attack";
@@ -1398,6 +1706,8 @@ async function startBattle() {
     state.resolving = false;
 
     state.active = true;
+    lastRenderedHeartState.player = null;
+    lastRenderedHeartState.enemy = null;
     session.submitted = false;
     session.lastRoundClash = null;
     session.kills = 0;

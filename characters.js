@@ -99,13 +99,13 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_015",
     name: "Smile mitea",
     sortIndex: 15,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [7, 10, 6, 12, 12, 10], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_016",
     name: "時櫻羽入",
     sortIndex: 16,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [6, 2, 5, 6, 12, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_017",
@@ -123,7 +123,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_019",
     name: "十人",
     sortIndex: 19,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 4, 4, 13, 13, 4], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_020",
@@ -135,7 +135,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_021",
     name: "麋安",
     sortIndex: 21,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 6, 1, 2, 2, 12], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_022",
@@ -159,19 +159,19 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_025",
     name: "櫻喵",
     sortIndex: 25,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [6, 12, 5, 12, 11, 5], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_026",
     name: "思提莫莫",
     sortIndex: 26,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [4, 12, 1, 11, 8, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_027",
     name: "木夢",
     sortIndex: 27,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [4, 6, 13, 12, 7, 12], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_028",
@@ -189,7 +189,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_030",
     name: "夜色守望",
     sortIndex: 30,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [2, 2, 9, 11, 13, 11], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_031",
@@ -207,13 +207,13 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_033",
     name: "蒼翎",
     sortIndex: 33,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [4, 13, 12, 5, 9, 10], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_034",
     name: "圈圈",
     sortIndex: 34,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [6, 11, 6, 10, 6, 9], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_035",
@@ -285,19 +285,19 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_046",
     name: "今夜橘子",
     sortIndex: 46,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [9, 4, 3, 6, 6, 13], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_047",
     name: "春霞",
     sortIndex: 47,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [2, 1, 11, 13, 1, 11], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_048",
     name: "藍凝燄",
     sortIndex: 48,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 3, 12, 10, 9, 7], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_049",
@@ -315,13 +315,13 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_051",
     name: "盧艾可",
     sortIndex: 51,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [2, 10, 7, 12, 8, 12], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_052",
     name: "靈玉",
     sortIndex: 52,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [1, 5, 3, 7, 12, 1], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_053",
@@ -435,7 +435,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_071",
     name: "陌",
     sortIndex: 71,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [7, 8, 6, 11, 8, 4], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_072",
@@ -471,7 +471,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_077",
     name: "李夏",
     sortIndex: 77,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [3, 6, 2, 13, 8, 13], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_078",

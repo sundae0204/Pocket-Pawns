@@ -20,6 +20,7 @@
     attack777: "sounds/se_attack_777.mp3",
     win: "sounds/se_win.mp3",
     loss: "sounds/se_loss.mp3",
+    hpUp: "sounds/se_hp_up.mp3",
   };
 
   const POOL_PER_KEY = 4;
@@ -169,6 +170,9 @@
     },
     playLoss() {
       play("loss");
+    },
+    playHpUp() {
+      play("hpUp");
     },
 
     setBgm,

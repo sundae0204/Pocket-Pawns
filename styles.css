@@ -289,6 +289,46 @@ body {
   gap: 5px;
   margin-top: 6px;
   justify-content: center;
+  align-items: center;
+}
+
+/* 愛心 HP 圖 100×88，特效 256×256 置中疊加；由 JS 設 z-index(2+i)，播特效時再拉高以免被鄰格蓋住 */
+.heart-wrap {
+  position: relative;
+  width: 100px;
+  height: 88px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+/* 播特效時主要由 game_card.js 設 style.setProperty(z-index, 120, important)；此處作後備 */
+.heart-wrap.heart-wrap--fx-playing {
+  z-index: 120 !important;
+}
+
+.heart-wrap > img {
+  position: relative;
+  z-index: 0;
+}
+
+.heart-fx-layer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 256px;
+  height: 256px;
+  margin-left: -128px;
+  margin-top: -128px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.heart-fx-canvas {
+  display: block;
+  width: 256px;
+  height: 256px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .enemy-hud .hearts {

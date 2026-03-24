@@ -96,10 +96,10 @@
     "defeat": "預留"
   },
   "char_016": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "這是哪裡尼是誰?窩是誰?",
+    "battleOpen": "尼來了 那窩們開始吧",
+    "victory": "贏啦!!!",
+    "defeat": "RRRRR(回音)"
   },
   "char_017": {
     "menuSelect": "沒看過鳥騎車喔",
@@ -426,10 +426,10 @@
     "defeat": "預留"
   },
   "char_071": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "推薦美景有很多，給你介紹介紹？",
+    "battleOpen": "遊戲時間到！該是狂樂的時候啦～",
+    "victory": "勝利的景色很美，是吧？",
+    "defeat": "沒想到竟然玩輸了……（假哭）"
   },
   "char_072": {
     "menuSelect": "本王聽說現世又有出新的同人本啦？",
@@ -462,10 +462,10 @@
     "defeat": "再來一次……？"
   },
   "char_077": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "由我來引導方向？感謝你的信任。",
+    "battleOpen": "請別受傷，站在我身後，放心交給我。",
+    "victory": "每一次勝利都是努力得來的成果，做得好。",
+    "defeat": "累積經驗下次會成功的，別氣餒。"
   },
   "char_078": {
     "menuSelect": "預留",
