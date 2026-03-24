@@ -25,9 +25,9 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
 
 ## 表情圖對應
 
-- `0` -> `assets/MissCloudy/Miss_Cloudy00.png`
-- `1` -> `assets/MissCloudy/Miss_Cloudy01.png`
-- `2` -> `assets/MissCloudy/Miss_Cloudy02.png`
+- `0` -> `assets/misscloudy/miss_cloudy00.png`
+- `1` -> `assets/misscloudy/miss_cloudy01.png`
+- `2` -> `assets/misscloudy/miss_cloudy02.png`
 
 你可以在 `faces` 自訂命名（例如 `happy`、`serious`），只要對應到數字索引即可。
 
@@ -39,5 +39,5 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
 ## 維護建議
 
 - 優先調整 `text`，不需要改 `game_card.js`
-- 若新增表情圖，先補 `assets/MissCloudy`，再更新 `faces` 對應
+- 若新增表情圖，先補 `assets/misscloudy`，再更新 `faces` 對應
 - 若某欄缺失，程式會使用內建預設台詞與表情，不會壞掉

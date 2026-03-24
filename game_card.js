@@ -198,7 +198,7 @@ function isRandomCharacter(ch) {
 }
 
 function missCloudyFacePath(index) {
-  return `assets/MissCloudy/Miss_Cloudy${String(index).padStart(2, "0")}.png`;
+  return `assets/misscloudy/miss_cloudy${String(index).padStart(2, "0")}.png`;
 }
 
 function getMissCloudyConfig() {
@@ -519,7 +519,7 @@ function renderHearts(container, cur, max) {
     img.style.height = "88px";
     img.alt = "";
     img.setAttribute("aria-hidden", "true");
-    img.src = asset(`assets/${isOn ? "HP_1" : "HP_0"}.png`);
+    img.src = asset(`assets/${isOn ? "hp_1" : "hp_0"}.png`);
     img.onerror = () => {
       img.remove();
       const span = document.createElement("span");
@@ -710,8 +710,8 @@ function makeEnemySpecial(phase) {
 function valueCardPath(card) {
   const stat = card.stat;
   const side = card.side;
-  const phasePrefix = state.phase === "attack" ? "A" : "D";
-  return `assets/card/${phasePrefix}_${stat}_${side}.png`;
+  const phasePrefix = state.phase === "attack" ? "a" : "d";
+  return `assets/card/${phasePrefix}_${stat}_${side}.png`.toLowerCase();
 }
 
 function specialCardPath(kind) {

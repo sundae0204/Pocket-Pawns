@@ -1114,7 +1114,7 @@ body {
 #character-select.overlay-screen.overlay-character-select,
 #character-detail.overlay-screen.overlay-character-select {
   background-color: #0d0820;
-  background-image: linear-gradient(rgba(8, 4, 24, 0.42), rgba(8, 4, 24, 0.52)), url("assets/fields/bg_Character.png");
+  background-image: linear-gradient(rgba(8, 4, 24, 0.42), rgba(8, 4, 24, 0.52)), url("assets/fields/bg_character.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

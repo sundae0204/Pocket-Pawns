@@ -19,12 +19,13 @@ assets/
   ui/
     card_*.png
   fields/
-    bg_Character.png       # 角色選單全屏背景（滿版 cover）
+    bg_character.png       # 角色選單全屏背景（滿版 cover）
     …                      # 場景底圖 1920×1080（16:9），檔名與場地 id：fire.png…
   img_list_ui_bg.png       # 選單角色格：底層（與 img_list_ui 同尺寸 205×160；charmin 198×122 疊在框內）
   img_list_ui.png          # 選單角色格：最上層框（205×160）
-  MissCloudy/
-    Miss_Cloudy00.png      # 朵雲公主表情（00、01…；程式用 expression 切換）
+  hp_0.png / hp_1.png      # 戰鬥 HP 圖示（請小寫；GitHub Pages 等 Linux 主機區分大小寫）
+  misscloudy/
+    miss_cloudy00.png      # 朵雲公主表情（00、01…；程式用 expression 切換）
     …
 ```
 
