@@ -8,6 +8,7 @@
  * @typedef {{ id: string, name: string, sortIndex: number, initial: { stats: number[], hearts: number, maxHearts: number } }} PocketCharacter
  */
 
+
 /** @type {PocketCharacter[]} */
 window.POCKET_PAWNS_CHARACTERS = [
   {
@@ -30,7 +31,7 @@ window.POCKET_PAWNS_CHARACTERS = [
   },
   {
     id: "char_004",
-    name: "朵雲公主",
+    name: "雲姬",
     sortIndex: 4,
     initial: { stats: [9, 9, 6, 6, 6, 4], hearts: 2, maxHearts: 4 },
   },
@@ -62,7 +63,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_009",
     name: "羅芝芝",
     sortIndex: 9,
-    initial: { stats: [6, 6, 6, 6, 6, 10], hearts: 2, maxHearts: 4 },
+    initial: { stats: [12, 6, 13, 8, 4, 9], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_010",
@@ -116,7 +117,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_018",
     name: "錫塔",
     sortIndex: 18,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [5, 4, 7, 8, 5, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_019",
@@ -218,7 +219,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_035",
     name: "幼稚小孩巧可",
     sortIndex: 35,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [12, 5, 9, 6, 10, 7], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_036",
@@ -527,87 +528,98 @@ window.POCKET_PAWNS_CHARACTERS = [
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
-    id: "char_087",
-    name: "茶抹抹",
+     id: "char_087",
+    name: "咖啡歐",
     sortIndex: 87,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_088",
-    name: "nanagi",
+    name: "茶抹抹",
     sortIndex: 88,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_089",
-    name: "曉火",
+    name: "nanagi",
     sortIndex: 89,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_090",
-    name: "扇子",
+    name: "曉火",
     sortIndex: 90,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_091",
-    name: "律豆豆",
+    name: "扇子",
     sortIndex: 91,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_092",
-    name: "猫島羽依",
+    name: "律豆豆",
     sortIndex: 92,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_093",
-    name: "夜雪儿",
+    name: "猫島羽依",
     sortIndex: 93,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_094",
-    name: "一狗愛笛聲",
+    name: "夜雪儿",
     sortIndex: 94,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_095",
-    name: "吳津",
+    name: "一狗愛笛聲",
     sortIndex: 95,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_096",
-    name: "阿牽",
+    name: "吳津",
     sortIndex: 96,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_097",
-    name: "靈玉",
+    name: "阿牽",
     sortIndex: 97,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_098",
-    name: "破羽",
+    name: "靈玉",
     sortIndex: 98,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_099",
-    name: "李研",
+    name: "破羽",
     sortIndex: 99,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_100",
-    name: "豆豆",
+    name: "李研",
     sortIndex: 100,
     initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
   },
+  {
+    id: "char_101",
+    name: "豆豆",
+    sortIndex: 101,
+    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+  },
 ];
+
+
+
+
+

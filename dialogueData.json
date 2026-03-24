@@ -72,10 +72,10 @@
     "defeat": "……被識破了嗎。"
   },
   "char_012": {
-    "menuSelect": "雷一落下，就結束了。",
-    "battleOpen": "雷擊兵，準備放電！",
-    "victory": "落雷判定，勝負已分！",
-    "defeat": "雷沒打中……"
+    "menuSelect": "盤上を掌握する者が、今、動く。",
+    "battleOpen": "結末は単純だ。残るのは一枚だけ――それを私にする",
+    "victory": "予定調和。私を活かしきった、完璧な采配だった。",
+    "defeat": "勝者を称える。次は残る側に立つ。"
   },
   "char_013": {
     "menuSelect": "預留",
@@ -102,10 +102,10 @@
     "defeat": "預留"
   },
   "char_017": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "沒看過鳥騎車喔",
+    "battleOpen": "閃喔！撞到不賠喔！！",
+    "victory": "我的車又撞了無趣的東西",
+    "defeat": "幫...幫叫救護車..."
   },
   "char_018": {
     "menuSelect": "哼，我是全天下最厲害的書靈！",
@@ -114,10 +114,10 @@
     "defeat": "嗚嗚嗚……我要跟芝芝麻麻說，你欺負我！"
   },
   "char_019": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "阿修羅霸凰拳!!!!",
+    "battleOpen": "阿修羅霸凰拳!!!!",
+    "victory": "阿修羅霸凰拳!!!!",
+    "defeat": "阿修..."
   },
   "char_020": {
     "menuSelect": "預留",
@@ -132,10 +132,10 @@
     "defeat": "預留"
   },
   "char_022": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "有需要妖界的貨到付款嗎~？",
+    "battleOpen": "多多綠QQ糖現在打折只要9900元！",
+    "victory": "虹，這個直接扔出去了~",
+    "defeat": "啊噠噠噠噠……（倒）"
   },
   "char_023": {
     "menuSelect": "預留",
@@ -144,10 +144,10 @@
     "defeat": "預留"
   },
   "char_024": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "被我選擇是你的榮幸！",
+    "battleOpen": "你已經死了！",
+    "victory": "你已經死第二次了！",
+    "defeat": "我已經死了！"
   },
   "char_025": {
     "menuSelect": "預留",
@@ -156,16 +156,16 @@
     "defeat": "預留"
   },
   "char_026": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "......（蛤？）",
+    "battleOpen": "......（啊）",
+    "victory": "......（乾！真的贏了！？）",
+    "defeat": "......（靠妖！也太強了吧！？）"
   },
   "char_027": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "還是被看到了嗎…請不要把我抓去當坦克",
+    "battleOpen": "不想成為經驗值就讓開！",
+    "victory": "平衡超平衡，學不起來當然輸給我",
+    "defeat": "我這麼可愛，一般情況下怎麼可能…"
   },
   "char_028": {
     "menuSelect": "預留",
@@ -246,16 +246,16 @@
     "defeat": "（在你面前把雞蛋糕吃掉）"
   },
   "char_041": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "命運的絲線，終究沒有辜負我這漫長的等待",
+    "battleOpen": "那麼……諸位，準備好隕落了嗎？",
+    "victory": "勝負如雲聚散，唯有這片天地……與我長存。",
+    "defeat": "此身雖隕，但我的意志……將在下一場春雨中重生。"
   },
   "char_042": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "小女不才名小親王(提裙禮)請多關照喔",
+    "battleOpen": "魔法☆美味☆/n甜點天使要來征服你的心~！",
+    "victory": "甜心能量滿載最終樂章！",
+    "defeat": "公主也要優雅地承受失敗..(哭)"
   },
   "char_043": {
     "menuSelect": "預留",
@@ -318,13 +318,13 @@
     "defeat": "預留"
   },
   "char_053": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "ヾ(•ω•`)o",
+    "battleOpen": "（<ゝω・）☆",
+    "victory": "σ`∀´)σ",
+    "defeat": "—(:3 」∠ )—"
   },
   "char_054": {
-    "menuSelect": "你也喜歡藝術嗎？",
+    "menuSelect": "正常甜的飲料不要喝太多",
     "battleOpen": "（卡牌間的較量，對學生的教育也很有幫助）",
     "victory": "下次再會，玩得很盡興",
     "defeat": "再來一局吧"
@@ -336,10 +336,10 @@
     "defeat": "預留"
   },
   "char_056": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "有需要現世的貨到付款嗎~？",
+    "battleOpen": "請先結帳再看商品喔～",
+    "victory": "大掌櫃！這可以扔掉了嗎～？",
+    "defeat": "我還沒玩夠！不！"
   },
   "char_057": {
     "menuSelect": "預留",
@@ -348,10 +348,10 @@
     "defeat": "預留"
   },
   "char_058": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "你確定……準備好見證面具下的『真實』了嗎？",
+    "battleOpen": "我可以是你的過去、現在，或未來。那麼，你希望我是誰？",
+    "victory": "皮囊不過是其中最無趣的一張",
+    "defeat": "沒有永恆不變的容貌，正如沒有永恆不變的誓言"
   },
   "char_059": {
     "menuSelect": "預留",
@@ -396,7 +396,7 @@
     "defeat": "嘖……"
   },
   "char_066": {
-    "menuSelect": "每天晚上八點固定直播唷",
+    "menuSelect": "每天晚上八點固定在YT直播唷",
     "battleOpen": "小貓，真可愛呢",
     "victory": "呵呵呵呵，贏很正常，畢竟是我",
     "defeat": "唉呀，我竟然輸了，再來一局吧"
@@ -433,7 +433,7 @@
   },
   "char_072": {
     "menuSelect": "本王聽說現世又有出新的同人本啦？",
-    "battleOpen": "給本王帶一綑吧？",
+    "battleOpen": "給本王帶一綑同人本吧？",
     "victory": "本王贏了，同人本的錢你出",
     "defeat": "本王雖輸了，同人本的錢找若拿"
   },
@@ -474,10 +474,10 @@
     "defeat": "預留"
   },
   "char_079": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "可愛的仙狐金穗會成為你的助力喔!",
+    "battleOpen": "尾巴出力要小一點免得對手受傷",
+    "victory": "沒事吧？我可以幫你治療",
+    "defeat": "對方沒受傷真是太好了"
   },
   "char_080": {
     "menuSelect": "預留",
@@ -486,10 +486,10 @@
     "defeat": "預留"
   },
   "char_081": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "你確..定...?!",
+    "battleOpen": "只要打敗十人就算我贏喔!",
+    "victory": "就說2打1怎麼輸-3-",
+    "defeat": "都是十人的鍋!"
   },
   "char_082": {
     "menuSelect": "預留",
@@ -604,8 +604,16 @@
     "battleOpen": "（默默看牌）",
     "victory": "謝謝較量",
     "defeat": "我還有工作，下次再說吧"
+  },
+  "char_101": {
+    "menuSelect": "喵喵喵",
+    "battleOpen": "喵喵喵~",
+    "victory": "喵喵喵!!",
+    "defeat": "喵……"
   }
 }
+
+
 
 
 
