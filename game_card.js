@@ -557,6 +557,7 @@ async function finishBattle(outcome) {
   setOverlaysHidden();
   renderSettlement(outcome);
   if (els.settlement) els.settlement.hidden = false;
+  window.PocketPawnsAudio?.setBgm?.("end");
   await submitBattleSummary(outcome);
 }
 

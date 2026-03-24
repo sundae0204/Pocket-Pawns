@@ -16,7 +16,7 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
     battle: {
       report: {
         face: "calm",
-        text: "先右邊的餅乾再點素質卡~長按有說明。小偷符號是偷敵人的素質",
+        text: "先右邊的餅乾再點素質卡~\n長按有說明。小偷符號是偷敵人的素質",
       },
       victory: {
         face: "cheer",
