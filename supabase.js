@@ -62,7 +62,15 @@
     const sb = getSupabase();
 
     if (sb) {
-      const { data, error } = await sb.from("character_stats").select("*").in("character_id", ids);
+      // PostgREST 在某些環境對 text + in.(a,b,c) 會將值誤判為識別字，改用明確字串 in 避免 400。
+      const quotedIds = ids
+        .map((id) => String(id || "").trim())
+        .filter(Boolean)
+        .map((id) => `"${id.replace(/"/g, '\\"')}"`);
+      const inExpr = `(${quotedIds.join(",")})`;
+      const { data, error } = quotedIds.length
+        ? await sb.from("character_stats").select("*").filter("character_id", "in", inExpr)
+        : { data: [], error: null };
       if (!error && data) {
         for (const row of data) {
           out[row.character_id] = {
