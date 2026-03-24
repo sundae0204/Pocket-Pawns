@@ -37,6 +37,7 @@ html {
   --pp-char-list-frame-h-num: 160;
   --pp-char-list-frame-w: calc(var(--pp-char-list-frame-w-num) * 1px);
   --pp-char-list-frame-h: calc(var(--pp-char-list-frame-h-num) * 1px);
+  --pp-battle-ui-scale: 1;
 }
 
 html,
@@ -52,20 +53,18 @@ body {
     radial-gradient(ellipse 120% 80% at 85% 12%, rgba(180, 160, 255, 0.35), transparent 50%),
     radial-gradient(ellipse at 50% 100%, rgba(100, 140, 220, 0.4), transparent 45%),
     linear-gradient(180deg, #0d0820 0%, #1a1038 40%, #2a1a50 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   min-height: 100vh;
-  padding: 8px;
+  padding: 0;
 }
 
-/* 固定 16:9 可視區域 */
+/* 戰鬥可視區域：不再固定 16:9，改為吃滿視窗 */
 .viewport-16x9 {
-  width: min(100vw - 16px, calc((100vh - 16px) * 16 / 9));
-  height: min(100vh - 16px, calc((100vw - 16px) * 9 / 16));
-  aspect-ratio: 16 / 9;
-  max-width: 100%;
-  max-height: 100%;
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+  max-width: none;
+  max-height: none;
   overflow: hidden;
   position: relative;
   transform-origin: center center;
@@ -124,8 +123,8 @@ body {
 }
 
 .game-root {
-  width: 100%;
-  height: 100%;
+  width: calc(100% / var(--pp-battle-ui-scale));
+  height: calc(100% / var(--pp-battle-ui-scale));
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) max-content;
@@ -139,6 +138,8 @@ body {
   position: relative;
   background-color: #0d0820;
   overflow-y: auto;
+  transform: scale(var(--pp-battle-ui-scale));
+  transform-origin: top center;
 }
 
 .game-root::before,
@@ -966,7 +967,7 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
 @media (max-width: 640px) {
   .viewport-16x9 {
     width: 100vw;
-    height: calc(100vw * 9 / 16);
+    height: 100vh;
   }
 
   .game-root {
@@ -1505,7 +1506,8 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
   display: grid;
   /* 每頁固定 10 格（不足處由 JS 隱形占位補滿）：5 欄×2 列 */
   grid-auto-flow: row;
-  --pp-char-list-col-w: var(--pp-char-list-frame-w);
+  /* 防止瀏覽器縮放/小寬度時第 5 欄擠壓重疊：欄寬可隨容器等比縮小 */
+  --pp-char-list-col-w: min(var(--pp-char-list-frame-w), calc((100% - (4 * 10px)) / 5));
   grid-template-columns: repeat(5, var(--pp-char-list-col-w));
   grid-template-rows: repeat(2, minmax(0, auto));
   justify-content: start;
@@ -1520,7 +1522,7 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
 .character-card-mini {
   min-height: 0;
   min-width: 0;
-  width: var(--pp-char-list-col-w);
+  width: 100%;
   padding: 8px 4px 6px;
   border-radius: 0;
   border: none;
@@ -1539,8 +1541,8 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
 /* hover：整格（含框內名字）一體縮放 */
 .character-card-stack {
   position: relative;
-  width: var(--pp-char-list-col-w);
-  max-width: var(--pp-char-list-col-w);
+  width: 100%;
+  max-width: 100%;
   margin-inline: auto;
   aspect-ratio: var(--pp-char-list-frame-w-num) / var(--pp-char-list-frame-h-num);
   height: auto;
@@ -1617,6 +1619,25 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
   border: none !important;
   box-shadow: none !important;
   padding: 12px 16px 20px;
+}
+
+/* 手機/小平板：角色選單與詳情面板等比縮放，避免第 5 欄卡片互擠失去點擊區 */
+@media (max-width: 1130px) {
+  #character-select,
+  #character-detail {
+    align-items: flex-start;
+  }
+
+  #character-select .character-select-inner,
+  #character-detail .character-detail-inner {
+    --pp-overlay-scale: clamp(0.72, calc((100vw - 24px) / 1173), 1);
+    width: 1173px;
+    max-width: 1173px;
+    transform: scale(var(--pp-overlay-scale));
+    transform-origin: top center;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 #character-detail .character-detail-panel {

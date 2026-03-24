@@ -28,10 +28,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "我草！這人這麼兇!"
   },
   "char_004": {
-    "menuSelect": "銀翼展開，準備起飛。",
-    "battleOpen": "高度優勢，在我這邊。",
-    "victory": "完美著陸。",
-    "defeat": "墜機了……重整再來。"
+    "menuSelect": "我怎麼能選……？誰陰我（質疑）",
+    "battleOpen": "我會咬人喔",
+    "victory": "看見旁白的力量了吧",
+    "defeat": "不能打公主！"
   },
   "char_005": {
     "menuSelect": "防守就是最好的進攻。",
@@ -112,10 +112,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_018": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是錫塔~哼，全天下最厲害的書靈！",
+    "battleOpen": "看我的熱騰騰雞蛋糕攻擊！",
+    "victory": "知道雞蛋糕的厲害了吧？",
+    "defeat": "嗚嗚嗚……我要跟芝芝麻麻說，你欺負我！"
   },
   "char_019": {
     "menuSelect": "預留",
@@ -244,10 +244,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_040": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是藍凝燄，方塊煉金學院的學生",
+    "battleOpen": "（希望能早點結束）內心想",
+    "victory": "這是雞蛋糕，請你吃",
+    "defeat": "（在你面前把雞蛋糕吃掉）"
   },
   "char_041": {
     "menuSelect": "預留",
@@ -310,10 +310,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_051": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是艾可，希望你不要讓我太無聊",
+    "battleOpen": "（直接用拳頭揍你）",
+    "victory": "把你的愛情故事留下",
+    "defeat": "看來今天不能帶回故事講給那孩子聽了"
   },
   "char_052": {
     "menuSelect": "預留",
@@ -328,10 +328,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_054": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是胡漢斯，是個藝術家",
+    "battleOpen": "（卡牌間的較量，對學生的教育也很有幫助）",
+    "victory": "下次再會，玩得很盡興",
+    "defeat": "再來一局吧"
   },
   "char_055": {
     "menuSelect": "預留",
@@ -394,16 +394,16 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_065": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是水御風……",
+    "battleOpen": "（要說什麼？）",
+    "victory": "喔",
+    "defeat": "嘖……"
   },
   "char_066": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是姜紫嫣，是個百萬網紅唷~呵呵",
+    "battleOpen": "小貓，真可愛呢",
+    "victory": "呵呵呵呵，贏很正常，畢竟是我",
+    "defeat": "唉呀，我竟然輸了，再來一局吧"
   },
   "char_067": {
     "menuSelect": "預留",
@@ -436,22 +436,22 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_072": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "本王是泠，聽說現世又有新出的同人本啦？",
+    "battleOpen": "給本王帶個一綑吧？",
+    "victory": "本王贏了，同人本的錢你出",
+    "defeat": "本王雖輸了，同人本的錢找若拿"
   },
   "char_073": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是花知曉，古楓高中學生會的記者唷！",
+    "battleOpen": "看我的花花牌之擊！",
+    "victory": "來！你說，芝芝老闆是不是超可愛！（拿出手機）",
+    "defeat": "我會輸是因為看到芝芝老闆密我的關係！"
   },
   "char_074": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "……我是水牽，全世界上最可愛的憂鬱美少女",
+    "battleOpen": "嗯（微笑）",
+    "victory": "不愧是最可愛的我……",
+    "defeat": "……（牽牛花手上的大便要丟到你的臉上了）"
   },
   "char_075": {
     "menuSelect": "預留",
@@ -460,10 +460,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_076": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "……我是塔塔，喜歡占卜。",
+    "battleOpen": "（抽牌）",
+    "victory": "（蓋牌）",
+    "defeat": "再來一次……？"
   },
   "char_077": {
     "menuSelect": "預留",
@@ -580,16 +580,16 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_096": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "呀！我是吳律，很高興認識你",
+    "battleOpen": "我已經看穿你了！",
+    "victory": "哈哈哈，再來一局吧？",
+    "defeat": "剛剛沒有輸，再來一局~"
   },
   "char_097": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是水牽頭上的那朵花，可以叫我阿牽",
+    "battleOpen": "吃屎吧你（拿大便塞）",
+    "victory": "（對手的牌面都是大便）",
+    "defeat": "（就算輸了，對手的牌面還是大便）"
   },
   "char_098": {
     "menuSelect": "預留",
@@ -604,9 +604,9 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_100": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是李研，多多指教",
+    "battleOpen": "（默默看牌）",
+    "victory": "謝謝較量",
+    "defeat": "我還有工作，下次再說吧"
   }
 };

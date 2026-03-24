@@ -1548,8 +1548,13 @@ function bindEvents() {
   document.querySelectorAll(".stat-sort-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       window.PocketPawnsAudio?.playBtn?.();
-      sortStat = btn.dataset.sortStat || null;
-      document.querySelectorAll(".stat-sort-btn").forEach((b) => b.classList.toggle("is-active", b === btn));
+      const nextSort = btn.dataset.sortStat || null;
+      const cancelCurrent = sortStat && sortStat === nextSort;
+      sortStat = cancelCurrent ? null : nextSort;
+      document.querySelectorAll(".stat-sort-btn").forEach((b) => {
+        const isActive = !cancelCurrent && b === btn;
+        b.classList.toggle("is-active", isActive);
+      });
       renderSelectCards();
     });
   });
