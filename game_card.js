@@ -37,6 +37,25 @@ const SPECIAL_META = {
   showy: { name: "華麗", desc: "本回合玩家最終值提升 50%" },
 };
 
+// 卡牌說明集中區：你之後可直接在這裡整理／改寫文案。
+const CARD_TOOLTIPS = {
+  value: {
+    attackP: "攻擊牌（P）：使用我方對應屬性值參戰。",
+    attackE: "攻擊牌（E）：複製敵方對應屬性值參戰。",
+    defenseP: "防禦牌（P）：使用我方對應屬性值防守。",
+    defenseE: "防禦牌（E）：複製敵方對應屬性值防守。",
+  },
+  special: {
+    heal: "回復 1 點 HP（不超過上限）。",
+    boost: "本回合指定屬性 x2。",
+    zero: "本回合指定屬性 x0（歸零）。",
+    seven77: "本回合最終值 +777，並強化攻擊特效。",
+    redheart: "雙方先各失去 1 點 HP；若本回合攻擊命中，再追加 2 點傷害。",
+    phloss: "我方立即失去 1 點 HP。",
+    showy: "僅播放特效，不影響數值。",
+  },
+};
+
 const state = {
   active: false,
   resolving: false,
@@ -94,6 +113,10 @@ const bubbleTimers = {
   playerHide: null,
   enemyFade: null,
   enemyHide: null,
+};
+const tipTimers = {
+  toastHide: null,
+  pressStart: null,
 };
 const LS_TOTAL_PLAYS = "pocket_pawns_total_plays_v1";
 
@@ -295,6 +318,98 @@ function getDialogueForCharacter(charId) {
 
 function specialName(kind) {
   return (SPECIAL_META[kind] && SPECIAL_META[kind].name) || kind || "無";
+}
+
+function getValueCardTooltip(card) {
+  const phase = state.phase === "attack" ? "attack" : "defense";
+  const side = card.side === "E" ? "E" : "P";
+  const key = `${phase}${side}`;
+  const basic = CARD_TOOLTIPS.value[key] || "";
+  return `${card.stat} ${card.side}：${basic}`;
+}
+
+function getSpecialCardTooltip(kind, stat) {
+  const base = CARD_TOOLTIPS.special[kind] || "";
+  if (kind === "boost" && stat) return `${specialName(kind)}（${stat} x2）：${base}`;
+  if (kind === "zero" && stat) return `${specialName(kind)}（${stat} x0）：${base}`;
+  return `${specialName(kind)}：${base}`;
+}
+
+function ensureTipEls() {
+  if (!els.mobileTipToast) {
+    const toast = document.createElement("div");
+    toast.className = "mobile-tip-toast";
+    toast.hidden = true;
+    document.body.appendChild(toast);
+    els.mobileTipToast = toast;
+  }
+  if (!els.cardHoverTooltip) {
+    const tip = document.createElement("div");
+    tip.className = "card-hover-tooltip";
+    tip.hidden = true;
+    document.body.appendChild(tip);
+    els.cardHoverTooltip = tip;
+  }
+}
+
+function hideCardHoverTip() {
+  if (els.cardHoverTooltip) els.cardHoverTooltip.hidden = true;
+}
+
+function showCardHoverTip(text, evt) {
+  if (!text) return;
+  ensureTipEls();
+  if (!els.cardHoverTooltip) return;
+  const tip = els.cardHoverTooltip;
+  tip.textContent = text;
+  tip.hidden = false;
+  const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+  const margin = 12;
+  let left = (evt?.clientX || margin) + 16;
+  let top = (evt?.clientY || margin) + 16;
+  const w = tip.offsetWidth || 260;
+  const h = tip.offsetHeight || 64;
+  if (left + w + margin > vw) left = Math.max(margin, vw - w - margin);
+  if (top + h + margin > vh) top = Math.max(margin, (evt?.clientY || margin) - h - 16);
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+
+function showMobileTipToast(text) {
+  if (!text) return;
+  ensureTipEls();
+  if (!els.mobileTipToast) return;
+  if (tipTimers.toastHide) clearTimeout(tipTimers.toastHide);
+  els.mobileTipToast.textContent = text;
+  els.mobileTipToast.hidden = false;
+  tipTimers.toastHide = setTimeout(() => {
+    if (els.mobileTipToast) els.mobileTipToast.hidden = true;
+  }, 2200);
+}
+
+function attachCardTooltip(btn, getText) {
+  if (!btn || typeof getText !== "function") return;
+  btn.dataset.longPressShown = "0";
+  btn.addEventListener("mouseenter", (evt) => showCardHoverTip(getText(), evt));
+  btn.addEventListener("mousemove", (evt) => showCardHoverTip(getText(), evt));
+  btn.addEventListener("mouseleave", hideCardHoverTip);
+  btn.addEventListener("focus", (evt) => showCardHoverTip(getText(), evt));
+  btn.addEventListener("blur", hideCardHoverTip);
+  btn.addEventListener("touchstart", () => {
+    btn.dataset.longPressShown = "0";
+    if (tipTimers.pressStart) clearTimeout(tipTimers.pressStart);
+    tipTimers.pressStart = setTimeout(() => {
+      btn.dataset.longPressShown = "1";
+      showMobileTipToast(getText());
+    }, 450);
+  }, { passive: true });
+  const clearPress = () => {
+    if (tipTimers.pressStart) clearTimeout(tipTimers.pressStart);
+    tipTimers.pressStart = null;
+  };
+  btn.addEventListener("touchend", clearPress, { passive: true });
+  btn.addEventListener("touchcancel", clearPress, { passive: true });
 }
 
 function formatEnemySpecialSettlement(on, kind, stat) {
@@ -816,8 +931,13 @@ function renderSpecialColumn() {
     note.textContent = direct ? `${direct} x0` : "x0";
     btn.appendChild(note);
   }
-  btn.title = `${meta.name}：${dynamicDesc}`;
+  btn.title = getSpecialCardTooltip(kind, state.specialStat);
+  attachCardTooltip(btn, () => getSpecialCardTooltip(kind, state.specialStat));
   btn.addEventListener("click", () => {
+    if (btn.dataset.longPressShown === "1") {
+      btn.dataset.longPressShown = "0";
+      return;
+    }
     window.PocketPawnsAudio?.playCard?.();
     state.specialOn = !state.specialOn;
     if (els.npcMessage) {
@@ -840,8 +960,14 @@ function renderValueCards() {
     btn.className = "card";
     btn.style.backgroundImage = `url("${asset(valueCardPath(card))}")`;
     btn.setAttribute("aria-label", `${stat} ${card.side}`);
+    btn.title = getValueCardTooltip(card);
+    attachCardTooltip(btn, () => getValueCardTooltip(card));
     btn.innerHTML = "";
     btn.addEventListener("click", () => {
+      if (btn.dataset.longPressShown === "1") {
+        btn.dataset.longPressShown = "0";
+        return;
+      }
       window.PocketPawnsAudio?.playCard?.();
       void playRound(card);
     });

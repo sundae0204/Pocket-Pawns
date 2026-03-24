@@ -7,24 +7,24 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
   pages: {
     characterSelect: {
       face: "cheer",
-      text: "選擇你的角色。",
+      text: "選擇你的角色玩吧~",
     },
     characterDetail: {
       face: "calm",
-      text: "確認後出戰吧。",
+      text: "確定要出戰嗎？",
     },
     battle: {
       report: {
         face: "calm",
-        text: "目前場景 {field}，直接屬性 x2。{phase}，請出牌。",
+        text: "{phase}，先右邊的餅乾再點素質卡~",
       },
       victory: {
         face: "cheer",
-        text: "太棒了！這局拿下了！",
+        text: "贏了！",
       },
       defeat: {
         face: "alert",
-        text: "先穩住節奏，下一局扳回來！",
+        text: "啊，你鼠了-w-",
       },
     },
   },
