@@ -15,6 +15,14 @@
     <script src="characters.js"></script>
   </head>
   <body>
+    <!-- 對話氣泡掛在 body，避免 .stage-band transform 使 fixed 失效而被角色／比數擋住 -->
+    <div class="speech-bubble speech-bubble--enemy" id="enemy-speech-bubble" hidden>
+      <p class="speech-bubble-text" id="enemy-speech-text"></p>
+    </div>
+    <div class="speech-bubble speech-bubble--player" id="player-speech-bubble" hidden>
+      <p class="speech-bubble-text" id="player-speech-text"></p>
+    </div>
+
     <div id="title-screen" class="overlay-screen overlay-title-screen" aria-label="標題畫面">
       <div class="overlay-inner title-inner">
         <h1 class="title-logo">口袋棋兵</h1>
@@ -149,25 +157,20 @@
 
         <main class="stage">
           <div class="stage-band" id="stage-band">
-            <div class="clash-numbers" id="clash-numbers" aria-hidden="true">
-              <div class="clash-num clash-num--enemy"><span class="clash-num-line" id="clash-enemy-val">0</span></div>
-              <div class="clash-num clash-num--player"><span class="clash-num-line" id="clash-player-val">0</span></div>
-            </div>
-
             <div class="fighter enemy-fighter" id="enemy-sprite">
-              <div class="speech-bubble speech-bubble--enemy" id="enemy-speech-bubble" hidden>
-                <p class="speech-bubble-text" id="enemy-speech-text"></p>
-              </div>
-              <span class="fighter-label" id="enemy-fighter-label"></span>
               <div class="sprite sprite-enemy" aria-hidden="true"></div>
             </div>
 
             <div class="fighter player-fighter" id="player-sprite">
-              <div class="speech-bubble speech-bubble--player" id="player-speech-bubble" hidden>
-                <p class="speech-bubble-text" id="player-speech-text"></p>
-              </div>
-              <span class="fighter-label" id="player-fighter-label"></span>
               <div class="sprite sprite-player" aria-hidden="true"></div>
+            </div>
+
+            <span class="fighter-label fighter-label--enemy" id="enemy-fighter-label"></span>
+            <span class="fighter-label fighter-label--player" id="player-fighter-label"></span>
+
+            <div class="clash-numbers" id="clash-numbers" aria-hidden="true">
+              <div class="clash-num clash-num--enemy"><span class="clash-num-line" id="clash-enemy-val">0</span></div>
+              <div class="clash-num clash-num--player"><span class="clash-num-line" id="clash-player-val">0</span></div>
             </div>
           </div>
         </main>

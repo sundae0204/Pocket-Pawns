@@ -114,10 +114,14 @@ const bubbleTimers = {
   enemyFade: null,
   enemyHide: null,
 };
+/** 長按卡片顯示說明（手機 toast）後自動關閉的時間（毫秒） */
+const MOBILE_TIP_AUTO_HIDE_MS = 2000;
+
 const tipTimers = {
   toastHide: null,
   pressStart: null,
 };
+let mobileTooltipTouchCleanupRegistered = false;
 const LS_TOTAL_PLAYS = "pocket_pawns_total_plays_v1";
 
 const ENDINGS = {
@@ -380,22 +384,37 @@ function showMobileTipToast(text) {
   if (!text) return;
   ensureTipEls();
   if (!els.mobileTipToast) return;
+  hideCardHoverTip();
   if (tipTimers.toastHide) clearTimeout(tipTimers.toastHide);
   els.mobileTipToast.textContent = text;
   els.mobileTipToast.hidden = false;
   tipTimers.toastHide = setTimeout(() => {
     if (els.mobileTipToast) els.mobileTipToast.hidden = true;
-  }, 2200);
+  }, MOBILE_TIP_AUTO_HIDE_MS);
+}
+
+function preferCardHoverTip() {
+  return typeof window.matchMedia === "function" ? !window.matchMedia("(pointer: coarse)").matches : true;
 }
 
 function attachCardTooltip(btn, getText) {
   if (!btn || typeof getText !== "function") return;
   btn.dataset.longPressShown = "0";
-  btn.addEventListener("mouseenter", (evt) => showCardHoverTip(getText(), evt));
-  btn.addEventListener("mousemove", (evt) => showCardHoverTip(getText(), evt));
-  btn.addEventListener("mouseleave", hideCardHoverTip);
-  btn.addEventListener("focus", (evt) => showCardHoverTip(getText(), evt));
-  btn.addEventListener("blur", hideCardHoverTip);
+  btn.addEventListener("mouseenter", (evt) => {
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+  });
+  btn.addEventListener("mousemove", (evt) => {
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+  });
+  btn.addEventListener("mouseleave", () => {
+    if (preferCardHoverTip()) hideCardHoverTip();
+  });
+  btn.addEventListener("focus", (evt) => {
+    if (preferCardHoverTip()) showCardHoverTip(getText(), evt);
+  });
+  btn.addEventListener("blur", () => {
+    if (preferCardHoverTip()) hideCardHoverTip();
+  });
   btn.addEventListener("touchstart", () => {
     btn.dataset.longPressShown = "0";
     if (tipTimers.pressStart) clearTimeout(tipTimers.pressStart);
@@ -440,6 +459,11 @@ function fieldBonusText(field) {
   return `${field.boost}X2`;
 }
 
+/** 僅統計玩家抽到的 777（makeSpecial），不含敵方 makeEnemySpecial。 */
+function registerPlayerSpecialDraw(kind) {
+  if (kind === "seven77") session.seven77Draws += 1;
+}
+
 function createMatchState() {
   return {
     usedSpecial: false,
@@ -464,8 +488,8 @@ function chooseEndingKey(outcome) {
     if (m.lukBoostWin) return "lukwin";
     if (m.maxOneHpStreak >= 3) return "lockhp";
     if (m.redheartAttackWin) return "redboom";
-    if (!m.usedSpecial) return "nospecial";
     if ((session.wins || 0) > (session.globalComboRecord || 0)) return "record";
+    if (!m.usedSpecial) return "nospecial";
   }
   return "plain";
 }
@@ -521,6 +545,9 @@ async function submitBattleSummary(outcome) {
 }
 
 async function finishBattle(outcome) {
+  state.over = true;
+  state.resolving = false;
+  syncCardsDeckVisibility();
   if (outcome === "win") {
     window.PocketPawnsAudio?.playWin?.();
   }
@@ -545,7 +572,7 @@ function setupRoundForCurrentOpponent() {
   const sp = makeSpecial(state.phase, state.hand);
   state.special = sp.kind;
   state.specialStat = sp.targetStat;
-  if (sp.kind === "seven77") session.seven77Draws += 1;
+  registerPlayerSpecialDraw(sp.kind);
   const esp = makeEnemySpecial(state.phase);
   state.enemySpecial = esp.kind;
   state.enemySpecialStat = esp.targetStat;
@@ -574,6 +601,7 @@ function setVisibleById(id) {
   } else if (id === "title-screen" || id === "character-select" || id === "character-detail" || id === "credits-screen") {
     window.PocketPawnsAudio?.setBgm?.("title");
   }
+  syncCardsDeckVisibility();
 }
 
 function setOverlaysHidden() {
@@ -645,8 +673,29 @@ function renderHearts(container, cur, max) {
   }
 }
 
+function canInteractWithCards() {
+  if (!els.viewport || els.viewport.hidden) return false;
+  if (els.settlement && !els.settlement.hidden) return false;
+  if (els.menuOverlay && !els.menuOverlay.hidden) return false;
+  if (!state.active || !state.player || !state.enemy) return false;
+  if (state.over || state.resolving) return false;
+  return true;
+}
+
+/** 僅在可出牌時顯示手牌，避免動畫／結算／連點誤觸（只影響 #cards-deck，不含 HP／屬性列） */
+function syncCardsDeckVisibility() {
+  if (!els.cardsDeck) return;
+  const show = canInteractWithCards();
+  els.cardsDeck.toggleAttribute("hidden", !show);
+  els.cardsDeck.classList.toggle("cards-deck--inactive", !show);
+  els.cardsDeck.setAttribute("aria-hidden", show ? "false" : "true");
+}
+
 function refreshBattleUI() {
-  if (!state.player || !state.enemy || !state.field) return;
+  if (!state.player || !state.enemy || !state.field) {
+    syncCardsDeckVisibility();
+    return;
+  }
   applyBattleFieldBackground();
   renderFighters();
   renderStats(els.enemyStats, state.enemy.stats || state.enemy.initial?.stats || []);
@@ -664,6 +713,7 @@ function refreshBattleUI() {
     field: state.field.name,
     phase: phaseText,
   });
+  syncCardsDeckVisibility();
 }
 
 function renderFighters() {
@@ -715,6 +765,32 @@ async function playDeathFade(side) {
   await sleep(450);
 }
 
+/** 對話氣泡為 body 下 fixed，依角色位置同步；SPEECH_BUBBLE_RAISE_PX 為相對錨點再往上偏移（數值愈大愈高） */
+const SPEECH_BUBBLE_RAISE_PX = 10;
+
+function syncSpeechBubblePositions() {
+  const place = (bubble, fighter) => {
+    if (!bubble || bubble.hidden || !fighter) return;
+    const rect = fighter.getBoundingClientRect();
+    const h = bubble.offsetHeight || 1;
+    const left = rect.left + rect.width / 2;
+    const top = rect.top + 54 - h - SPEECH_BUBBLE_RAISE_PX;
+    bubble.style.left = `${left}px`;
+    bubble.style.top = `${Math.max(8, top)}px`;
+    bubble.style.transform = "translateX(-50%)";
+  };
+  place(els.playerSpeechBubble, els.playerFighter);
+  place(els.enemySpeechBubble, els.enemyFighter);
+}
+
+let speechBubbleResizeRegistered = false;
+function setupSpeechBubbleResizeSync() {
+  if (speechBubbleResizeRegistered) return;
+  speechBubbleResizeRegistered = true;
+  window.addEventListener("resize", syncSpeechBubblePositions);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", syncSpeechBubblePositions);
+}
+
 function showSpeechBubble(side, text) {
   const isPlayer = side === "player";
   const bubble = isPlayer ? els.playerSpeechBubble : els.enemySpeechBubble;
@@ -730,18 +806,27 @@ function showSpeechBubble(side, text) {
     bubble.classList.remove("speech-bubble--fade");
     bubble.hidden = true;
     textEl.textContent = "";
+    bubble.style.left = "";
+    bubble.style.top = "";
+    bubble.style.transform = "";
     return;
   }
 
   textEl.textContent = text;
   bubble.hidden = false;
   bubble.classList.remove("speech-bubble--fade");
+  requestAnimationFrame(() => {
+    requestAnimationFrame(syncSpeechBubblePositions);
+  });
   bubbleTimers[fadeKey] = setTimeout(() => {
     bubble.classList.add("speech-bubble--fade");
   }, 2000);
   bubbleTimers[hideKey] = setTimeout(() => {
     bubble.hidden = true;
     bubble.classList.remove("speech-bubble--fade");
+    bubble.style.left = "";
+    bubble.style.top = "";
+    bubble.style.transform = "";
   }, 2500);
 }
 
@@ -1092,6 +1177,7 @@ async function playRound(card) {
   if (state.resolving) return;
   if (!state.player || !state.enemy) return;
   state.resolving = true;
+  syncCardsDeckVisibility();
   const stat = card.stat;
   const side = card.side;
   const playerHeartsBefore = state.player.hearts || 0;
@@ -1267,7 +1353,7 @@ async function playRound(card) {
     const sp = makeSpecial(state.phase, state.hand);
     state.special = sp.kind;
     state.specialStat = sp.targetStat;
-    if (sp.kind === "seven77") session.seven77Draws += 1;
+    registerPlayerSpecialDraw(sp.kind);
   }
   {
     const esp = makeEnemySpecial(state.phase);
@@ -1308,14 +1394,6 @@ async function startBattle() {
     state.phase = "attack";
     state.over = false;
     state.resolving = false;
-    state.hand = makeHandForPhase(state.phase);
-    {
-      const sp = makeSpecial(state.phase, state.hand);
-      state.special = sp.kind;
-      state.specialStat = sp.targetStat;
-      if (sp.kind === "seven77") session.seven77Draws += 1;
-    }
-    state.specialOn = false;
 
     state.active = true;
     session.submitted = false;
@@ -1326,6 +1404,21 @@ async function startBattle() {
     session.seven77Draws = 0;
     session.any77Used = false;
     session.match = createMatchState();
+
+    state.hand = makeHandForPhase(state.phase);
+    {
+      const sp = makeSpecial(state.phase, state.hand);
+      state.special = sp.kind;
+      state.specialStat = sp.targetStat;
+      registerPlayerSpecialDraw(sp.kind);
+    }
+    {
+      const esp = makeEnemySpecial(state.phase);
+      state.enemySpecial = esp.kind;
+      state.enemySpecialStat = esp.targetStat;
+      state.enemySpecialOn = Math.random() < 0.5;
+    }
+    state.specialOn = false;
     session.totalPlays = readTotalPlays() + 1;
     writeTotalPlays(session.totalPlays);
     applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
@@ -1464,10 +1557,12 @@ function bindEvents() {
   document.getElementById("btn-menu").addEventListener("click", () => {
     window.PocketPawnsAudio?.playBtn?.();
     if (els.menuOverlay) els.menuOverlay.hidden = false;
+    syncCardsDeckVisibility();
   });
   document.getElementById("menu-btn-close").addEventListener("click", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     if (els.menuOverlay) els.menuOverlay.hidden = true;
+    syncCardsDeckVisibility();
   });
   document.getElementById("menu-btn-quit-battle").addEventListener("click", () => {
     window.PocketPawnsAudio?.playBtn?.();
@@ -1535,6 +1630,7 @@ function initEls() {
 
   els.valueCards = document.getElementById("value-cards");
   els.specialColumn = document.getElementById("special-column");
+  els.cardsDeck = document.getElementById("cards-deck");
   els.npcPanel = document.getElementById("npc-panel");
   els.npcFace = document.getElementById("npc-face");
   els.npcMessage = document.getElementById("npc-message");
@@ -1572,8 +1668,23 @@ function initEls() {
   els.screenCurtain = document.getElementById("screen-curtain");
 }
 
+function setupMobileTooltipCleanup() {
+  if (mobileTooltipTouchCleanupRegistered) return;
+  mobileTooltipTouchCleanupRegistered = true;
+  document.addEventListener(
+    "touchstart",
+    () => {
+      if (typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches) hideCardHoverTip();
+    },
+    { passive: true }
+  );
+}
+
 async function init() {
   initEls();
+  syncCardsDeckVisibility();
+  setupMobileTooltipCleanup();
+  setupSpeechBubbleResizeSync();
   await loadGlobalRecordInfo();
   bindEvents();
   await loadDialogue();

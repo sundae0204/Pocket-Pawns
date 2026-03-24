@@ -317,7 +317,8 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 0;
-  z-index: 2;
+  /* 低於操作區／NPC，小畫面時角色與黑底不壓到手牌；對話氣泡改 fixed 另層置頂 */
+  z-index: 1;
 }
 
 .stage-band {
@@ -338,7 +339,7 @@ body {
   transform: translateY(30px);
 }
 
-/* 最終值：置於黑色場地帶中央、兩隻角色之間 */
+/* 最終值：與名字同 z-index(8)，DOM 置於名字之後以便中央重疊時蓋在最上；皆高於立繪(.fighter z-index:2) */
 .clash-numbers {
   position: absolute;
   inset: 0;
@@ -347,7 +348,7 @@ body {
   justify-content: center;
   gap: min(16px, 3vw);
   pointer-events: none;
-  z-index: 4;
+  z-index: 8;
   opacity: 1;
   transition: opacity 0.5s ease;
 }
@@ -387,7 +388,8 @@ body {
 .fighter {
   position: relative;
   top: 90px;
-  z-index: 1;
+  /* 低於 .clash-numbers / .fighter-label（均為 8） */
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -480,11 +482,14 @@ body {
 }
 
 .fighter--exit-down .sprite,
-.fighter--exit-down .fighter-label {
+#enemy-sprite.fighter--exit-down ~ #enemy-fighter-label,
+#player-sprite.fighter--exit-down ~ #player-fighter-label {
   opacity: 0.2;
 }
 
-.fighter--exit-down .speech-bubble {
+/* 氣泡掛在 body，用 :has 對應角色狀態（舊 .fighter … .speech-bubble 已失效） */
+body:has(#enemy-sprite.fighter--exit-down) #enemy-speech-bubble,
+body:has(#player-sprite.fighter--exit-down) #player-speech-bubble {
   filter: none;
   opacity: 1;
 }
@@ -497,22 +502,26 @@ body {
 
 /* 陣亡灰階只套在立繪與標籤，避免對話氣泡繼承 filter 變黑看不清 */
 .fighter.dead .sprite,
-.fighter.dead .fighter-label {
+#enemy-sprite.dead ~ #enemy-fighter-label,
+#player-sprite.dead ~ #player-fighter-label {
   filter: grayscale(1) brightness(0.15);
   opacity: 0.85;
 }
 
-.fighter.dead .speech-bubble {
+body:has(#enemy-sprite.fighter.dead) #enemy-speech-bubble,
+body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   filter: none;
   opacity: 1;
 }
 
 .fighter--death-fade .sprite,
-.fighter--death-fade .fighter-label {
+#enemy-sprite.fighter--death-fade ~ #enemy-fighter-label,
+#player-sprite.fighter--death-fade ~ #player-fighter-label {
   animation: fighter-death-fade 0.45s ease-out forwards;
 }
 
-.fighter--death-fade .speech-bubble {
+body:has(#enemy-sprite.fighter--death-fade) #enemy-speech-bubble,
+body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
   opacity: 1;
   filter: none;
 }
@@ -527,6 +536,8 @@ body {
 }
 
 .fighter-label {
+  position: absolute;
+  z-index: 8;
   display: block;
   max-width: min(42vw, 9rem);
   font-size: 0.75rem;
@@ -539,15 +550,27 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  order: 2;
-  transform: translateY(-50px);
+  pointer-events: none;
+  bottom: 8px;
+}
+
+/* 相對原 -50px Y：再下移 100px → translateY(50px)；敵往右、玩家往左各 20px */
+.fighter-label--enemy {
+  left: 22%;
+  transform: translateX(calc(-50% + 20px)) translateY(50px);
+}
+
+.fighter-label--player {
+  left: 78%;
+  transform: translateX(calc(-50% - 20px)) translateY(50px);
 }
 
 .sprite {
+  position: relative;
+  z-index: 1;
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  order: 1;
 }
 
 /* 全身立繪（詳情頁）：響應式區塊（路徑由 game.js 依角色 id 設定） */
@@ -625,7 +648,7 @@ body {
   width: 670px;
   max-width: 670px;
   overflow: visible;
-  z-index: 6;
+  z-index: 10;
 }
 
 #npc-panel .character-select-npc {
@@ -701,7 +724,7 @@ body {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   min-height: 0;
   position: relative;
-  z-index: 6;
+  z-index: 10;
   width: 647px;
   height: 341px;
   flex-shrink: 0;
@@ -727,6 +750,12 @@ body {
   justify-content: center;
   gap: 10px;
   flex-wrap: nowrap;
+}
+
+/* hidden 須壓過上列 display:flex，否則 JS 設 hidden 仍會顯示手牌（與 .overlay-screen[hidden] 同理） */
+.cards-deck[hidden],
+.cards-deck.cards-deck--inactive {
+  display: none !important;
 }
 
 .value-cards {
@@ -1040,11 +1069,10 @@ body {
 }
 
 .speech-bubble {
-  position: absolute;
-  bottom: calc(100% - 54px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  z-index: 11000;
   width: 280px;
   min-width: 280px;
   max-width: 280px;
@@ -1060,6 +1088,7 @@ body {
   border: 2px solid rgba(40, 30, 60, 0.2);
   opacity: 1;
   transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .speech-bubble.speech-bubble--fade {

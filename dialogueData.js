@@ -58,7 +58,7 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "手滑了……真的……"
   },
   "char_009": {
-    "menuSelect": "羅芝芝是小說家！歡迎各位加入「羅芝芝的書房」",
+    "menuSelect": "我是小說家！歡迎各位加入「羅芝芝的書房」",
     "battleOpen": "欸嘿！要開始啦！可別小看我喔！",
     "victory": "耶！我贏了！是不是很厲害？",
     "defeat": "嗚……果然不可以太囂張……"
@@ -80,5 +80,533 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "battleOpen": "雷擊兵，準備放電！",
     "victory": "落雷判定，勝負已分！",
     "defeat": "雷沒打中……"
+  },
+  "char_013": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_014": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_015": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_016": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_017": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_018": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_019": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_020": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_021": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_022": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_023": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_024": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_025": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_026": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_027": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_028": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_029": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_030": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_031": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_032": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_033": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_034": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_035": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_036": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_037": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_038": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_039": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_040": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_041": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_042": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_043": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_044": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_045": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_046": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_047": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_048": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_049": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_050": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_051": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_052": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_053": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_054": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_055": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_056": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_057": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_058": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_059": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_060": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_061": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_062": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_063": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_064": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_065": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_066": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_067": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_068": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_069": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_070": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_071": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_072": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_073": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_074": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_075": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_076": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_077": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_078": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_079": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_080": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_081": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_082": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_083": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_084": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_085": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_086": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_087": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_088": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_089": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_090": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_091": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_092": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_093": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_094": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_095": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_096": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_097": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_098": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_099": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
+  },
+  "char_100": {
+    "menuSelect": "預留",
+    "battleOpen": "預留",
+    "victory": "預留",
+    "defeat": "預留"
   }
 };
