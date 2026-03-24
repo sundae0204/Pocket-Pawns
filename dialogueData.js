@@ -257,7 +257,7 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
   },
   "char_042": {
     "menuSelect": "小女不才名小親王(提裙禮)請多關照喔",
-    "battleOpen": "魔法☆美味☆/n甜點天使要來征服你的心~！",
+    "battleOpen": "魔法☆美味☆\n甜點天使要來征服你的心~！",
     "victory": "甜心能量滿載最終樂章！",
     "defeat": "公主也要優雅地承受失敗..(哭)"
   },
