@@ -1,0 +1,29 @@
+/**
+ * 自訂主題（最後載入，可覆寫 styles.css 任意規則）
+ * ---------------------------------------------------------------------------
+ * 建議只改這個檔案做「整頁美化」，不要去改 game.js 邏輯。
+ *
+ * 範例（取消註解即可試）：
+ *
+ * :root {
+ *   --pp-font-sans: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+ *   --pp-curtain-ms: 400;
+ * }
+ *
+ * .title-logo { font-size: clamp(2rem, 6vw, 3rem); }
+ * #character-select .overlay-title { font-size: 1.6rem; }
+ * .speech-bubble { font-size: 0.75rem; max-width: 220px; }
+ */
+
+/* 在此下方撰寫你的覆寫規則 */
+
+/*
+ * 角色選單底部區塊（返回按鈕等）可自行設計，例如：
+ *
+ * .character-select-footer {
+ *   padding: 12px 16px;
+ *   background: rgba(0, 0, 0, 0.35);
+ *   border-radius: 12px 12px 0 0;
+ * }
+ * .character-scroll-outer { ... } 捲動區、.stat-sort-wrap 排序列同理可覆寫
+ */

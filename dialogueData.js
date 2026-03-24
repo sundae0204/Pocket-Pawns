@@ -1,0 +1,84 @@
+/**
+ * 自動產生：請勿手改。更新台詞請編輯 dialogueData.json 後執行
+ * node scripts/sync-dialogue-data.js
+ */
+window.__POCKET_PAWNS_DIALOGUE__ = {
+  "_default": {
+    "menuSelect": "一二三四五六七八九十一二三四五六七八九十一二",
+    "battleOpen": "一二三四五六七八九十一二三四五六七八九十一二",
+    "victory": "一二三四五六七八九十一二三四五六七八九十一二",
+    "defeat": "一二三四五六七八九十一二三四五六七八九十一二"
+  },
+  "char_001": {
+    "menuSelect": "我阿茶啦幹",
+    "battleOpen": "聽說你是來自鄉村的地瓜怪人，一決勝負吧!",
+    "victory": "看來你沒地瓜吃了，改吃山藥吧",
+    "defeat": "這裡有批地瓜好便宜的，需要就打電話給我...."
+  },
+  "char_002": {
+    "menuSelect": "紅妻巴哈小屋熱絡中！",
+    "battleOpen": "嘗嘗我火燙燙的地瓜吧！",
+    "victory": "趁熱吃呀！",
+    "defeat": "呀啊啊啊啊啊\n（像反派一樣叫）"
+  },
+  "char_003": {
+    "menuSelect": "噗咿噗咿窮奇不是貓！",
+    "battleOpen": "你面對的是無盡的深淵…哼哈哈",
+    "victory": "YES！用逃的也能贏!",
+    "defeat": "我草！這人這麼兇!"
+  },
+  "char_004": {
+    "menuSelect": "銀翼展開，準備起飛。",
+    "battleOpen": "高度優勢，在我這邊。",
+    "victory": "完美著陸。",
+    "defeat": "墜機了……重整再來。"
+  },
+  "char_005": {
+    "menuSelect": "防守就是最好的進攻。",
+    "battleOpen": "墨盾在前，儘管來攻。",
+    "victory": "盾還在，你就贏不了。",
+    "defeat": "盾……裂開了……"
+  },
+  "char_006": {
+    "menuSelect": "速度決定一切。",
+    "battleOpen": "你追得上我嗎？",
+    "victory": "太慢囉～",
+    "defeat": "腳步亂了……"
+  },
+  "char_007": {
+    "menuSelect": "三步之內，勝負已定。",
+    "battleOpen": "棋局如戰局，我算過了。",
+    "victory": "和計算的一樣。",
+    "defeat": "變數……比想像多……"
+  },
+  "char_008": {
+    "menuSelect": "手滑一下也能贏，大概。",
+    "battleOpen": "看好了，這招很貴的。",
+    "victory": "帥氣結算，謝謝收看！",
+    "defeat": "手滑了……真的……"
+  },
+  "char_009": {
+    "menuSelect": "羅芝芝是小說家！歡迎各位加入「羅芝芝的書房」",
+    "battleOpen": "欸嘿！要開始啦！可別小看我喔！",
+    "victory": "耶！我贏了！是不是很厲害？",
+    "defeat": "嗚……果然不可以太囂張……"
+  },
+  "char_010": {
+    "menuSelect": "站我後面，我扛。",
+    "battleOpen": "鐵衛在此，誰都別想過。",
+    "victory": "還站得住。",
+    "defeat": "防線……被突破了……"
+  },
+  "char_011": {
+    "menuSelect": "你看到的是真的我嗎？",
+    "battleOpen": "幻步開始，別眨眼。",
+    "victory": "抓到真身了嗎？",
+    "defeat": "……被識破了嗎。"
+  },
+  "char_012": {
+    "menuSelect": "雷一落下，就結束了。",
+    "battleOpen": "雷擊兵，準備放電！",
+    "victory": "落雷判定，勝負已分！",
+    "defeat": "雷沒打中……"
+  }
+};

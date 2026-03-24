@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>口袋棋兵 Pocket Chess Soldiers</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="themes/custom.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+    <script>
+      window.POCKET_PAWNS_SUPABASE_URL = "https://gnacikhtarwihgruuerg.supabase.co";
+      window.POCKET_PAWNS_SUPABASE_ANON_KEY = "sb_publishable_pXjLMjvS137qZQzEIGiQXQ_zKcGF52P";
+    </script>
+    <script src="supabase.js"></script>
+    <script src="characters.js"></script>
+  </head>
+  <body>
+    <div id="title-screen" class="overlay-screen overlay-title-screen" aria-label="標題畫面">
+      <div class="overlay-inner title-inner">
+        <h1 class="title-logo">口袋棋兵</h1>
+        <p class="title-sub">Pocket Chess Soldiers</p>
+        <div class="title-actions">
+          <button type="button" class="title-btn title-btn-primary" id="title-btn-play">開始遊玩</button>
+          <button type="button" class="title-btn" id="title-btn-credits">製作名單</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="credits-screen" class="overlay-screen" hidden aria-label="製作名單">
+      <div class="overlay-inner credits-inner">
+        <h2 class="overlay-title">製作名單</h2>
+        <p class="credits-body">Pocket Pawns / Pocket Chess Soldiers</p>
+        <button type="button" class="settlement-btn" id="credits-btn-back">返回</button>
+      </div>
+    </div>
+
+    <div id="character-select" class="overlay-screen overlay-character-select" hidden aria-label="角色選擇">
+      <div class="overlay-inner character-select-inner">
+        <div class="character-select-list-panel" aria-label="角色清單">
+          <header class="character-select-header">
+            <h1 class="overlay-title character-select-title">請選擇角色</h1>
+            <div class="stat-sort-wrap" aria-label="屬性排序">
+              <div class="stat-sort-row">
+                <button type="button" class="stat-sort-btn" data-sort-stat="STR" title="依 STR 排序">STR</button>
+                <button type="button" class="stat-sort-btn" data-sort-stat="INT" title="依 INT 排序">INT</button>
+                <button type="button" class="stat-sort-btn" data-sort-stat="DEX" title="依 DEX 排序">DEX</button>
+                <button type="button" class="stat-sort-btn" data-sort-stat="AGI" title="依 AGI 排序">AGI</button>
+                <button type="button" class="stat-sort-btn" data-sort-stat="VIT" title="依 VIT 排序">VIT</button>
+                <button type="button" class="stat-sort-btn" data-sort-stat="LUK" title="依 LUK 排序">LUK</button>
+              </div>
+            </div>
+          </header>
+          <div class="character-scroll-outer">
+            <div id="character-strip" class="character-strip"></div>
+          </div>
+        </div>
+
+        <footer class="character-select-footer" aria-label="角色選擇操作">
+          <div class="character-select-npc" aria-label="朵雲公主對話">
+            <img id="character-select-npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
+            <div class="character-select-npc-text">
+              <div class="character-select-npc-title">
+                <span class="character-select-npc-name">朵雲公主</span>
+                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
+              </div>
+              <p class="npc-message character-select-npc-message" id="character-select-npc-message"></p>
+            </div>
+          </div>
+          <button type="button" class="character-select-back-btn" id="btn-character-back">返回標題</button>
+        </footer>
+      </div>
+    </div>
+
+    <div id="character-detail" class="overlay-screen overlay-character-select" hidden aria-label="角色詳情">
+      <div class="overlay-inner character-detail-inner">
+        <div class="character-select-list-panel character-detail-panel" aria-label="角色詳情內容">
+          <div class="character-detail-layout">
+            <div class="character-detail-left">
+              <div id="character-detail-portrait" class="character-detail-portrait" aria-hidden="true"></div>
+            </div>
+            <div class="character-detail-right">
+              <h2 id="character-detail-name" class="character-detail-name"></h2>
+              <p class="character-detail-menu-dlg" id="character-detail-menu-dlg" hidden></p>
+              <div id="character-detail-stats" class="character-detail-stats"></div>
+              <div class="character-detail-meta" id="character-detail-meta"></div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="character-select-footer character-detail-footer" aria-label="角色詳情操作">
+          <div class="character-select-npc" aria-label="朵雲公主對話">
+            <img id="character-detail-npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
+            <div class="character-select-npc-text">
+              <div class="character-select-npc-title">
+                <span class="character-select-npc-name">朵雲公主</span>
+                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
+              </div>
+              <p class="npc-message character-select-npc-message" id="character-detail-npc-message"></p>
+            </div>
+          </div>
+          <div class="character-detail-footer-actions">
+            <button type="button" class="character-select-back-btn" id="character-detail-back">返回</button>
+            <button type="button" class="Btn character-detail-confirm-btn" id="character-detail-confirm" aria-label="確定">
+              <span class="character-detail-confirm-btn-sizer" aria-hidden="true">確定</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <div id="menu-overlay" class="overlay-screen overlay-menu" hidden aria-modal="true" role="dialog">
+      <div class="menu-panel">
+        <h3 class="menu-panel-title">系統</h3>
+        <button type="button" class="settlement-btn" id="menu-btn-close">關閉</button>
+        <button type="button" class="settlement-btn menu-quit" id="menu-btn-quit-battle">退出戰鬥</button>
+      </div>
+    </div>
+
+    <div id="settlement" class="overlay-screen overlay-settlement" hidden aria-modal="true" role="dialog">
+      <div class="overlay-inner settlement-inner">
+        <div id="settlement-ending" class="settlement-ending"></div>
+        <div id="settlement-details" class="settlement-details" hidden></div>
+        <div id="settlement-record" class="settlement-record" hidden>
+          <p class="settlement-record-hint">你打破了連擊紀錄！輸入你的名稱，讓大家記住你。</p>
+          <input type="text" id="settlement-record-input" class="settlement-record-input" maxlength="32" placeholder="輸入 2~32 字元" />
+          <button type="button" id="settlement-btn-record" class="settlement-btn primary">提交名稱</button>
+        </div>
+        <button type="button" id="settlement-btn-back" class="character-select-back-btn">返回標題</button>
+      </div>
+    </div>
+
+    <div id="screen-curtain" class="screen-curtain" hidden aria-hidden="true"></div>
+
+    <div class="viewport-16x9" id="viewport" hidden>
+      <div class="game-root" id="game-root">
+        <header class="top-bar">
+          <div class="enemy-hud">
+            <div class="enemy-stats stat-row" id="enemy-stats" aria-label="敵方屬性"></div>
+            <div class="hearts" id="enemy-hearts" aria-label="敵方 HP"></div>
+          </div>
+          <div class="top-bar-right">
+            <div class="battle-context-panel" id="battle-context-panel" aria-label="戰場資訊">
+              <div class="field-label" id="field-label" aria-live="polite">場景：</div>
+              <div class="phase-badge" id="phase-badge" aria-live="polite">玩家攻擊階段</div>
+            </div>
+            <button type="button" class="menu-btn Btn character-detail-confirm-btn" id="btn-menu">系統</button>
+          </div>
+        </header>
+
+        <main class="stage">
+          <div class="stage-band" id="stage-band">
+            <div class="clash-numbers" id="clash-numbers" aria-hidden="true">
+              <div class="clash-num clash-num--enemy"><span class="clash-num-line" id="clash-enemy-val">0</span></div>
+              <div class="clash-num clash-num--player"><span class="clash-num-line" id="clash-player-val">0</span></div>
+            </div>
+
+            <div class="fighter enemy-fighter" id="enemy-sprite">
+              <div class="speech-bubble speech-bubble--enemy" id="enemy-speech-bubble" hidden>
+                <p class="speech-bubble-text" id="enemy-speech-text"></p>
+              </div>
+              <span class="fighter-label" id="enemy-fighter-label"></span>
+              <div class="sprite sprite-enemy" aria-hidden="true"></div>
+            </div>
+
+            <div class="fighter player-fighter" id="player-sprite">
+              <div class="speech-bubble speech-bubble--player" id="player-speech-bubble" hidden>
+                <p class="speech-bubble-text" id="player-speech-text"></p>
+              </div>
+              <span class="fighter-label" id="player-fighter-label"></span>
+              <div class="sprite sprite-player" aria-hidden="true"></div>
+            </div>
+          </div>
+        </main>
+
+        <aside class="npc-panel" id="npc-panel">
+          <div class="character-select-npc" aria-label="朵雲公主對話">
+            <img id="npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
+            <div class="character-select-npc-text">
+              <div class="character-select-npc-title">
+                <span class="character-select-npc-name">朵雲公主</span>
+                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
+              </div>
+              <p class="npc-message character-select-npc-message" id="npc-message"></p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="player-panel">
+          <div class="hearts player-hearts" id="player-hearts" aria-label="玩家 HP"></div>
+          <div class="player-stats stat-row" id="player-stats" aria-label="玩家屬性"></div>
+          <div class="cards-deck" role="group" aria-label="手牌">
+            <div class="value-cards" id="value-cards"></div>
+            <div class="special-column" id="special-column" aria-label="特殊卡"></div>
+          </div>
+        </section>
+
+        <div class="combat-banner" id="combat-banner" aria-live="polite" hidden></div>
+      </div>
+    </div>
+
+    <script src="dialogueData.js"></script>
+    <script src="audio-manager.js"></script>
+    <script src="miss-cloudy-data.js"></script>
+    <script src="game_card.js"></script>
+  </body>
+</html>
