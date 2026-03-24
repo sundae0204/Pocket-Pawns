@@ -28,13 +28,13 @@ const SPECIAL_CARD_FILE = {
   showy: "showy.png",
 };
 const SPECIAL_META = {
-  heal: { name: "治癒", desc: "立即回復 1 點 HP（不超過上限）" },
-  boost: { name: "加成", desc: "本回合玩家最終值 x2" },
-  zero: { name: "歸零", desc: "本回合對手最終值歸零" },
-  seven77: { name: "777", desc: "本回合玩家最終值改為 77" },
-  redheart: { name: "紅心", desc: "本回合若命中，額外造成 1 點傷害" },
-  phloss: { name: "損血", desc: "敵方立即失去 1 點 HP" },
-  showy: { name: "華麗", desc: "本回合玩家最終值提升 50%" },
+  heal: { name: "治癒！", desc: "立即回復 1 點 HP（不超過上限）" },
+  boost: { name: "雙倍卡！", desc: "本回合數值 x2" },
+  zero: { name: "歸零卡！", desc: "本回合對手素質歸零" },
+  seven77: { name: "777卡！", desc: "本回合玩家+ 777" },
+  redheart: { name: "自爆！", desc: "本回合若命中，額外造成 1 點傷害" },
+  phloss: { name: "扣血卡！", desc: "立即失去 1 點 HP" },
+  showy: { name: "華麗光芒！", desc: "沒啥用" },
 };
 
 // 卡牌說明集中區：你之後可直接在這裡整理／改寫文案。
@@ -51,8 +51,8 @@ const CARD_TOOLTIPS = {
     zero: "本回合指定屬性 x0（歸零）。",
     seven77: "本回合最終值 +777，並強化攻擊特效。",
     redheart: "雙方先各失去 1 點 HP；若本回合攻擊命中，再追加 2 點傷害。",
-    phloss: "我方立即失去 1 點 HP。",
-    showy: "僅播放特效，不影響數值。",
+    phloss: "立即失去 1 點 HP。",
+    showy: "沒啥，就是很帥",
   },
 };
 
