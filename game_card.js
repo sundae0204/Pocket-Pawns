@@ -481,13 +481,16 @@ function createMatchState() {
 
 function chooseEndingKey(outcome) {
   const m = session.match || createMatchState();
+  // 成就型結局：即使最終非 win（例如已達成後又敗北），仍可顯示成就結局
+  if (m.used777Kill) return "ko777";
+  if (m.maxNoDamageStreak >= 7) return "nodmg7";
+  if (m.showyUses >= 3) return "showy3";
+  if (m.lukBoostWin) return "lukwin";
+  if (m.maxOneHpStreak >= 3) return "lockhp";
+  if (m.redheartAttackWin) return "redboom";
+
+  // 需以「整場勝利」結算的結局
   if (outcome === "win") {
-    if (m.used777Kill) return "ko777";
-    if (m.maxNoDamageStreak >= 7) return "nodmg7";
-    if (m.showyUses >= 3) return "showy3";
-    if (m.lukBoostWin) return "lukwin";
-    if (m.maxOneHpStreak >= 3) return "lockhp";
-    if (m.redheartAttackWin) return "redboom";
     if ((session.wins || 0) > (session.globalComboRecord || 0)) return "record";
     if (!m.usedSpecial) return "nospecial";
   }
@@ -1025,9 +1028,6 @@ function renderSpecialColumn() {
     }
     window.PocketPawnsAudio?.playCard?.();
     state.specialOn = !state.specialOn;
-    if (els.npcMessage) {
-      els.npcMessage.textContent = state.specialOn ? `${meta.name}` : "";
-    }
     renderSpecialColumn();
   });
   els.specialColumn.innerHTML = "";
@@ -1254,7 +1254,8 @@ async function playRound(card) {
   // - Attack phase: player attacks enemy.
   // - Defense phase: enemy attacks player.
   // Damage only happens when attack value is strictly greater than defense value.
-  let roundNote = [specialRes.note, enemySpecialRes.note].filter(Boolean).join("｜");
+  // 玩家特殊卡資訊已由 tooltip + 角色氣泡承擔；朵雲公主不再重複播報玩家特殊卡
+  let roundNote = [enemySpecialRes.note].filter(Boolean).join("｜");
   if (isPlayerAttacking) {
     if (playerFinal > enemyFinal) {
       const damage = 1 + (specialRes.bonusDamage || 0);

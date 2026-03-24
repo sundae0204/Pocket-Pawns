@@ -30,7 +30,7 @@ window.POCKET_PAWNS_CHARACTERS = [
   },
   {
     id: "char_004",
-    name: "雲姬",
+    name: "朵雲公主",
     sortIndex: 4,
     initial: { stats: [9, 9, 6, 6, 6, 4], hearts: 2, maxHearts: 4 },
   },

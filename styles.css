@@ -501,9 +501,7 @@ body:has(#player-sprite.fighter--exit-down) #player-speech-bubble {
 }
 
 /* 陣亡灰階只套在立繪與標籤，避免對話氣泡繼承 filter 變黑看不清 */
-.fighter.dead .sprite,
-#enemy-sprite.dead ~ #enemy-fighter-label,
-#player-sprite.dead ~ #player-fighter-label {
+.fighter.dead .sprite {
   filter: grayscale(1) brightness(0.15);
   opacity: 0.85;
 }
@@ -514,9 +512,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   opacity: 1;
 }
 
-.fighter--death-fade .sprite,
-#enemy-sprite.fighter--death-fade ~ #enemy-fighter-label,
-#player-sprite.fighter--death-fade ~ #player-fighter-label {
+.fighter--death-fade .sprite {
   animation: fighter-death-fade 0.45s ease-out forwards;
 }
 
