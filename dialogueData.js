@@ -214,10 +214,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_035": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "你是幼稚大人嗎OwO!!",
+    "battleOpen": "（耳語兒歌）",
+    "victory": "已打針完畢OwO",
+    "defeat": "怒啾雞!!!!!!!!!!"
   },
   "char_036": {
     "menuSelect": "預留",
