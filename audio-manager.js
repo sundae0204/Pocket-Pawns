@@ -21,6 +21,8 @@
     win: "sounds/se_win.mp3",
     loss: "sounds/se_loss.mp3",
     hpUp: "sounds/se_hp_up.mp3",
+    dead: "sounds/se_dead.mp3",
+    battleStart: "sounds/se_start.mp3",
   };
 
   const POOL_PER_KEY = 4;
@@ -173,6 +175,13 @@
     },
     playHpUp() {
       play("hpUp");
+    },
+    playDead() {
+      play("dead");
+    },
+    /** GAME START／ROUND 2+ 中央跳字演出 */
+    playBattleStart() {
+      play("battleStart");
     },
 
     setBgm,

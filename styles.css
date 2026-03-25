@@ -478,6 +478,30 @@ body {
   }
 }
 
+/* 比拚扣血成功：守方左右震兩下（總 0.2s） */
+.fighter.fighter--hit-shake {
+  animation: fighter-hit-shake 0.2s ease-in-out;
+}
+
+@keyframes fighter-hit-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(calc(-1 * clamp(6px, 1.8vw, 14px)));
+  }
+  40% {
+    transform: translateX(clamp(6px, 1.8vw, 14px));
+  }
+  60% {
+    transform: translateX(calc(-1 * clamp(6px, 1.8vw, 14px)));
+  }
+  80% {
+    transform: translateX(clamp(6px, 1.8vw, 14px));
+  }
+}
+
 /* 撞擊瞬間畫面特效（與 se_attack / se_attack_777 對應；777 版偏金黃閃光） */
 .viewport-16x9.viewport--clash-hit {
   animation: clash-screen-flash 0.38s ease-out;
@@ -541,35 +565,35 @@ body:has(#player-sprite.fighter--exit-down) #player-speech-bubble {
   }
 }
 
-/* 陣亡灰階只套在立繪與標籤，避免對話氣泡繼承 filter 變黑看不清 */
-.fighter.dead .sprite {
-  filter: grayscale(1) brightness(0.15);
-  opacity: 0.85;
-}
-
 body:has(#enemy-sprite.fighter.dead) #enemy-speech-bubble,
 body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   filter: none;
   opacity: 1;
 }
 
-.fighter--death-fade .sprite {
-  animation: fighter-death-fade 0.45s ease-out forwards;
-}
-
-body:has(#enemy-sprite.fighter--death-fade) #enemy-speech-bubble,
-body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
-  opacity: 1;
-  filter: none;
-}
-
-@keyframes fighter-death-fade {
-  from {
+/* 陣亡：立繪 brightness 1→1.5（0.2s）→ brightness 0.1 且 opacity→0（0.5s），總長 0.7s */
+@keyframes sprite-death-out {
+  0% {
+    filter: brightness(1);
     opacity: 1;
   }
-  to {
+  28.571% {
+    filter: brightness(1.5);
+    opacity: 1;
+  }
+  100% {
+    filter: brightness(0.1);
     opacity: 0;
   }
+}
+
+.sprite.sprite--death-animate {
+  animation: sprite-death-out 0.7s linear forwards;
+}
+
+.sprite.sprite--death-finished {
+  opacity: 0;
+  filter: brightness(0.1);
 }
 
 .fighter-label {
@@ -981,6 +1005,10 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
   border-color: var(--card-orange);
 }
 
+.game-root > .combat-banner {
+  z-index: 120;
+}
+
 .combat-banner {
   position: absolute;
   left: 50%;
@@ -998,6 +1026,51 @@ body:has(#player-sprite.fighter--death-fade) #player-speech-bubble {
   max-width: min(92%, 420px);
   pointer-events: none;
   white-space: pre-line;
+}
+
+.combat-banner.combat-banner--round-flash {
+  left: 0;
+  right: 0;
+  top: 38%;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 18px 16px;
+  box-sizing: border-box;
+  transform: translateY(-50%);
+  border-radius: 0;
+  font-size: clamp(1.35rem, 3.6vw, 2.05rem);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  text-align: center;
+  color: #ffff66;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  box-shadow: none;
+  animation: combat-banner-round-pop 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes combat-banner-round-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.98);
+  }
+  16% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(1.02);
+  }
 }
 
 .combat-banner[hidden] {

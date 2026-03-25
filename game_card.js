@@ -164,15 +164,7 @@ function emitBattleFx(type, payload = {}) {
     setTimeout(() => els.viewport && els.viewport.classList.remove("showy-fx"), 1700);
     return;
   }
-  if (type === "attack") {
-    // 僅 777 特殊攻擊、且實際命中扣血、且最終攻擊值破 777 時震動（一般數值卡命中不震）
-    const pf = payload.playerFinal;
-    const is777 =
-      payload.attacker === "player" &&
-      payload.special === "seven77" &&
-      typeof pf === "number" &&
-      Math.round(pf) > 777;
-    if (!is777) return;
+  if (type === "seven77Shake") {
     els.viewport.classList.remove("screen-shake");
     void els.viewport.offsetWidth;
     els.viewport.classList.add("screen-shake");
@@ -790,7 +782,7 @@ function pickAndConsumeNextOpponent() {
   return next;
 }
 
-/** 玩家回血僅兩種：治癒卡、戰鬥段落開始時 0 HP → 補到 1（不超過上限）。 */
+/** 新戰鬥或換關進場：若玩家 0 HP，補到 1（不超過上限），避免進場即敗。對戰中回血仍以治癒卡等為主。 */
 function ensurePlayerNotZeroHpAtBattleEntry() {
   if (!state.player) return;
   if ((state.player.hearts || 0) > 0) return;
@@ -822,6 +814,8 @@ function setupRoundForCurrentOpponent() {
   renderSpecialColumn();
   refreshBattleUI();
   setNpcSpeech("open");
+  const wins = session.wins | 0;
+  if (wins >= 1) showCombatRoundFlash(`ROUND ${wins + 1}`);
   return true;
 }
 
@@ -851,6 +845,34 @@ function setOverlaysHidden() {
     const el = document.getElementById(id);
     if (el) el.hidden = true;
   });
+}
+
+/** 開戰／下一關對手時的中央跳字（使用 #combat-banner）。 */
+function showCombatRoundFlash(text) {
+  const el = els.combatBanner;
+  if (!el || !text) return;
+  window.PocketPawnsAudio?.playBattleStart?.();
+  el.textContent = text;
+  el.hidden = false;
+  el.classList.remove("combat-banner--round-flash");
+  void el.offsetWidth;
+  el.classList.add("combat-banner--round-flash");
+  let cleaned = false;
+  const finish = () => {
+    if (cleaned) return;
+    cleaned = true;
+    window.clearTimeout(fallback);
+    el.hidden = true;
+    el.classList.remove("combat-banner--round-flash");
+  };
+  const fallback = window.setTimeout(finish, 2200);
+  el.addEventListener(
+    "animationend",
+    (e) => {
+      if (e.target === el && e.animationName === "combat-banner-round-pop") finish();
+    },
+    { once: true },
+  );
 }
 
 async function runCurtainTransition(task, options = {}) {
@@ -892,29 +914,58 @@ function renderStats(el, stats) {
   });
 }
 
-function renderHearts(container, cur, max, side) {
+/**
+ * @param {{ silent?: boolean, fxBaseline?: { hearts: number, max: number } }} [options]
+ * silent：只更新畫面與 lastRenderedHeartState，不播特效。
+ * fxBaseline：與「本回合開始時」的 HP／max 比對，一次決定扣血／回血特效（不受中途 refresh 影響）。
+ */
+function renderHearts(container, cur, max, side, options = {}) {
   if (!container) return;
   const maxH = Math.max(0, max | 0);
   const curH = Math.max(0, Math.min(maxH, Math.floor(Number(cur) || 0)));
   const curSlots = Array.from({ length: maxH }, (_, i) => i < curH);
   const prevState = lastRenderedHeartState[side];
   const pendingFx = [];
+  const silent = options.silent === true;
+  const base = options.fxBaseline;
 
-  if (prevState && prevState.max === maxH) {
-    const ph = prevState.hearts;
-    for (let i = 0; i < maxH; i += 1) {
-      const wasOn = i < ph;
-      const isOn = i < curH;
-      if (wasOn && !isOn) pendingFx.push({ i, kind: "d" });
-      if (!wasOn && isOn) pendingFx.push({ i, kind: "u" });
-    }
-  } else if (prevState && prevState.max !== maxH) {
-    const prevSlots = buildHeartSlots(prevState.hearts, prevState.max);
-    const prevAligned = alignPrevHeartSlots(prevSlots, maxH);
-    if (prevAligned) {
+  if (!silent) {
+    if (base != null && base.max != null) {
+      const oldMax = Math.max(0, base.max | 0);
+      const oldH = Math.max(0, Math.min(oldMax, Math.floor(Number(base.hearts) || 0)));
+      if (oldMax === maxH) {
+        for (let i = 0; i < maxH; i += 1) {
+          const wasOn = i < oldH;
+          const isOn = i < curH;
+          if (wasOn && !isOn) pendingFx.push({ i, kind: "d" });
+          if (!wasOn && isOn) pendingFx.push({ i, kind: "u" });
+        }
+      } else {
+        const prevSlots = buildHeartSlots(oldH, oldMax);
+        const prevAligned = alignPrevHeartSlots(prevSlots, maxH);
+        if (prevAligned) {
+          for (let i = 0; i < maxH; i += 1) {
+            if (prevAligned[i] && !curSlots[i]) pendingFx.push({ i, kind: "d" });
+            if (!prevAligned[i] && curSlots[i]) pendingFx.push({ i, kind: "u" });
+          }
+        }
+      }
+    } else if (prevState && prevState.max === maxH) {
+      const ph = prevState.hearts;
       for (let i = 0; i < maxH; i += 1) {
-        if (prevAligned[i] && !curSlots[i]) pendingFx.push({ i, kind: "d" });
-        if (!prevAligned[i] && curSlots[i]) pendingFx.push({ i, kind: "u" });
+        const wasOn = i < ph;
+        const isOn = i < curH;
+        if (wasOn && !isOn) pendingFx.push({ i, kind: "d" });
+        if (!wasOn && isOn) pendingFx.push({ i, kind: "u" });
+      }
+    } else if (prevState && prevState.max !== maxH) {
+      const prevSlots = buildHeartSlots(prevState.hearts, prevState.max);
+      const prevAligned = alignPrevHeartSlots(prevSlots, maxH);
+      if (prevAligned) {
+        for (let i = 0; i < maxH; i += 1) {
+          if (prevAligned[i] && !curSlots[i]) pendingFx.push({ i, kind: "d" });
+          if (!prevAligned[i] && curSlots[i]) pendingFx.push({ i, kind: "u" });
+        }
       }
     }
   }
@@ -991,13 +1042,21 @@ function syncCardsDeckVisibility() {
 }
 
 /**
- * @param {{ skipHearts?: boolean, skipPlayerHearts?: boolean, skipEnemyHearts?: boolean }} [options]
- * skipHearts：兩側愛心都不重畫。skipPlayerHearts／skipEnemyHearts：只跳過該側（比拚後僅敵方扣血時勿重畫玩家，避免拆掉回血 FX）。
+ * @param {{
+ *   skipHearts?: boolean,
+ *   silentHearts?: boolean,
+ *   heartFxBaseline?: { player?: { hearts: number, max: number }, enemy?: { hearts: number, max: number } },
+ * }} [options]
+ * skipHearts：兩側愛心都不重畫（例如特效播放中避免整塊 innerHTML 重置）。
+ * silentHearts：重畫愛心但不播增減特效（回合中、數值已變但尚未結算完時）。
+ * heartFxBaseline：與回合開始時比對，於本 refresh 一次性播愛心增減特效。
  */
 function refreshBattleUI(options = {}) {
   const skipBoth = options.skipHearts === true;
-  const skipEnemy = skipBoth || options.skipEnemyHearts === true;
-  const skipPlayer = skipBoth || options.skipPlayerHearts === true;
+  const skipEnemy = skipBoth;
+  const skipPlayer = skipBoth;
+  const silentHearts = options.silentHearts === true;
+  const heartFxBaseline = options.heartFxBaseline;
   if (!state.player || !state.enemy || !state.field) {
     syncCardsDeckVisibility();
     return;
@@ -1008,10 +1067,16 @@ function refreshBattleUI(options = {}) {
   renderStats(els.playerStats, state.player.stats || state.player.initial?.stats || []);
 
   if (!skipEnemy) {
-    renderHearts(els.enemyHearts, state.enemy.hearts ?? 0, state.enemy.maxHearts ?? 0, "enemy");
+    renderHearts(els.enemyHearts, state.enemy.hearts ?? 0, state.enemy.maxHearts ?? 0, "enemy", {
+      silent: silentHearts,
+      fxBaseline: heartFxBaseline?.enemy,
+    });
   }
   if (!skipPlayer) {
-    renderHearts(els.playerHearts, state.player.hearts ?? 0, state.player.maxHearts ?? 0, "player");
+    renderHearts(els.playerHearts, state.player.hearts ?? 0, state.player.maxHearts ?? 0, "player", {
+      silent: silentHearts,
+      fxBaseline: heartFxBaseline?.player,
+    });
   }
 
   if (els.fieldLabel) {
@@ -1029,18 +1094,24 @@ function refreshBattleUI(options = {}) {
 }
 
 function renderFighters() {
-  if (els.playerFighter) els.playerFighter.classList.remove("dead", "fighter--death-fade");
-  if (els.enemyFighter) els.enemyFighter.classList.remove("dead", "fighter--death-fade");
+  if (els.playerFighter) els.playerFighter.classList.remove("dead", "fighter--hit-shake");
+  if (els.enemyFighter) els.enemyFighter.classList.remove("dead", "fighter--hit-shake");
   if (els.playerSprite) {
+    els.playerSprite.classList.remove("sprite--death-animate", "sprite--death-finished");
     els.playerSprite.classList.add("sprite--character-art");
     if (session.playerChar?.id) {
       els.playerSprite.style.backgroundImage = `url("${asset(charPortraitPath(session.playerChar.id))}")`;
+    } else {
+      els.playerSprite.style.backgroundImage = "";
     }
   }
   if (els.enemySprite) {
+    els.enemySprite.classList.remove("sprite--death-animate", "sprite--death-finished");
     els.enemySprite.classList.add("sprite--character-art");
     if (session.opponent?.id) {
       els.enemySprite.style.backgroundImage = `url("${asset(charPortraitPath(session.opponent.id))}")`;
+    } else {
+      els.enemySprite.style.backgroundImage = "";
     }
   }
   if (els.playerFighterLabel) els.playerFighterLabel.textContent = session.playerChar?.name || "PLAYER";
@@ -1067,14 +1138,31 @@ async function playAttackStepMotion(isPlayerAttacking) {
   els.stageBand.classList.remove("stage-band--clash", "stage-band--clash-player-atk", "stage-band--clash-enemy-atk");
 }
 
+/** 比拚命中扣血：守方角色左右震動 2 下（0.2s） */
+function playDefenderHitShake(side) {
+  const fighter = side === "enemy" ? els.enemyFighter : els.playerFighter;
+  if (!fighter) return;
+  fighter.classList.remove("fighter--hit-shake");
+  void fighter.offsetWidth;
+  fighter.classList.add("fighter--hit-shake");
+  window.setTimeout(() => fighter.classList.remove("fighter--hit-shake"), 200);
+}
+
+/** 陣亡：brightness 1→1.5（0.2s）→ brightness 0.1 + opacity 0（0.5s） */
+const FIGHTER_DEATH_FX_MS = 700;
+
 async function playDeathFade(side) {
   const fighter = side === "player" ? els.playerFighter : els.enemyFighter;
-  if (!fighter) return;
-  fighter.classList.remove("fighter--death-fade");
+  const sprite = side === "player" ? els.playerSprite : els.enemySprite;
+  if (!fighter || !sprite) return;
   fighter.classList.add("dead");
-  void fighter.offsetWidth;
-  fighter.classList.add("fighter--death-fade");
-  await sleep(450);
+  sprite.classList.remove("sprite--death-animate", "sprite--death-finished");
+  void sprite.offsetWidth;
+  window.PocketPawnsAudio?.playDead?.();
+  sprite.classList.add("sprite--death-animate");
+  await sleep(FIGHTER_DEATH_FX_MS);
+  sprite.classList.remove("sprite--death-animate");
+  sprite.classList.add("sprite--death-finished");
 }
 
 /** 對話氣泡為 body 下 fixed，依角色位置同步；SPEECH_BUBBLE_RAISE_PX 為相對錨點再往上偏移（數值愈大愈高） */
@@ -1491,6 +1579,10 @@ async function playRound(card) {
   const side = card.side;
   const playerHeartsBefore = state.player.hearts || 0;
   const enemyHeartsBefore = state.enemy.hearts || 0;
+  const roundHeartFxBaseline = {
+    player: { hearts: playerHeartsBefore, max: state.player.maxHearts ?? 0 },
+    enemy: { hearts: enemyHeartsBefore, max: state.enemy.maxHearts ?? 0 },
+  };
   const usedSpecialThisRound = !!state.specialOn;
   const usedSpecialKind = state.specialOn ? state.special : null;
   const usedEnemySpecialThisRound = !!state.enemySpecialOn;
@@ -1537,11 +1629,7 @@ async function playRound(card) {
   enemyFinal = enemySpecialRes.enemyFinal;
   if (enemySpecialRes.selfDamage) state.enemy.hearts = Math.max(0, (state.enemy.hearts || 0) - enemySpecialRes.selfDamage);
   if (enemySpecialRes.enemyDamage) state.player.hearts = Math.max(0, (state.player.hearts || 0) - enemySpecialRes.enemyDamage);
-  refreshBattleUI();
-  const preClashPlayerH = state.player.hearts ?? 0;
-  const preClashEnemyH = state.enemy.hearts ?? 0;
-  const preClashPlayerM = state.player.maxHearts ?? 0;
-  const preClashEnemyM = state.enemy.maxHearts ?? 0;
+  refreshBattleUI({ silentHearts: true });
 
   // Attack windup: step forward and back in 1 second.
   await playAttackStepMotion(isPlayerAttacking);
@@ -1554,6 +1642,11 @@ async function playRound(card) {
 
   // Show clash numbers.
   showClashNumbers(enemyFinal, playerFinal);
+
+  const attackerUsed777 =
+    (isPlayerAttacking && usedSpecialThisRound && usedSpecialKind === "seven77") ||
+    (!isPlayerAttacking && usedEnemySpecialThisRound && usedEnemySpecialKind === "seven77");
+  if (attackerUsed777) emitBattleFx("seven77Shake", { isPlayerAttacking });
 
   session.lastRoundClash = {
     enemyFinal: Math.round(enemyFinal),
@@ -1569,10 +1662,13 @@ async function playRound(card) {
   // Damage only happens when attack value is strictly greater than defense value.
   // 玩家特殊卡資訊已由 tooltip + 角色氣泡承擔；朵雲公主不再重複播報玩家特殊卡
   let roundNote = [enemySpecialRes.note].filter(Boolean).join("｜");
+  /** 須在 refreshBattleUI 之後再播，否則 renderFighters 會立刻清掉 fighter--hit-shake */
+  let defenderHitShakeSide = null;
   if (isPlayerAttacking) {
     if (playerFinal > enemyFinal) {
       const damage = 1 + (specialRes.bonusDamage || 0);
       state.enemy.hearts = Math.max(0, (state.enemy.hearts || 0) - damage);
+      defenderHitShakeSide = "enemy";
       emitBattleFx("attack", {
         stat,
         phase: state.phase,
@@ -1593,6 +1689,7 @@ async function playRound(card) {
     }
   } else if (enemyFinal > playerFinal) {
     state.player.hearts = Math.max(0, (state.player.hearts || 0) - 1);
+    defenderHitShakeSide = "player";
     if (!roundNote) roundNote = "防禦失敗：玩家失去 1 點 HP";
   } else if (!roundNote) {
     roundNote = "防禦成功，未受到傷害";
@@ -1615,12 +1712,10 @@ async function playRound(card) {
   } else {
     session.match.oneHpStreak = 0;
   }
-  refreshBattleUI({
-    skipPlayerHearts:
-      (state.player.hearts ?? 0) === preClashPlayerH && (state.player.maxHearts ?? 0) === preClashPlayerM,
-    skipEnemyHearts:
-      (state.enemy.hearts ?? 0) === preClashEnemyH && (state.enemy.maxHearts ?? 0) === preClashEnemyM,
-  });
+  refreshBattleUI({ heartFxBaseline: roundHeartFxBaseline });
+  if (defenderHitShakeSide) {
+    requestAnimationFrame(() => playDefenderHitShake(defenderHitShakeSide));
+  }
   if (els.npcMessage && roundNote) els.npcMessage.textContent = roundNote;
 
   if ((state.enemy.hearts || 0) <= 0) {
@@ -1674,7 +1769,7 @@ async function playRound(card) {
   state.resolving = false;
   renderValueCards();
   renderSpecialColumn();
-  refreshBattleUI({ skipPlayerHearts: true, skipEnemyHearts: true });
+  refreshBattleUI({ skipHearts: true });
 }
 
 async function startBattle() {
@@ -1742,6 +1837,7 @@ async function startBattle() {
     refreshBattleUI();
     setNpcSpeech("open");
     setVisibleById("viewport");
+    showCombatRoundFlash("GAME START");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     // 若失敗，就把訊息顯示在角色詳情頁（避免你只看到沒反應）。
@@ -1983,6 +2079,7 @@ function initEls() {
   els.settlementRecordHint = document.querySelector("#settlement-record .settlement-record-hint");
   els.settlementRecordInput = document.getElementById("settlement-record-input");
   els.screenCurtain = document.getElementById("screen-curtain");
+  els.combatBanner = document.getElementById("combat-banner");
 }
 
 function setupMobileTooltipCleanup() {
