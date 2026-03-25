@@ -1332,7 +1332,8 @@ function applyBattleFieldBackground() {
     return;
   }
   const bg = asset(fieldBackgroundPath(state.field.id));
-  els.gameRoot.style.backgroundImage = `linear-gradient(rgba(8, 4, 24, 0.32), rgba(8, 4, 24, 0.48)), url("${bg}")`;
+  /* 僅平鋪場景圖；勿再疊 linear-gradient，否則會比原圖偏暗、像半透明罩一層 */
+  els.gameRoot.style.backgroundImage = `url("${bg}")`;
   els.gameRoot.style.backgroundSize = "cover";
   els.gameRoot.style.backgroundPosition = "center";
   els.gameRoot.style.backgroundRepeat = "no-repeat";
