@@ -286,10 +286,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_047": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "春霞みぃなです",
+    "battleOpen": "二ー友お酒飲もうねぇ",
+    "victory": "かんぱい",
+    "defeat": "筋肉痛なんだよねぇT^T"
   },
   "char_048": {
     "menuSelect": "預留",
