@@ -268,13 +268,51 @@ body {
   line-height: 1.1;
 }
 
-/* 當前階段下受「場地」加倍的屬性（黃字） */
+/* 素質固定色（提升玩家辨識） */
+.stat-value--str { color: #ff9290; }
+.stat-value--int { color: #62d8ff; }
+.stat-value--dex { color: #89ff9f; }
+.stat-value--agi { color: #ffc2ef; }
+.stat-value--vit { color: #bababa; }
+.stat-value--luk { color: #ffa507; }
+
+/* 場景加成：各素質改為「上色到白」漸層 + 白色陰影 */
 .enemy-hud .stat-row .stat-value.stat-boosted,
 .player-panel .stat-row .stat-value.stat-boosted {
-  color: #ffe066 !important;
-  text-shadow:
-    0 0 8px rgba(255, 200, 40, 0.75),
-    var(--text-outline);
+  text-shadow: 0 0 8px #fff;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--str,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--str {
+  background-image: linear-gradient(to bottom, #ff9290 0%, #ffffff 100%);
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--int,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--int {
+  background-image: linear-gradient(to bottom, #62d8ff 0%, #ffffff 100%);
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--dex,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--dex {
+  background-image: linear-gradient(to bottom, #89ff9f 0%, #ffffff 100%);
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--agi,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--agi {
+  background-image: linear-gradient(to bottom, #ffc2ef 0%, #ffffff 100%);
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--vit,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--vit {
+  background-image: linear-gradient(to bottom, #bababa 0%, #ffffff 100%);
+}
+
+.enemy-hud .stat-row .stat-value.stat-boosted.stat-value--luk,
+.player-panel .stat-row .stat-value.stat-boosted.stat-value--luk {
+  background-image: linear-gradient(to bottom, #ffa507 0%, #ffffff 100%);
 }
 
 .stat-label {

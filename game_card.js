@@ -942,8 +942,8 @@ function renderStats(el, stats) {
     const val = Math.round(base * mult);
     const boosted = mult > 1;
     const row = document.createElement("div");
-    row.className = "stat-cell";
-    row.innerHTML = `<div class="stat-value${boosted ? " stat-boosted" : ""}">${val}</div><div class="stat-label">${s}</div>`;
+    row.className = `stat-cell stat-cell--${String(s || "").toLowerCase()}`;
+    row.innerHTML = `<div class="stat-value stat-value--${String(s || "").toLowerCase()}${boosted ? " stat-boosted" : ""}">${val}</div><div class="stat-label">${s}</div>`;
     el.appendChild(row);
   });
 }
