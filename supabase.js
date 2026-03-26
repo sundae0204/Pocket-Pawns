@@ -48,10 +48,12 @@
     const { data, error } = await sb.from("character_stats").select("*").eq("character_id", characterId).maybeSingle();
     if (error || !data) return base;
 
+    const remoteMax = Number(data.max_combo ?? 0);
+    const localMax = Number(local?.max_combo ?? 0);
     return {
       use_count: data.use_count ?? 0,
       seven77_total: data.seven77_total ?? 0,
-      max_combo: data.max_combo ?? 0,
+      max_combo: Math.max(remoteMax, localMax),
       combo_holder: data.combo_holder || "—",
     };
   }
@@ -75,11 +77,16 @@
         ? await sb.from("character_stats").select("*").filter("character_id", "in", inExpr)
         : { data: [], error: null };
       if (!error && data) {
+        const localMap = readLocalMap();
         for (const row of data) {
-          out[row.character_id] = {
+          const lid = row.character_id;
+          const l = localMap[lid];
+          const remoteMax = Number(row.max_combo ?? 0);
+          const localMax = Number(l?.max_combo ?? 0);
+          out[lid] = {
             use_count: row.use_count ?? 0,
             seven77_total: row.seven77_total ?? 0,
-            max_combo: row.max_combo ?? 0,
+            max_combo: Math.max(remoteMax, localMax),
             combo_holder: row.combo_holder || "—",
           };
         }
@@ -140,9 +147,8 @@
 
     if (maxComboThisMatch > next.max_combo) {
       next.max_combo = maxComboThisMatch;
-      if (recordHolderName && String(recordHolderName).trim()) {
-        next.combo_holder = String(recordHolderName).trim().slice(0, 32);
-      }
+      const nm = recordHolderName && String(recordHolderName).trim() ? String(recordHolderName).trim().slice(0, 32) : "";
+      next.combo_holder = nm || "匿名";
     }
 
     map[characterId] = next;
@@ -183,7 +189,7 @@
     if (maxComboThisMatch > newMax) {
       newMax = maxComboThisMatch;
       const nm = recordHolderName && String(recordHolderName).trim() ? String(recordHolderName).trim().slice(0, 32) : "";
-      if (nm) comboHolder = nm;
+      comboHolder = nm || "匿名";
     }
 
     const { error: upErr } = await sb.from("character_stats").upsert(

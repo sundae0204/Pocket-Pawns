@@ -89,6 +89,10 @@ const session = {
   totalPlays: 0,
   globalComboRecord: 0,
   globalComboHolder: "—",
+  /** 角色詳情頁載入後的「最高連續擊殺」數字（與畫面一致） */
+  detailPageMaxCombo: null,
+  /** 按下詳情頁「確定」進戰鬥時快照的基準，結算時與本場峰值比較是否破紀錄 */
+  recordBaselineFromDetail: 0,
   submitted: false,
   pendingRecordCharacterId: "",
   match: null,
@@ -513,6 +517,16 @@ function specialName(kind) {
   return (SPECIAL_META[kind] && SPECIAL_META[kind].name) || kind || "無";
 }
 
+/** 歸零卡在手上顯示的名稱：攻擊方為 VIT／AGI／LUK，防守方為 STR／INT／DEX */
+function zeroSpecialCardTitle(stat) {
+  return stat ? `${stat}歸0！` : "歸零卡！";
+}
+
+function specialCardDisplayName(kind, stat) {
+  if (kind === "zero" && stat) return zeroSpecialCardTitle(stat);
+  return specialName(kind);
+}
+
 function getValueCardTooltip(card) {
   const phase = state.phase === "attack" ? "attack" : "defense";
   const side = card.side === "E" ? "E" : "P";
@@ -524,7 +538,7 @@ function getValueCardTooltip(card) {
 function getSpecialCardTooltip(kind, stat) {
   const base = CARD_TOOLTIPS.special[kind] || "";
   if (kind === "boost" && stat) return `${specialName(kind)}（${stat} x2）：${base}`;
-  if (kind === "zero" && stat) return `${specialName(kind)}（${stat} x0）：${base}`;
+  if (kind === "zero" && stat) return `${zeroSpecialCardTitle(stat)}${base ? `：${base}` : ""}`;
   return `${specialName(kind)}：${base}`;
 }
 
@@ -651,7 +665,7 @@ function formatEnemySpecialSettlement(on, kind, stat) {
   const name = specialName(kind);
   if (!on) return `未發動（本回合抽中：${name}）`;
   if (kind === "boost" && stat) return `${name}（${stat} x2）`;
-  if (kind === "zero" && stat) return `${name}（${stat} x0）`;
+  if (kind === "zero" && stat) return zeroSpecialCardTitle(stat);
   return name;
 }
 
@@ -690,22 +704,42 @@ function createMatchState() {
   };
 }
 
+/** 本場至今的最高連續擊殺（擊敗敵人數的峰值，含中途結束前） */
+function getCurrentRunPeakCombo() {
+  return Math.max(session.maxCombo || 0, session.wins || 0);
+}
+
+/** 是否超過進戰鬥前在詳情頁鎖定的基準（recordBaselineFromDetail） */
+function didBreakComboRecordThisRun() {
+  const peak = getCurrentRunPeakCombo();
+  if (peak <= 0) return false;
+  const raw = Number(session.recordBaselineFromDetail);
+  const baseline = Number.isFinite(raw) ? Math.max(0, raw) : 0;
+  return peak > baseline;
+}
+
+/**
+ * 結局圖權重：破紀錄結局為唯一首選（並觸發暱稱輸入）；其餘在「本場有達成的結局」中隨機擇一。
+ */
 function chooseEndingKey(outcome) {
   const m = session.match || createMatchState();
-  // 成就型結局：即使最終非 win（例如已達成後又敗北），仍可顯示成就結局
-  if (m.used777Kill) return "ko777";
-  if (m.maxNoDamageStreak >= 7) return "nodmg7";
-  if (m.showyUses >= 3) return "showy3";
-  if (m.lukBoostWin) return "lukwin";
-  if (m.maxOneHpStreak >= 3) return "lockhp";
-  if (m.redheartAttackWin) return "redboom";
 
-  // 需以「整場勝利」結算的結局
-  if (outcome === "win") {
-    if ((session.wins || 0) > (session.globalComboRecord || 0)) return "record";
-    if (!m.usedSpecial) return "nospecial";
+  // 破紀錄結局：通關／選單結束／戰敗皆可（只要本場峰值連擊 > 進戰鬥前基準）
+  if (didBreakComboRecordThisRun()) {
+    return "record";
   }
-  return "plain";
+
+  const pool = [];
+  if (m.used777Kill) pool.push("ko777");
+  if (m.maxNoDamageStreak >= 7) pool.push("nodmg7");
+  if (m.showyUses >= 3) pool.push("showy3");
+  if (m.lukBoostWin) pool.push("lukwin");
+  if (m.maxOneHpStreak >= 3) pool.push("lockhp");
+  if (m.redheartAttackWin) pool.push("redboom");
+  if (outcome === "win" && !m.usedSpecial) pool.push("nospecial");
+
+  if (pool.length === 0) return "plain";
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 function renderSettlement(outcome) {
@@ -721,8 +755,7 @@ function renderSettlement(outcome) {
   const clash = session.lastRoundClash;
   const details = [
     ["角色", session.playerChar?.name || "—"],
-    ["連續擊殺數", String(session.wins || 0)],
-    ["總遊玩次數", String(session.totalPlays || 0)],
+    ["本輪連續擊殺數", String(session.wins || 0)],
     ["抽到777次數（本輪）", String(session.seven77Draws || 0)],
     ["最後一戰對手", session.opponent?.name || "—"],
   ];
@@ -736,7 +769,7 @@ function renderSettlement(outcome) {
       .map(([k, v]) => `<li><span>${k}</span><strong>${v}</strong></li>`)
       .join("")}</ul>`;
   }
-  const brokeRecord = outcome === "win" && (session.wins || 0) > (session.globalComboRecord || 0);
+  const brokeRecord = didBreakComboRecordThisRun();
   if (els.settlementRecord) els.settlementRecord.hidden = !brokeRecord;
   session.pendingRecordCharacterId = brokeRecord ? session.playerChar?.id || "" : "";
 }
@@ -744,7 +777,8 @@ function renderSettlement(outcome) {
 async function submitBattleSummary(outcome) {
   if (session.submitted || !session.playerChar?.id) return;
   session.submitted = true;
-  const brokeRecord = outcome === "win" && (session.wins || 0) > (session.globalComboRecord || 0);
+  const peakCombo = getCurrentRunPeakCombo();
+  const brokeRecord = didBreakComboRecordThisRun();
   await window.PocketPawnsSupabase?.submitBattleResult?.({
     characterId: session.playerChar.id,
     characterName: session.playerChar.name,
@@ -752,7 +786,7 @@ async function submitBattleSummary(outcome) {
     kills: session.wins || 0,
     used777: !!session.any77Used,
     seven77DrawsThisMatch: session.seven77Draws || 0,
-    maxComboThisMatch: session.wins || 0,
+    maxComboThisMatch: peakCombo,
     brokeGlobalComboRecord: brokeRecord,
     recordHolderName: null,
   });
@@ -1261,6 +1295,26 @@ function boostMultiplier(stat) {
   return boostValue(stat);
 }
 
+/** 敵方本回合比拚用的屬性池：玩家攻擊時敵為守方（AGI/VIT/LUK）；玩家防禦時敵為攻方（STR/INT/DEX）。 */
+function enemyStatPoolForClash(isPlayerAttacking) {
+  return isPlayerAttacking ? ["AGI", "VIT", "LUK"] : ["STR", "INT", "DEX"];
+}
+
+/** 從池中取場景加成後最高值，並記錄實際用哪一項（供敵方特殊卡命中判定）。 */
+function bestEnemyCombatValue(enemy, statPool, zeroStat = null) {
+  let value = 0;
+  let primaryStat = statPool[0];
+  for (const s of statPool) {
+    const raw = zeroStat === s ? 0 : statValueFromCharacter(enemy, s);
+    const v = Math.round(raw * boostMultiplier(s));
+    if (v > value) {
+      value = v;
+      primaryStat = s;
+    }
+  }
+  return { value, primaryStat };
+}
+
 function makeHandForPhase(phase) {
   const pool = phase === "attack" ? ["STR", "INT", "DEX"] : ["AGI", "VIT", "LUK"];
   const candidates = pool.flatMap((stat) => [
@@ -1395,13 +1449,15 @@ function renderSpecialColumn() {
     kind === "boost" && state.specialStat
       ? `本回合 ${state.specialStat} x2`
       : kind === "zero" && state.specialStat
-        ? `本回合敵方 ${state.specialStat} x0`
+        ? `本回合敵方在比拚中 ${state.specialStat} 素質 x0`
         : meta.desc;
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = `card card-special-mini${state.specialOn ? " selected" : ""}`;
   btn.style.backgroundImage = `url("${asset(specialCardPath(kind))}")`;
-  btn.setAttribute("aria-label", `${meta.name}：${dynamicDesc}`);
+  const specialLabel =
+    kind === "zero" && state.specialStat ? zeroSpecialCardTitle(state.specialStat) : meta.name;
+  btn.setAttribute("aria-label", `${specialLabel}：${dynamicDesc}`);
   btn.innerHTML = "";
   if (kind === "boost") {
     const note = document.createElement("span");
@@ -1413,8 +1469,7 @@ function renderSpecialColumn() {
   if (kind === "zero") {
     const note = document.createElement("span");
     note.className = "card-note";
-    const direct = state.specialStat || "";
-    note.textContent = direct ? `${direct} x0` : "x0";
+    note.textContent = state.specialStat ? zeroSpecialCardTitle(state.specialStat) : "歸零";
     btn.appendChild(note);
   }
   btn.title = getSpecialCardTooltip(kind, state.specialStat);
@@ -1480,11 +1535,8 @@ function applyPlayerSpecialEffect(ctx) {
       }
       break;
     case "zero":
-      if (ctx.stat === state.specialStat) {
-        res.enemyFinal = 0;
-        res.note = `歸零卡啟動：敵方 ${state.specialStat} x0`;
-      } else {
-        res.note = `歸零卡未命中：本回合為 ${ctx.stat}，非 ${state.specialStat}`;
+      if (state.specialStat) {
+        res.note = `歸零卡啟動：敵方 ${state.specialStat} 素質已於比拚中 x0`;
       }
       break;
     case "heal":
@@ -1530,9 +1582,12 @@ function applyEnemySpecialEffect(ctx) {
   };
   if (!state.enemySpecialOn) return res;
 
+  /** 敵方數值來自攻防池時，加成須對「敵方實際用上的屬性」判定，而非玩家出牌屬性。 */
+  const enemyStatForEnemySpecial = ctx.enemyCombatStat ?? ctx.stat;
+
   switch (state.enemySpecial) {
     case "boost":
-      if (ctx.stat === state.enemySpecialStat) {
+      if (enemyStatForEnemySpecial === state.enemySpecialStat) {
         res.enemyFinal = Math.round(res.enemyFinal * 2);
         res.note = `敵方加成：${state.enemySpecialStat} x2`;
       }
@@ -1540,7 +1595,7 @@ function applyEnemySpecialEffect(ctx) {
     case "zero":
       if (ctx.stat === state.enemySpecialStat) {
         res.playerFinal = 0;
-        res.note = `敵方歸零：玩家 ${state.enemySpecialStat} x0`;
+        res.note = `敵方歸零：玩家 ${state.enemySpecialStat} 素質 x0`;
       }
       break;
     case "heal":
@@ -1588,9 +1643,11 @@ async function playRound(card) {
   const usedSpecialKind = state.specialOn ? state.special : null;
   const usedEnemySpecialThisRound = !!state.enemySpecialOn;
   const usedEnemySpecialKind = state.enemySpecialOn ? state.enemySpecial : null;
-  if (usedSpecialThisRound) showSpeechBubble("player", `${specialName(usedSpecialKind)}`);
+  if (usedSpecialThisRound)
+    showSpeechBubble("player", `${specialCardDisplayName(usedSpecialKind, state.specialStat)}`);
   else showSpeechBubble("player", "");
-  if (usedEnemySpecialThisRound) showSpeechBubble("enemy", `${specialName(usedEnemySpecialKind)}`);
+  if (usedEnemySpecialThisRound)
+    showSpeechBubble("enemy", `${specialCardDisplayName(usedEnemySpecialKind, state.enemySpecialStat)}`);
   else showSpeechBubble("enemy", "");
   if (usedSpecialThisRound) {
     session.match.usedSpecial = true;
@@ -1600,13 +1657,20 @@ async function playRound(card) {
   // Resolve one round with a single stat card.
   const isPlayerAttacking = state.phase === "attack";
   const basePlayerOwn = statValueFromCharacter(state.player, stat);
-  const baseEnemy = statValueFromCharacter(state.enemy, stat);
+  const baseEnemySameStat = statValueFromCharacter(state.enemy, stat);
   const fieldMult = boostMultiplier(stat);
-  const enemyBuffed = Math.round(baseEnemy * fieldMult);
-  const playerSourceBase = side === "E" ? enemyBuffed : basePlayerOwn;
+  const enemyBuffedSameStat = Math.round(baseEnemySameStat * fieldMult);
+  const playerSourceBase = side === "E" ? enemyBuffedSameStat : basePlayerOwn;
 
   let playerFinal = Math.round(playerSourceBase * (side === "E" ? 1 : fieldMult));
-  let enemyFinal = enemyBuffed;
+  const enemyPool = enemyStatPoolForClash(isPlayerAttacking);
+  const playerZeroStat =
+    state.specialOn && state.special === "zero" && state.specialStat && enemyPool.includes(state.specialStat)
+      ? state.specialStat
+      : null;
+  const enemyCombat = bestEnemyCombatValue(state.enemy, enemyPool, playerZeroStat);
+  let enemyFinal = enemyCombat.value;
+  const enemyCombatStat = enemyCombat.primaryStat;
 
   const specialRes = applyPlayerSpecialEffect({
     isPlayerAttacking,
@@ -1623,6 +1687,7 @@ async function playRound(card) {
   const enemySpecialRes = applyEnemySpecialEffect({
     isPlayerAttacking,
     stat,
+    enemyCombatStat,
     playerFinal,
     enemyFinal,
   });
@@ -1655,6 +1720,8 @@ async function playRound(card) {
     enemySpecialOn: usedEnemySpecialThisRound,
     enemySpecialKind: state.enemySpecial,
     enemySpecialStat: state.enemySpecialStat,
+    /** 敵方本回合比拚實際採用的屬性（攻方 STR/INT/DEX 或守方 AGI/VIT/LUK 中最高者） */
+    enemyCombatStat,
   };
 
   // Hit decision:
@@ -1854,6 +1921,7 @@ async function startBattle() {
 
 function openDetail(ch) {
   selectedChar = ch;
+  session.detailPageMaxCombo = null;
   const randomMode = isRandomCharacter(ch);
   els.characterDetailName.textContent = randomMode ? "神祕人物" : ch.name;
   if (els.characterDetailPortrait) {
@@ -1890,13 +1958,21 @@ function openDetail(ch) {
   setVisibleById("character-detail");
 }
 
+/** 連擊榜顯示：無名稱或佔位符時顯示「匿名」 */
+function formatComboHolderDisplay(holder) {
+  const s = String(holder ?? "").trim();
+  if (!s || s === "—") return "匿名";
+  return s;
+}
+
 async function loadCharacterDetailMeta(ch) {
   if (!els.characterDetailMeta || !ch?.id) return;
   const stats = await window.PocketPawnsSupabase?.fetchCharacterStats?.(ch.id);
   const useCount = stats?.use_count ?? 0;
   const sevenTotal = stats?.seven77_total ?? 0;
   const maxCombo = stats?.max_combo ?? 0;
-  const holder = stats?.combo_holder || "—";
+  session.detailPageMaxCombo = Math.max(0, Number(maxCombo));
+  const holder = formatComboHolderDisplay(stats?.combo_holder);
   els.characterDetailMeta.innerHTML = `使用次數：${useCount}　／　777 抽中：${sevenTotal}<br>最高連續擊殺：${maxCombo}（玩家：${holder}）`;
 }
 
@@ -1911,11 +1987,11 @@ async function loadGlobalRecordInfo() {
     const combo = Number(row?.max_combo || 0);
     if (combo > maxCombo) {
       maxCombo = combo;
-      holder = row?.combo_holder || "—";
+      holder = formatComboHolderDisplay(row?.combo_holder);
     }
   });
   session.globalComboRecord = maxCombo;
-  session.globalComboHolder = holder;
+  session.globalComboHolder = formatComboHolderDisplay(holder);
 }
 
 function bindEvents() {
@@ -1949,6 +2025,19 @@ function bindEvents() {
     // playBtn() 的回傳值不應影響是否進入戰鬥。
     window.PocketPawnsAudio?.playBtn?.();
     void runCurtainTransition(async () => {
+      if (selectedChar && !isRandomCharacter(selectedChar)) {
+        try {
+          const st = await window.PocketPawnsSupabase?.fetchCharacterStats?.(selectedChar.id);
+          const raw = Number(st?.max_combo ?? 0);
+          session.recordBaselineFromDetail = Number.isFinite(raw) ? Math.max(0, raw) : 0;
+        } catch {
+          const fallback = Number(session.detailPageMaxCombo);
+          session.recordBaselineFromDetail =
+            Number.isFinite(fallback) && session.detailPageMaxCombo != null ? Math.max(0, fallback) : 0;
+        }
+      } else {
+        session.recordBaselineFromDetail = 0;
+      }
       await startBattle();
     }, { fadeMs: 200 });
   });

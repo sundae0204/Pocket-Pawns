@@ -1303,6 +1303,23 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   font-size: 0.95rem;
 }
 
+/* 僅手機／觸控為主時顯示，不佔版面、不需互動 */
+.title-mobile-hint {
+  display: none;
+  margin: 0 auto 14px;
+  max-width: 20rem;
+  padding: 0 10px;
+  font-size: 0.5rem;
+  line-height: 1.45;
+  opacity: 0.82;
+}
+
+@media (max-width: 900px) and (pointer: coarse) {
+  .title-mobile-hint {
+    display: block;
+  }
+}
+
 .title-actions {
   display: flex;
   flex-direction: column;

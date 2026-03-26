@@ -124,10 +124,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "阿修..."
   },
   "char_020": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是獅子少女采彩、呀比",
+    "battleOpen": "呀比~",
+    "victory": "吃豬豬",
+    "defeat": "三八啦怎麼能打女生"
   },
   "char_021": {
     "menuSelect": "預留",
@@ -544,10 +544,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_090": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "茶，還是現泡好",
+    "battleOpen": "茶包很燙喔~",
+    "victory": "跟你說很燙了",
+    "defeat": "茶沒泡開，下次再來"
   },
   "char_091": {
     "menuSelect": "預留",

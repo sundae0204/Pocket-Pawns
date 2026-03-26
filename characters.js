@@ -333,7 +333,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_054",
     name: "胡漢斯",
     sortIndex: 54,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [7, 10, 1, 13, 9, 3], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_055",
@@ -399,13 +399,13 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_065",
     name: "水御風",
     sortIndex: 65,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [12, 1, 4, 2, 12, 2], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_066",
     name: "姜紫嫣",
     sortIndex: 66,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 7, 7, 13, 4, 13], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_067",
@@ -441,7 +441,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_072",
     name: "泠",
     sortIndex: 72,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [5, 13, 1, 5, 11, 9], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_073",
@@ -537,7 +537,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_088",
     name: "茶抹抹",
     sortIndex: 88,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [7, 5, 1, 12, 5, 9], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_089",
@@ -561,7 +561,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_092",
     name: "律豆豆",
     sortIndex: 92,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 1, 4, 13, 3, 13], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_093",
@@ -603,13 +603,13 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_099",
     name: "破羽",
     sortIndex: 99,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [13, 8, 13, 1, 1, 4], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_100",
     name: "李研",
     sortIndex: 100,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [9, 5, 2, 12, 3, 10], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_101",
