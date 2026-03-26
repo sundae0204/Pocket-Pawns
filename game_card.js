@@ -1225,12 +1225,13 @@ function setupSpeechBubbleResizeSync() {
   if (window.visualViewport) window.visualViewport.addEventListener("resize", syncSpeechBubblePositions);
 }
 
-function showSpeechBubble(side, text) {
+function showSpeechBubble(side, text, options = {}) {
   const isPlayer = side === "player";
   const bubble = isPlayer ? els.playerSpeechBubble : els.enemySpeechBubble;
   const textEl = isPlayer ? els.playerSpeechText : els.enemySpeechText;
   const fadeKey = isPlayer ? "playerFade" : "enemyFade";
   const hideKey = isPlayer ? "playerHide" : "enemyHide";
+  const extraMs = Math.max(0, Number(options.extraMs || 0));
   if (!bubble || !textEl) return;
 
   if (bubbleTimers[fadeKey]) clearTimeout(bubbleTimers[fadeKey]);
@@ -1254,14 +1255,14 @@ function showSpeechBubble(side, text) {
   });
   bubbleTimers[fadeKey] = setTimeout(() => {
     bubble.classList.add("speech-bubble--fade");
-  }, 2000);
+  }, 2000 + extraMs);
   bubbleTimers[hideKey] = setTimeout(() => {
     bubble.hidden = true;
     bubble.classList.remove("speech-bubble--fade");
     bubble.style.left = "";
     bubble.style.top = "";
     bubble.style.transform = "";
-  }, 2500);
+  }, 2500 + extraMs);
 }
 
 function setNpcSpeech(kind) {
@@ -1644,10 +1645,10 @@ async function playRound(card) {
   const usedEnemySpecialThisRound = !!state.enemySpecialOn;
   const usedEnemySpecialKind = state.enemySpecialOn ? state.enemySpecial : null;
   if (usedSpecialThisRound)
-    showSpeechBubble("player", `${specialCardDisplayName(usedSpecialKind, state.specialStat)}`);
+    showSpeechBubble("player", `${specialCardDisplayName(usedSpecialKind, state.specialStat)}`, { extraMs: 2000 });
   else showSpeechBubble("player", "");
   if (usedEnemySpecialThisRound)
-    showSpeechBubble("enemy", `${specialCardDisplayName(usedEnemySpecialKind, state.enemySpecialStat)}`);
+    showSpeechBubble("enemy", `${specialCardDisplayName(usedEnemySpecialKind, state.enemySpecialStat)}`, { extraMs: 2000 });
   else showSpeechBubble("enemy", "");
   if (usedSpecialThisRound) {
     session.match.usedSpecial = true;

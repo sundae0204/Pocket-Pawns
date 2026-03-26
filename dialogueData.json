@@ -276,10 +276,10 @@
     "defeat": "預留"
   },
   "char_046": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "選擇幸運大橘，包你大吉大利一整天！",
+    "battleOpen": "大橘子要吃掉你！嘎吼ˋ口ˊ！",
+    "victory": "大橘已定！一口把你吃掉ˋ口ˊ！",
+    "defeat": "溜了溜了溜了！"
   },
   "char_047": {
     "menuSelect": "春霞みぃなです",
