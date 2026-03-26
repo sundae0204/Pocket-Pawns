@@ -598,10 +598,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "預留"
   },
   "char_099": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "讓揉奇幫偉大!!",
+    "battleOpen": "奇奇在哪裡絕對難不倒你~",
+    "victory": "一起喊~ 喔~ 奇奇~",
+    "defeat": "捏奇幫...偉大..."
   },
   "char_100": {
     "menuSelect": "KOTI KOTI 在芬南語中是溫暖的家",

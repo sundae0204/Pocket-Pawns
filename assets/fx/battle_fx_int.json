@@ -1,0 +1,375 @@
+{
+  "frames": {
+    "battle_fx_int_00006.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00007.png": {
+      "frame": {
+        "x": 0,
+        "y": 247,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00008.png": {
+      "frame": {
+        "x": 0,
+        "y": 494,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00009.png": {
+      "frame": {
+        "x": 0,
+        "y": 741,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00010.png": {
+      "frame": {
+        "x": 0,
+        "y": 988,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00011.png": {
+      "frame": {
+        "x": 0,
+        "y": 1235,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00012.png": {
+      "frame": {
+        "x": 0,
+        "y": 1482,
+        "w": 235,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 235,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00005.png": {
+      "frame": {
+        "x": 0,
+        "y": 1729,
+        "w": 232,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 232,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00004.png": {
+      "frame": {
+        "x": 232,
+        "y": 1729,
+        "w": 205,
+        "h": 247
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 6,
+        "w": 205,
+        "h": 247
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00014.png": {
+      "frame": {
+        "x": 437,
+        "y": 0,
+        "w": 222,
+        "h": 207
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 30,
+        "y": 24,
+        "w": 222,
+        "h": 207
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00003.png": {
+      "frame": {
+        "x": 235,
+        "y": 0,
+        "w": 154,
+        "h": 190
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 42,
+        "w": 154,
+        "h": 190
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00000.png": {
+      "frame": {
+        "x": 389,
+        "y": 0,
+        "w": 41,
+        "h": 73
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 107,
+        "y": 106,
+        "w": 41,
+        "h": 73
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00002.png": {
+      "frame": {
+        "x": 235,
+        "y": 190,
+        "w": 111,
+        "h": 144
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 65,
+        "y": 73,
+        "w": 111,
+        "h": 144
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00001.png": {
+      "frame": {
+        "x": 346,
+        "y": 190,
+        "w": 74,
+        "h": 109
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 88,
+        "y": 89,
+        "w": 74,
+        "h": 109
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_int_00013.png": {
+      "frame": {
+        "x": 659,
+        "y": 0,
+        "w": 221,
+        "h": 215
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 26,
+        "w": 221,
+        "h": 215
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "battle_fx_int.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 880,
+      "h": 1976
+    },
+    "scale": 1
+  }
+}

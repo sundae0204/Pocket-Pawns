@@ -477,6 +477,58 @@ body {
   will-change: transform;
 }
 
+.defender-battle-fx {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  transform: translate(-50%, -50%) scale(1.5);
+  pointer-events: none;
+  z-index: 7;
+}
+
+.defender-battle-fx-canvas {
+  width: 100%;
+  height: 100%;
+  display: none;
+  image-rendering: pixelated;
+}
+
+.defender-battle-fx-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.6667);
+  font-size: 1rem;
+  font-weight: 900;
+  color: #ffbc2c;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow:
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff,
+    0 0 8px rgba(255, 188, 44, 0.75),
+    0 0 16px rgba(193, 100, 0, 0.45);
+  opacity: 1;
+  transition: opacity 300ms ease;
+  animation: defender-battle-fx-text-blink 500ms linear infinite;
+}
+
+.defender-battle-fx-text.defender-battle-fx-text--fade {
+  opacity: 0;
+}
+
+@keyframes defender-battle-fx-text-blink {
+  0%,
+  100% {
+    color: #ffbc2c;
+  }
+  50% {
+    color: #c16400;
+  }
+}
+
 /* 僅攻方移動：玩家在右側時向左接近敵方；敵在左側時向右接近玩家；守方不動 */
 .stage-band--clash.stage-band--clash-player-atk .player-fighter {
   animation: clash-player-atk 0.4s ease-in-out;

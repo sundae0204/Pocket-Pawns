@@ -1,0 +1,375 @@
+{
+  "frames": {
+    "battle_fx_agi_00014.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 197,
+        "h": 216
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 12,
+        "w": 197,
+        "h": 216
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00013.png": {
+      "frame": {
+        "x": 0,
+        "y": 216,
+        "w": 194,
+        "h": 212
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 14,
+        "w": 194,
+        "h": 212
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00012.png": {
+      "frame": {
+        "x": 0,
+        "y": 428,
+        "w": 190,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 48,
+        "y": 16,
+        "w": 190,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00011.png": {
+      "frame": {
+        "x": 0,
+        "y": 636,
+        "w": 186,
+        "h": 204
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 18,
+        "w": 186,
+        "h": 204
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00010.png": {
+      "frame": {
+        "x": 0,
+        "y": 840,
+        "w": 183,
+        "h": 201
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 20,
+        "w": 183,
+        "h": 201
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00009.png": {
+      "frame": {
+        "x": 0,
+        "y": 1041,
+        "w": 180,
+        "h": 193
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 24,
+        "w": 180,
+        "h": 193
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00008.png": {
+      "frame": {
+        "x": 0,
+        "y": 1234,
+        "w": 178,
+        "h": 190
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 48,
+        "y": 28,
+        "w": 178,
+        "h": 190
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00007.png": {
+      "frame": {
+        "x": 0,
+        "y": 1424,
+        "w": 179,
+        "h": 187
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 32,
+        "w": 179,
+        "h": 187
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00006.png": {
+      "frame": {
+        "x": 178,
+        "y": 1234,
+        "w": 185,
+        "h": 184
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 42,
+        "y": 36,
+        "w": 185,
+        "h": 184
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00002.png": {
+      "frame": {
+        "x": 180,
+        "y": 1041,
+        "w": 165,
+        "h": 178
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 43,
+        "w": 165,
+        "h": 178
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00005.png": {
+      "frame": {
+        "x": 345,
+        "y": 1041,
+        "w": 191,
+        "h": 174
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 39,
+        "y": 40,
+        "w": 191,
+        "h": 174
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00003.png": {
+      "frame": {
+        "x": 183,
+        "y": 840,
+        "w": 161,
+        "h": 174
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 45,
+        "w": 161,
+        "h": 174
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00004.png": {
+      "frame": {
+        "x": 344,
+        "y": 840,
+        "w": 195,
+        "h": 173
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 37,
+        "y": 43,
+        "w": 195,
+        "h": 173
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00000.png": {
+      "frame": {
+        "x": 186,
+        "y": 636,
+        "w": 170,
+        "h": 146
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 44,
+        "y": 39,
+        "w": 170,
+        "h": 146
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "battle_fx_agi_00001.png": {
+      "frame": {
+        "x": 356,
+        "y": 636,
+        "w": 166,
+        "h": 142
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 41,
+        "w": 166,
+        "h": 142
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "battle_fx_agi.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 539,
+      "h": 1611
+    },
+    "scale": 1
+  }
+}

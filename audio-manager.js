@@ -1,6 +1,6 @@
 /**
  * 音效管理：以 new Audio() 建立小型音效池，避免 Web Audio decode 與複雜節點。
- * 請將 se_btn / se_attack / … 放在 ./sounds/（檔名見 SOUND_FILES）。
+ * 請將 se_btn / se_atk_str / … 放在 ./sounds/（檔名見 SOUND_FILES）。
  * 須在使用者手勢後呼叫 init()（內含 AudioContext.resume() 以符合自動播放策略）。
  */
 (function (global) {
@@ -16,7 +16,12 @@
     btn: "sounds/se_btn.mp3",
     btnBack: "sounds/se_btn_back.mp3",
     card: "sounds/se_btn_card.mp3",
-    attack: "sounds/se_attack.mp3",
+    atkStr: "sounds/se_atk_str.mp3",
+    atkInt: "sounds/se_atk_int.mp3",
+    atkDex: "sounds/se_atk_dex.mp3",
+    defAgi: "sounds/se_def_agi.mp3",
+    defVit: "sounds/se_def_vit.mp3",
+    defLuk: "sounds/se_def_luk.mp3",
     attack777: "sounds/se_attack_777.mp3",
     win: "sounds/se_win.mp3",
     loss: "sounds/se_loss.mp3",
@@ -162,7 +167,17 @@
       play("card");
     },
     playAttack() {
-      play("attack");
+      // 舊 API：預設走 STR 攻擊音效（避免舊呼叫壞掉）
+      play("atkStr");
+    },
+    playBattleFxByKey(kindKey) {
+      const k = String(kindKey || "").toLowerCase();
+      if (k === "str") play("atkStr");
+      else if (k === "int") play("atkInt");
+      else if (k === "dex") play("atkDex");
+      else if (k === "agi") play("defAgi");
+      else if (k === "vit") play("defVit");
+      else if (k === "luk") play("defLuk");
     },
     playAttack777() {
       play("attack777");

@@ -122,6 +122,30 @@ const bubbleTimers = {
   enemyFade: null,
   enemyHide: null,
 };
+const battleFxTextTimers = {
+  playerFade: null,
+  playerClear: null,
+  enemyFade: null,
+  enemyClear: null,
+};
+const battleFxWrapHideTimers = {
+  player: null,
+  enemy: null,
+};
+const BATTLE_FX_DURATION_MS = 500;
+const BATTLE_FX_TEXT_VISIBLE_MS = 2000;
+const BATTLE_FX_TEXT_FADE_MS = 300;
+
+const BATTLE_FX_META = {
+  str: { text: "攻擊", json: "battle_fx_str" },
+  int: { text: "魔法", json: "battle_fx_int" },
+  dex: { text: "射擊", json: "battle_fx_dex" },
+  vit: { text: "防御", json: "battle_fx_vit" },
+  agi: { text: "回避", json: "battle_fx_agi" },
+  luk: { text: "幸運", json: "battle_fx_luk" },
+};
+
+const battleFxAtlasCache = {};
 /** 長按卡片顯示說明（手機 toast）後自動關閉的時間（毫秒） */
 const MOBILE_TIP_AUTO_HIDE_MS = 2000;
 
@@ -268,6 +292,86 @@ function drawHeartFxFrame(ctx, image, frameData) {
     ctx.drawImage(patch, 0, 0, sw, sh, -dh / 2, -dw / 2, dh, dw);
     ctx.restore();
   }
+}
+
+function normalizeBattleFxFrameData(frameData) {
+  if (!frameData) return null;
+  if (frameData.frame && frameData.spriteSourceSize && frameData.sourceSize) return frameData;
+  const f = frameData.frame || frameData;
+  if (typeof f?.x !== "number") return null;
+  return {
+    frame: { x: f.x, y: f.y, w: f.w, h: f.h },
+    rotated: false,
+    spriteSourceSize: { x: 0, y: 0, w: f.w, h: f.h },
+    sourceSize: { w: 256, h: 256 },
+  };
+}
+
+function ensureBattleFxAtlas(kindKey) {
+  if (battleFxAtlasCache[kindKey]) return battleFxAtlasCache[kindKey];
+  battleFxAtlasCache[kindKey] = (async () => {
+    const meta = BATTLE_FX_META[kindKey];
+    if (!meta) throw new Error(`unknown battle fx kind: ${kindKey}`);
+    const base = meta.json;
+    const embedded = typeof window !== "undefined" ? window.POCKET_PAWNS_BATTLE_FX : null;
+    let json = embedded && embedded[kindKey] ? embedded[kindKey] : null;
+    if (!json) {
+      json = await fetch(asset(`assets/fx/${base}.json`)).then((r) => {
+        if (!r.ok) throw new Error(`${base}.json`);
+        return r.json();
+      });
+    }
+    const image = await loadImageForHeartFx(asset(`assets/fx/${base}.png`));
+    const keys = sortHeartFxFrameKeys(json.frames || {});
+    const first = keys[0] ? normalizeBattleFxFrameData(json.frames[keys[0]]) : null;
+    const width = first?.sourceSize?.w || 256;
+    const height = first?.sourceSize?.h || 256;
+    return { json, image, keys, width, height };
+  })();
+  return battleFxAtlasCache[kindKey];
+}
+
+function playBattleFxCanvas(canvas, kindKey) {
+  if (!canvas) return;
+  if (canvas._battleFxRaf) {
+    cancelAnimationFrame(canvas._battleFxRaf);
+    canvas._battleFxRaf = 0;
+  }
+  ensureBattleFxAtlas(kindKey)
+    .then((pack) => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx || !pack.keys.length) return;
+      canvas.width = pack.width;
+      canvas.height = pack.height;
+      canvas.hidden = false;
+      canvas.style.display = "block";
+      ctx.imageSmoothingEnabled = false;
+      const frameDur = BATTLE_FX_DURATION_MS / pack.keys.length;
+      const start = performance.now();
+      const tick = (now) => {
+        if (!canvas.isConnected) {
+          canvas._battleFxRaf = 0;
+          return;
+        }
+        const elapsed = now - start;
+        const idx = Math.min(Math.floor(elapsed / frameDur), pack.keys.length - 1);
+        const frameData = normalizeBattleFxFrameData(pack.json.frames[pack.keys[idx]]);
+        if (frameData) drawHeartFxFrame(ctx, pack.image, frameData);
+        if (elapsed < BATTLE_FX_DURATION_MS) {
+          canvas._battleFxRaf = requestAnimationFrame(tick);
+          return;
+        }
+        canvas._battleFxRaf = 0;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = "none";
+        canvas.hidden = true;
+      };
+      canvas._battleFxRaf = requestAnimationFrame(tick);
+    })
+    .catch(() => {
+      canvas.style.display = "none";
+      canvas.hidden = true;
+    });
 }
 
 function ensureHeartFxCache() {
@@ -1152,6 +1256,98 @@ function renderFighters() {
   if (els.enemyFighterLabel) els.enemyFighterLabel.textContent = session.opponent?.name || "ENEMY";
 }
 
+function ensureDefenderBattleFxEls() {
+  if (!els.stageBand) return;
+  if (!els.enemyDefFxWrap) {
+    const wrap = document.createElement("div");
+    wrap.className = "defender-battle-fx defender-battle-fx--enemy";
+    wrap.hidden = true;
+    const canvas = document.createElement("canvas");
+    canvas.className = "defender-battle-fx-canvas";
+    canvas.width = 256;
+    canvas.height = 256;
+    canvas.hidden = true;
+    const text = document.createElement("div");
+    text.className = "defender-battle-fx-text";
+    text.textContent = "";
+    text.hidden = true;
+    wrap.appendChild(canvas);
+    wrap.appendChild(text);
+    els.stageBand.appendChild(wrap);
+    els.enemyDefFxWrap = wrap;
+    els.enemyDefFxCanvas = canvas;
+    els.enemyDefFxText = text;
+  }
+  if (!els.playerDefFxWrap) {
+    const wrap = document.createElement("div");
+    wrap.className = "defender-battle-fx defender-battle-fx--player";
+    wrap.hidden = true;
+    const canvas = document.createElement("canvas");
+    canvas.className = "defender-battle-fx-canvas";
+    canvas.width = 256;
+    canvas.height = 256;
+    canvas.hidden = true;
+    const text = document.createElement("div");
+    text.className = "defender-battle-fx-text";
+    text.textContent = "";
+    text.hidden = true;
+    wrap.appendChild(canvas);
+    wrap.appendChild(text);
+    els.stageBand.appendChild(wrap);
+    els.playerDefFxWrap = wrap;
+    els.playerDefFxCanvas = canvas;
+    els.playerDefFxText = text;
+  }
+}
+
+function placeDefenderBattleFx(side) {
+  const fighter = side === "enemy" ? els.enemyFighter : els.playerFighter;
+  const wrap = side === "enemy" ? els.enemyDefFxWrap : els.playerDefFxWrap;
+  if (!fighter || !wrap || !els.stageBand) return;
+  const fr = fighter.getBoundingClientRect();
+  const sr = els.stageBand.getBoundingClientRect();
+  const centerX = fr.left - sr.left + fr.width / 2;
+  const centerY = fr.top - sr.top + fr.height * 0.58;
+  wrap.style.left = `${centerX}px`;
+  wrap.style.top = `${centerY}px`;
+}
+
+function showDefenderBattleFxText(side, text) {
+  const textEl = side === "enemy" ? els.enemyDefFxText : els.playerDefFxText;
+  const fadeKey = side === "enemy" ? "enemyFade" : "playerFade";
+  const clearKey = side === "enemy" ? "enemyClear" : "playerClear";
+  if (!textEl) return;
+  if (battleFxTextTimers[fadeKey]) clearTimeout(battleFxTextTimers[fadeKey]);
+  if (battleFxTextTimers[clearKey]) clearTimeout(battleFxTextTimers[clearKey]);
+  textEl.hidden = false;
+  textEl.classList.remove("defender-battle-fx-text--fade");
+  textEl.textContent = text || "";
+  battleFxTextTimers[fadeKey] = setTimeout(() => {
+    textEl.classList.add("defender-battle-fx-text--fade");
+  }, BATTLE_FX_TEXT_VISIBLE_MS);
+  battleFxTextTimers[clearKey] = setTimeout(() => {
+    textEl.hidden = true;
+    textEl.classList.remove("defender-battle-fx-text--fade");
+    textEl.textContent = "";
+  }, BATTLE_FX_TEXT_VISIBLE_MS + BATTLE_FX_TEXT_FADE_MS);
+}
+
+function playDefenderBattleFx(side, kindKey, text) {
+  ensureDefenderBattleFxEls();
+  const wrap = side === "enemy" ? els.enemyDefFxWrap : els.playerDefFxWrap;
+  const canvas = side === "enemy" ? els.enemyDefFxCanvas : els.playerDefFxCanvas;
+  if (!wrap || !canvas) return;
+  placeDefenderBattleFx(side);
+  wrap.hidden = false;
+  if (battleFxWrapHideTimers[side]) clearTimeout(battleFxWrapHideTimers[side]);
+  playBattleFxCanvas(canvas, kindKey);
+  showDefenderBattleFxText(side, text);
+  battleFxWrapHideTimers[side] = setTimeout(() => {
+    if (wrap) wrap.hidden = true;
+    battleFxWrapHideTimers[side] = null;
+  }, BATTLE_FX_TEXT_VISIBLE_MS + BATTLE_FX_TEXT_FADE_MS + 120);
+}
+
 function showClashNumbers(enemyVal, playerVal) {
   if (!els.clashNumbers) return;
   els.clashNumbers.hidden = false; // never hide final values
@@ -1701,11 +1897,9 @@ async function playRound(card) {
   // Attack windup: step forward and back in 1 second.
   await playAttackStepMotion(isPlayerAttacking);
 
-  const use777AttackSfx =
+  const attackerHas777ThisRound =
     (isPlayerAttacking && usedSpecialThisRound && usedSpecialKind === "seven77") ||
     (!isPlayerAttacking && usedEnemySpecialThisRound && usedEnemySpecialKind === "seven77");
-  if (use777AttackSfx) window.PocketPawnsAudio?.playAttack777?.();
-  else window.PocketPawnsAudio?.playAttack?.();
 
   // Show clash numbers.
   showClashNumbers(enemyFinal, playerFinal);
@@ -1733,11 +1927,16 @@ async function playRound(card) {
   let roundNote = [enemySpecialRes.note].filter(Boolean).join("｜");
   /** 須在 refreshBattleUI 之後再播，否則 renderFighters 會立刻清掉 fighter--hit-shake */
   let defenderHitShakeSide = null;
+  let defenderBattleFxPlan = null;
+  const attackerStatForResult = isPlayerAttacking ? stat : enemyCombatStat;
+  const defenderStatForResult = isPlayerAttacking ? enemyCombatStat : stat;
   if (isPlayerAttacking) {
     if (playerFinal > enemyFinal) {
       const damage = 1 + (specialRes.bonusDamage || 0);
       state.enemy.hearts = Math.max(0, (state.enemy.hearts || 0) - damage);
       defenderHitShakeSide = "enemy";
+      const key = String(attackerStatForResult || "").toLowerCase();
+      if (BATTLE_FX_META[key]) defenderBattleFxPlan = { side: "enemy", key };
       emitBattleFx("attack", {
         stat,
         phase: state.phase,
@@ -1756,12 +1955,20 @@ async function playRound(card) {
     } else if (!roundNote) {
       roundNote = "攻擊被擋下，未造成傷害";
     }
+    const key = String(defenderStatForResult || "").toLowerCase();
+    if (playerFinal <= enemyFinal && BATTLE_FX_META[key]) defenderBattleFxPlan = { side: "enemy", key };
   } else if (enemyFinal > playerFinal) {
     state.player.hearts = Math.max(0, (state.player.hearts || 0) - 1);
     defenderHitShakeSide = "player";
+    const key = String(attackerStatForResult || "").toLowerCase();
+    if (BATTLE_FX_META[key]) defenderBattleFxPlan = { side: "player", key };
     if (!roundNote) roundNote = "防禦失敗：玩家失去 1 點 HP";
   } else if (!roundNote) {
     roundNote = "防禦成功，未受到傷害";
+  }
+  const defenseWinKey = String(defenderStatForResult || "").toLowerCase();
+  if (!isPlayerAttacking && playerFinal >= enemyFinal && BATTLE_FX_META[defenseWinKey]) {
+    defenderBattleFxPlan = { side: "player", key: defenseWinKey };
   }
 
   state.player = clone(state.player);
@@ -1782,6 +1989,14 @@ async function playRound(card) {
     session.match.oneHpStreak = 0;
   }
   refreshBattleUI({ heartFxBaseline: roundHeartFxBaseline });
+  if (defenderBattleFxPlan) {
+    const meta = BATTLE_FX_META[defenderBattleFxPlan.key];
+    const shouldPlay777AttackSfx =
+      attackerHas777ThisRound && ["str", "int", "dex"].includes(String(defenderBattleFxPlan.key || "").toLowerCase());
+    if (shouldPlay777AttackSfx) window.PocketPawnsAudio?.playAttack777?.();
+    else window.PocketPawnsAudio?.playBattleFxByKey?.(defenderBattleFxPlan.key);
+    if (meta) playDefenderBattleFx(defenderBattleFxPlan.side, defenderBattleFxPlan.key, meta.text);
+  }
   if (defenderHitShakeSide) {
     requestAnimationFrame(() => playDefenderHitShake(defenderHitShakeSide));
   }
