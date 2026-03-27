@@ -15,6 +15,7 @@
     <script src="characters.js"></script>
   </head>
   <body>
+    <!-- Floating speech bubbles -->
     <!-- 對話氣泡掛在 body，避免 .stage-band transform 使 fixed 失效而被角色／比數擋住 -->
     <div class="speech-bubble speech-bubble--enemy" id="enemy-speech-bubble" hidden>
       <p class="speech-bubble-text" id="enemy-speech-text"></p>
@@ -22,7 +23,21 @@
     <div class="speech-bubble speech-bubble--player" id="player-speech-bubble" hidden>
       <p class="speech-bubble-text" id="player-speech-text"></p>
     </div>
+    <template id="npc-dialog-template">
+      <img class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
+      <div class="character-select-npc-text">
+        <div class="character-select-npc-title">
+          <span class="character-select-npc-name">朵雲公主</span>
+          <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
+        </div>
+        <p class="npc-message character-select-npc-message" aria-live="polite"></p>
+      </div>
+    </template>
+    <template id="action-button-template">
+      <button type="button"></button>
+    </template>
 
+    <!-- Title / meta screens -->
     <div id="title-screen" class="overlay-screen overlay-title-screen" aria-label="標題畫面">
       <div class="overlay-inner title-inner">
         <h1 class="title-logo">口袋棋兵</h1>
@@ -30,35 +45,29 @@
         <p class="title-mobile-hint">
           手機用戶請在瀏覽器選單裡手動開<br />「電腦版網站」以獲得最佳體驗
         </p>
-        <div class="title-actions">
-          <button type="button" class="title-btn title-btn-primary" id="title-btn-play">開始遊玩</button>
-          <button type="button" class="title-btn" id="title-btn-credits">製作名單</button>
-        </div>
+        <div
+          class="title-actions"
+          data-action-buttons="title-btn-play|title-btn title-btn-primary|開始遊玩;title-btn-credits|title-btn|製作名單"
+        ></div>
       </div>
     </div>
 
     <div id="credits-screen" class="overlay-screen" hidden aria-label="製作名單">
       <div class="overlay-inner credits-inner">
-        <h2 class="overlay-title">製作名單</h2>
+        <h2 class="overlay-title" id="credits-title">製作名單</h2>
         <p class="credits-body">Pocket Pawns / Pocket Chess Soldiers</p>
-        <button type="button" class="settlement-btn" id="credits-btn-back">返回</button>
+        <div data-action-buttons="credits-btn-back|settlement-btn|返回"></div>
       </div>
     </div>
 
+    <!-- Character select / detail -->
     <div id="character-select" class="overlay-screen overlay-character-select" hidden aria-label="角色選擇">
       <div class="overlay-inner character-select-inner">
         <div class="character-select-list-panel" aria-label="角色清單">
           <header class="character-select-header">
             <h1 class="overlay-title character-select-title">請選擇角色</h1>
             <div class="stat-sort-wrap" aria-label="屬性排序">
-              <div class="stat-sort-row">
-                <button type="button" class="stat-sort-btn" data-sort-stat="STR" title="依 STR 排序">STR</button>
-                <button type="button" class="stat-sort-btn" data-sort-stat="INT" title="依 INT 排序">INT</button>
-                <button type="button" class="stat-sort-btn" data-sort-stat="DEX" title="依 DEX 排序">DEX</button>
-                <button type="button" class="stat-sort-btn" data-sort-stat="AGI" title="依 AGI 排序">AGI</button>
-                <button type="button" class="stat-sort-btn" data-sort-stat="VIT" title="依 VIT 排序">VIT</button>
-                <button type="button" class="stat-sort-btn" data-sort-stat="LUK" title="依 LUK 排序">LUK</button>
-              </div>
+              <div class="stat-sort-row" data-stat-sort-row data-stats="STR,INT,DEX,AGI,VIT,LUK"></div>
             </div>
           </header>
           <div class="character-scroll-outer">
@@ -67,17 +76,13 @@
         </div>
 
         <footer class="character-select-footer" aria-label="角色選擇操作">
-          <div class="character-select-npc" aria-label="朵雲公主對話">
-            <img id="character-select-npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
-            <div class="character-select-npc-text">
-              <div class="character-select-npc-title">
-                <span class="character-select-npc-name">朵雲公主</span>
-                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
-              </div>
-              <p class="npc-message character-select-npc-message" id="character-select-npc-message"></p>
-            </div>
-          </div>
-          <button type="button" class="character-select-back-btn" id="btn-character-back">返回標題</button>
+          <div
+            class="character-select-npc npc-shell"
+            aria-label="朵雲公主對話"
+            data-face-id="character-select-npc-face"
+            data-message-id="character-select-npc-message"
+          ></div>
+          <div data-action-buttons="btn-character-back|character-select-back-btn|返回標題"></div>
         </footer>
       </div>
     </div>
@@ -93,56 +98,51 @@
               <h2 id="character-detail-name" class="character-detail-name"></h2>
               <p class="character-detail-menu-dlg" id="character-detail-menu-dlg" hidden></p>
               <div id="character-detail-stats" class="character-detail-stats"></div>
-              <div class="character-detail-meta" id="character-detail-meta"></div>
+              <div class="character-detail-meta" id="character-detail-meta" aria-live="polite"></div>
             </div>
           </div>
         </div>
 
         <footer class="character-select-footer character-detail-footer" aria-label="角色詳情操作">
-          <div class="character-select-npc" aria-label="朵雲公主對話">
-            <img id="character-detail-npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
-            <div class="character-select-npc-text">
-              <div class="character-select-npc-title">
-                <span class="character-select-npc-name">朵雲公主</span>
-                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
-              </div>
-              <p class="npc-message character-select-npc-message" id="character-detail-npc-message"></p>
-            </div>
-          </div>
-          <div class="character-detail-footer-actions">
-            <button type="button" class="character-select-back-btn" id="character-detail-back">返回</button>
-            <button type="button" class="Btn character-detail-confirm-btn" id="character-detail-confirm" aria-label="確定">
-              <span class="character-detail-confirm-btn-sizer" aria-hidden="true">確定</span>
-            </button>
-          </div>
+          <div
+            class="character-select-npc npc-shell"
+            aria-label="朵雲公主對話"
+            data-face-id="character-detail-npc-face"
+            data-message-id="character-detail-npc-message"
+          ></div>
+          <div
+            class="character-detail-footer-actions"
+            data-action-buttons="character-detail-back|character-select-back-btn|返回;character-detail-confirm|Btn character-detail-confirm-btn|確定|確定"
+          ></div>
         </footer>
       </div>
     </div>
 
-    <div id="menu-overlay" class="overlay-screen overlay-menu" hidden aria-modal="true" role="dialog">
+    <!-- In-battle overlays -->
+    <div id="menu-overlay" class="overlay-screen overlay-menu" hidden aria-modal="true" role="dialog" aria-labelledby="menu-panel-title">
       <div class="menu-panel">
-        <h3 class="menu-panel-title">系統</h3>
-        <button type="button" class="settlement-btn" id="menu-btn-close">關閉</button>
-        <button type="button" class="settlement-btn menu-quit" id="menu-btn-quit-battle">退出戰鬥</button>
+        <h3 class="menu-panel-title" id="menu-panel-title">系統</h3>
+        <div data-action-buttons="menu-btn-close|settlement-btn|關閉;menu-btn-quit-battle|settlement-btn menu-quit|退出戰鬥"></div>
       </div>
     </div>
 
-    <div id="settlement" class="overlay-screen overlay-settlement" hidden aria-modal="true" role="dialog">
+    <div id="settlement" class="overlay-screen overlay-settlement" hidden aria-modal="true" role="dialog" aria-labelledby="settlement-ending">
       <div class="overlay-inner settlement-inner">
         <div id="settlement-ending" class="settlement-ending"></div>
         <div id="settlement-details" class="settlement-details" hidden></div>
         <div id="settlement-record" class="settlement-record" hidden>
           <p class="settlement-record-hint">你打破了連擊紀錄！輸入你的名稱，讓大家記住你。</p>
-          <input type="text" id="settlement-record-input" class="settlement-record-input" maxlength="32" placeholder="輸入 2~32 字元" />
-          <button type="button" id="settlement-btn-record" class="settlement-btn primary">提交名稱</button>
+          <input type="text" id="settlement-record-input" class="settlement-record-input" maxlength="32" placeholder="輸入 2~32 字元" autocomplete="off" />
+          <div data-action-buttons="settlement-btn-record|settlement-btn primary|提交名稱"></div>
         </div>
-        <button type="button" id="settlement-btn-back" class="character-select-back-btn">返回標題</button>
+        <div data-action-buttons="settlement-btn-back|character-select-back-btn|返回標題"></div>
       </div>
     </div>
 
     <div id="screen-curtain" class="screen-curtain" hidden aria-hidden="true"></div>
 
-    <div class="viewport-16x9" id="viewport" hidden>
+    <!-- Core battle viewport -->
+    <div class="viewport-16x9" id="viewport" hidden aria-label="戰鬥畫面">
       <div class="game-root" id="game-root">
         <header class="top-bar">
           <div class="enemy-hud">
@@ -154,7 +154,7 @@
               <div class="field-label" id="field-label" aria-live="polite"></div>
               <div class="phase-badge" id="phase-badge" aria-live="polite">玩家攻擊階段</div>
             </div>
-            <button type="button" class="menu-btn Btn character-detail-confirm-btn" id="btn-menu">系統</button>
+            <div data-action-buttons="btn-menu|menu-btn Btn character-detail-confirm-btn|系統"></div>
           </div>
         </header>
 
@@ -179,16 +179,7 @@
         </main>
 
         <aside class="npc-panel" id="npc-panel">
-          <div class="character-select-npc" aria-label="朵雲公主對話">
-            <img id="npc-face" class="character-select-npc-face" src="" alt="" width="203" height="239" decoding="async" />
-            <div class="character-select-npc-text">
-              <div class="character-select-npc-title">
-                <span class="character-select-npc-name">朵雲公主</span>
-                <span class="character-select-npc-tag" aria-hidden="true">嚮導</span>
-              </div>
-              <p class="npc-message character-select-npc-message" id="npc-message"></p>
-            </div>
-          </div>
+          <div class="character-select-npc npc-shell" aria-label="朵雲公主對話" data-face-id="npc-face" data-message-id="npc-message"></div>
         </aside>
 
         <section class="player-panel">

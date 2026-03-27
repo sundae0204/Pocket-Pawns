@@ -10,13 +10,48 @@ html {
   font-size: 200%;
 }
 
+/* ---- Theme tokens ---- */
 :root {
+  /* General shared colors */
+  --color-white: #fff;
+
+  /* Tooltip tokens */
+  --color-tooltip-text: #f0f0f5;
+  --color-tooltip-bg-mobile: rgba(20, 20, 30, 0.94);
+  --color-tooltip-bg-desktop: rgba(20, 20, 30, 0.96);
+  --shadow-tooltip-mobile: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --shadow-tooltip-desktop: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  /* Button tokens */
+  --radius-btn-md: 10px;
+  --anim-btn-slow: 1s;
+  --btn-border-subtle: 2px solid rgba(255, 255, 255, 0.2);
+  --btn-border-primary: rgba(180, 210, 255, 0.4);
+  --panel-border-soft: 2px solid rgba(255, 255, 255, 0.12);
+  --rule-soft: 1px solid rgba(255, 255, 255, 0.08);
+  --btn-back-border: 2px solid #bd945f;
+  --btn-back-bg: linear-gradient(180deg, #a3715b 0%, #74574b 100%);
+  --btn-back-stroke: #a25d3e;
+  --btn-back-shadow: #5a3020;
+  --btn-gold-text: #ffd277;
+  --btn-gold-bg: linear-gradient(to right, #77530a, #ffd277, #77530a, #77530a, #ffd277, #77530a);
+  --btn-gold-inner-bg: rgba(0, 0, 0, 0.842);
+  --btn-min-w: 108px;
+  --btn-pad-md: 10px 16px;
+  --btn-font-sm: 0.75rem;
+
+  /* Spacing tokens used by button/tooltip blocks */
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
   --heart-on: #ff84e9;
   --heart-off: #502949;
   --panel-purple: rgba(88, 48, 120, 0.92);
   --panel-blue: #2a6cb8;
   --panel-npc: #2d2d33;
   --text-outline: 0 1px 0 #000, 0 -1px 0 #000, 1px 0 0 #000, -1px 0 0 #000;
+  --btn-primary-blue: linear-gradient(180deg, #5a8cff 0%, #2a58c0 100%);
   --card-blue: #4a9eff;
   --card-orange: #ff9a3c;
   --stage-band: rgba(12, 8, 28, 0.55);
@@ -1200,43 +1235,43 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   }
 }
 
-#btn-menu.Btn.character-detail-confirm-btn {
-  min-width: 108px;
-  padding: 10px 16px;
+/* 金色按鈕共用樣式：戰鬥「系統」與角色詳情「確定」 */
+.Btn.character-detail-confirm-btn {
+  min-width: var(--btn-min-w);
+  padding: var(--btn-pad-md);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-btn-md);
   appearance: none;
-  background: linear-gradient(to right, #77530a, #ffd277, #77530a, #77530a, #ffd277, #77530a);
+  background: var(--btn-gold-bg);
   background-size: 250%;
   background-position: left;
-  color: #ffd277;
+  color: var(--btn-gold-text);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition-duration: 1s;
+  transition-duration: var(--anim-btn-slow);
   overflow: hidden;
   box-sizing: border-box;
   font: inherit;
-  font-size: 1.125rem;
   font-weight: 800;
   line-height: 1.35;
   letter-spacing: normal;
   box-shadow: none;
 }
 
-#btn-menu.Btn.character-detail-confirm-btn::before {
+.Btn.character-detail-confirm-btn::before {
   position: absolute;
-  content: "系統";
-  color: #ffd277;
+  content: attr(data-label);
+  color: var(--btn-gold-text);
   display: flex;
   align-items: center;
   justify-content: center;
   inset: 2px 2px;
   border-radius: 7px;
-  transition-duration: 1s;
-  background-color: rgba(0, 0, 0, 0.842);
+  transition-duration: var(--anim-btn-slow);
+  background-color: var(--btn-gold-inner-bg);
   background-size: 200%;
   font-weight: 800;
   font-size: inherit;
@@ -1244,16 +1279,20 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   box-sizing: border-box;
 }
 
-#btn-menu.Btn.character-detail-confirm-btn:hover {
+.Btn.character-detail-confirm-btn:hover {
   background-position: right;
 }
 
-#btn-menu.Btn.character-detail-confirm-btn:hover::before {
+.Btn.character-detail-confirm-btn:hover::before {
   background-position: right;
 }
 
-#btn-menu.Btn.character-detail-confirm-btn:active {
+.Btn.character-detail-confirm-btn:active {
   transform: scale(0.95);
+}
+
+#btn-menu.Btn.character-detail-confirm-btn {
+  font-size: 1.125rem;
 }
 
 /* --- 角色選單 / 結算覆蓋層 --- */
@@ -1418,29 +1457,35 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   }
 }
 
+/* ---- Button blocks ---- */
 .title-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-12);
   align-items: stretch;
   max-width: 280px;
   margin: 0 auto;
 }
 
-.title-btn {
-  padding: 12px 20px;
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(40, 36, 70, 0.9);
-  color: #fff;
+.title-btn,
+.character-select-back-btn,
+.settlement-btn {
   font: inherit;
-  font-weight: 700;
+  color: var(--color-white);
   cursor: pointer;
 }
 
+.title-btn {
+  padding: 12px 20px;
+  border-radius: var(--radius-btn-md);
+  border: var(--btn-border-subtle);
+  background: rgba(40, 36, 70, 0.9);
+  font-weight: 700;
+}
+
 .title-btn-primary {
-  background: linear-gradient(180deg, #5a8cff 0%, #2a58c0 100%);
-  border-color: rgba(180, 210, 255, 0.4);
+  background: var(--btn-primary-blue);
+  border-color: var(--btn-border-primary);
 }
 
 .title-btn:hover {
@@ -1669,22 +1714,19 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   flex: 0 0 auto;
   align-self: flex-end;
   margin-top: 0;
-  padding: 10px 16px;
-  min-width: 108px;
+  padding: var(--btn-pad-md);
+  min-width: var(--btn-min-w);
   max-width: none;
-  font: inherit;
-  font-size: 0.75rem;
+  font-size: var(--btn-font-sm);
   font-weight: 800;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 10px;
-  border: 2px solid #bd945f;
-  background: linear-gradient(180deg, #a3715b 0%, #74574b 100%);
-  -webkit-text-stroke: 0.4px #a25d3e;
+  border-radius: var(--radius-btn-md);
+  border: var(--btn-back-border);
+  background: var(--btn-back-bg);
+  -webkit-text-stroke: 0.4px var(--btn-back-stroke);
   paint-order: stroke fill;
   text-shadow:
-    0 0 1px #a25d3e,
-    0 1px 0 #5a3020;
+    0 0 1px var(--btn-back-stroke),
+    0 1px 0 var(--btn-back-shadow);
 }
 
 .character-select-back-btn:hover {
@@ -1693,7 +1735,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
 #settlement-btn-back.character-select-back-btn {
   display: block;
-  margin: 14px auto 0;
+  margin: var(--space-14) auto 0;
 }
 
 @media (max-width: 420px) {
@@ -1932,7 +1974,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   justify-content: space-between;
   gap: 10px;
   padding: 5px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: var(--rule-soft);
 }
 
 .character-detail-meta-row span:first-child {
@@ -1948,7 +1990,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
+  gap: var(--space-10);
   flex: 0 0 auto;
 }
 
@@ -1957,32 +1999,12 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   text-align: center;
 }
 
-/* From Uiverse.io by vinodjangid07 — 確定鈕（外觀與 .character-select-back-btn 同 padding／字級；空按鈕需 sizer 撐高） */
+/* Detail confirm button: shares base gold style, keeps local sizing/sizer behavior */
 #character-detail .Btn.character-detail-confirm-btn {
   width: 100%;
-  min-width: 108px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 10px;
-  appearance: none;
-  background: linear-gradient(to right, #77530a, #ffd277, #77530a, #77530a, #ffd277, #77530a);
-  background-size: 250%;
-  background-position: left;
-  color: #ffd277;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition-duration: 1s;
-  overflow: hidden;
   flex-shrink: 0;
   margin: 0;
-  box-sizing: border-box;
-  font: inherit;
-  font-size: 0.75rem;
-  font-weight: 800;
-  line-height: 1.35;
+  font-size: var(--btn-font-sm);
 }
 
 #character-detail .Btn.character-detail-confirm-btn .character-detail-confirm-btn-sizer {
@@ -1996,42 +2018,10 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   white-space: nowrap;
 }
 
-#character-detail .Btn.character-detail-confirm-btn::before {
-  position: absolute;
-  content: "確定";
-  color: #ffd277;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  inset: 2px 2px;
-  border-radius: 7px;
-  transition-duration: 1s;
-  background-color: rgba(0, 0, 0, 0.842);
-  background-size: 200%;
-  font-weight: 800;
-  font-size: inherit;
-  line-height: inherit;
-  box-sizing: border-box;
-}
-
-#character-detail .Btn.character-detail-confirm-btn:hover {
-  background-position: right;
-  transition-duration: 1s;
-}
-
-#character-detail .Btn.character-detail-confirm-btn:hover::before {
-  background-position: right;
-  transition-duration: 1s;
-}
-
-#character-detail .Btn.character-detail-confirm-btn:active {
-  transform: scale(0.95);
-}
-
 .overlay-inner {
   width: min(960px, 100%);
   background: rgba(20, 14, 40, 0.92);
-  border: 2px solid rgba(255, 255, 255, 0.12);
+  border: var(--panel-border-soft);
   border-radius: 14px;
   padding: 20px 22px 24px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
@@ -2361,68 +2351,59 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 .settlement-btn {
   display: block;
   width: 100%;
-  margin-top: 10px;
+  margin-top: var(--space-10);
   padding: 10px 14px;
   border-radius: 8px;
   border: none;
   background: #3a3a52;
-  color: #fff;
   font-weight: 700;
-  cursor: pointer;
-  font: inherit;
 }
 
 .settlement-btn.primary {
-  background: linear-gradient(180deg, #5a8cff 0%, #2a58c0 100%);
+  background: var(--btn-primary-blue);
 }
 
 .settlement-btn:hover {
   filter: brightness(1.08);
 }
 
-/* 手機長按卡牌／特殊卡：說明（與桌面懸浮共用樣式概念） */
-.mobile-tip-toast {
-  position: fixed;
-  bottom: max(16px, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: min(92vw, 22rem);
-  padding: 0.65rem 1rem;
-  background: rgba(20, 20, 30, 0.94);
-  color: #f0f0f5;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  line-height: 1.45;
-  z-index: 9999;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
-  text-align: center;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.mobile-tip-toast[hidden] {
-  display: none;
-}
-
-/* 桌面：懸浮說明（夾在視窗內，避免原生 title 跑出瀏覽器） */
+/* ---- Tooltip blocks ---- */
+/* Mobile long-press tip + desktop hover tooltip shared styles */
+.mobile-tip-toast,
 .card-hover-tooltip {
   position: fixed;
-  z-index: 10000;
   max-width: min(92vw, 22rem);
   padding: 0.65rem 1rem;
-  background: rgba(20, 20, 30, 0.96);
-  color: #f0f0f5;
-  border-radius: 10px;
+  color: var(--color-tooltip-text);
+  border-radius: var(--radius-btn-md);
   font-size: 0.88rem;
   line-height: 1.45;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  pointer-events: auto;
-  text-align: left;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
 
+/* Mobile long-press card/special tip */
+.mobile-tip-toast {
+  bottom: max(var(--space-16), env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-tooltip-bg-mobile);
+  z-index: 9999;
+  box-shadow: var(--shadow-tooltip-mobile);
+  pointer-events: none;
+  text-align: center;
+}
+
+/* Desktop hover tooltip (kept inside viewport bounds by JS) */
+.card-hover-tooltip {
+  z-index: 10000;
+  background: var(--color-tooltip-bg-desktop);
+  box-shadow: var(--shadow-tooltip-desktop);
+  pointer-events: auto;
+  text-align: left;
+}
+
+.mobile-tip-toast[hidden],
 .card-hover-tooltip[hidden] {
   display: none;
 }

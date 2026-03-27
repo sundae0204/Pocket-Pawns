@@ -5,6 +5,8 @@
 
 const STATS = ["STR", "INT", "DEX", "AGI", "VIT", "LUK"];
 const STATS_SET = new Set(STATS);
+const ATTACK_STATS = ["STR", "INT", "DEX"];
+const DEFENSE_STATS = ["AGI", "VIT", "LUK"];
 
 const FIELDS = [
   { id: "fire", name: "焦糖沙漠", boost: "STR" },
@@ -992,17 +994,7 @@ function setupRoundForCurrentOpponent() {
   ensurePlayerNotZeroHpAtBattleEntry();
   state.enemy = clone(session.opponent.initial);
   state.field = rand(FIELDS);
-  state.phase = "attack";
-  state.hand = makeHandForPhase(state.phase);
-  const sp = makeSpecial(state.phase, state.hand);
-  state.special = sp.kind;
-  state.specialStat = sp.targetStat;
-  registerPlayerSpecialDraw(sp.kind);
-  const esp = makeEnemySpecial(state.phase);
-  state.enemySpecial = esp.kind;
-  state.enemySpecialStat = esp.targetStat;
-  state.enemySpecialOn = Math.random() < 0.5;
-  state.specialOn = false;
+  setupRoundCardsAndSpecials("attack");
   state.resolving = false;
   state.over = false;
   lastRenderedHeartState.player = null;
@@ -1548,7 +1540,7 @@ function statValueFromCharacter(charObj, stat) {
 
 /** 敵方本回合比拚用的屬性池：玩家攻擊時敵為守方（AGI/VIT/LUK）；玩家防禦時敵為攻方（STR/INT/DEX）。 */
 function enemyStatPoolForClash(isPlayerAttacking) {
-  return isPlayerAttacking ? ["AGI", "VIT", "LUK"] : ["STR", "INT", "DEX"];
+  return isPlayerAttacking ? DEFENSE_STATS : ATTACK_STATS;
 }
 
 /** 從池中取場景加成後最高值，並記錄實際用哪一項（供敵方特殊卡命中判定）。 */
@@ -1568,7 +1560,7 @@ function bestEnemyCombatValue(enemy, statPool, zeroStat = null) {
 }
 
 function makeHandForPhase(phase) {
-  const pool = phase === "attack" ? ["STR", "INT", "DEX"] : ["AGI", "VIT", "LUK"];
+  const pool = phase === "attack" ? ATTACK_STATS : DEFENSE_STATS;
   const candidates = pool.flatMap((stat) => [
     { stat, side: "P" },
     { stat, side: "E" },
@@ -1583,12 +1575,28 @@ function makeHandForPhase(phase) {
 }
 
 function specialPoolForPlayerPhase(phase) {
-  return phase === "attack" ? ["STR", "INT", "DEX"] : ["AGI", "VIT", "LUK"];
+  return phase === "attack" ? ATTACK_STATS : DEFENSE_STATS;
 }
 
 function specialPoolForEnemyPhase(phase) {
   // If player is attacking, enemy is defending (and vice versa).
-  return phase === "attack" ? ["AGI", "VIT", "LUK"] : ["STR", "INT", "DEX"];
+  return phase === "attack" ? DEFENSE_STATS : ATTACK_STATS;
+}
+
+function setupRoundCardsAndSpecials(phase) {
+  state.phase = phase;
+  state.hand = makeHandForPhase(state.phase);
+
+  const playerSpecial = makeSpecial(state.phase, state.hand);
+  state.special = playerSpecial.kind;
+  state.specialStat = playerSpecial.targetStat;
+  registerPlayerSpecialDraw(playerSpecial.kind);
+
+  const enemySpecial = makeEnemySpecial(state.phase);
+  state.enemySpecial = enemySpecial.kind;
+  state.enemySpecialStat = enemySpecial.targetStat;
+  state.enemySpecialOn = Math.random() < 0.5;
+  state.specialOn = false;
 }
 
 function makeSpecial(phase, handStats = []) {
@@ -1951,10 +1959,6 @@ async function playRound(card) {
   // Attack windup: step forward and back in 1 second.
   await playAttackStepMotion(isPlayerAttacking);
 
-  const attackerHas777ThisRound =
-    (isPlayerAttacking && usedSpecialThisRound && usedSpecialKind === "seven77") ||
-    (!isPlayerAttacking && usedEnemySpecialThisRound && usedEnemySpecialKind === "seven77");
-
   // Show clash numbers.
   showClashNumbers(enemyFinal, playerFinal);
 
@@ -2046,7 +2050,7 @@ async function playRound(card) {
   if (defenderBattleFxPlan) {
     const meta = BATTLE_FX_META[defenderBattleFxPlan.key];
     const shouldPlay777AttackSfx =
-      attackerHas777ThisRound && ["str", "int", "dex"].includes(String(defenderBattleFxPlan.key || "").toLowerCase());
+      attackerUsed777 && ["str", "int", "dex"].includes(String(defenderBattleFxPlan.key || "").toLowerCase());
     if (shouldPlay777AttackSfx) window.PocketPawnsAudio?.playAttack777?.();
     else window.PocketPawnsAudio?.playBattleFxByKey?.(defenderBattleFxPlan.key);
     if (meta) playDefenderBattleFx(defenderBattleFxPlan.side, defenderBattleFxPlan.key, meta.text);
@@ -2089,21 +2093,8 @@ async function playRound(card) {
   }
 
   // Next phase
-  state.phase = state.phase === "attack" ? "defense" : "attack";
-  state.hand = makeHandForPhase(state.phase);
-  {
-    const sp = makeSpecial(state.phase, state.hand);
-    state.special = sp.kind;
-    state.specialStat = sp.targetStat;
-    registerPlayerSpecialDraw(sp.kind);
-  }
-  {
-    const esp = makeEnemySpecial(state.phase);
-    state.enemySpecial = esp.kind;
-    state.enemySpecialStat = esp.targetStat;
-    state.enemySpecialOn = Math.random() < 0.5;
-  }
-  state.specialOn = false;
+  const nextPhase = state.phase === "attack" ? "defense" : "attack";
+  setupRoundCardsAndSpecials(nextPhase);
   state.resolving = false;
   renderValueCards();
   renderSpecialColumn();
@@ -2134,7 +2125,6 @@ async function startBattle() {
     ensurePlayerNotZeroHpAtBattleEntry();
     state.enemy = clone(session.opponent.initial);
     state.field = rand(FIELDS);
-    state.phase = "attack";
     state.over = false;
     state.resolving = false;
 
@@ -2150,20 +2140,7 @@ async function startBattle() {
     session.any77Used = false;
     session.match = createMatchState();
 
-    state.hand = makeHandForPhase(state.phase);
-    {
-      const sp = makeSpecial(state.phase, state.hand);
-      state.special = sp.kind;
-      state.specialStat = sp.targetStat;
-      registerPlayerSpecialDraw(sp.kind);
-    }
-    {
-      const esp = makeEnemySpecial(state.phase);
-      state.enemySpecial = esp.kind;
-      state.enemySpecialStat = esp.targetStat;
-      state.enemySpecialOn = Math.random() < 0.5;
-    }
-    state.specialOn = false;
+    setupRoundCardsAndSpecials("attack");
     session.totalPlays = readTotalPlays() + 1;
     writeTotalPlays(session.totalPlays);
     applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
@@ -2266,7 +2243,9 @@ async function loadGlobalRecordInfo() {
 }
 
 function bindEvents() {
-  document.getElementById("title-btn-play").addEventListener("click", async () => {
+  const onClick = (id, handler) => document.getElementById(id)?.addEventListener("click", handler);
+
+  onClick("title-btn-play", async () => {
     window.PocketPawnsAudio?.init?.();
     window.PocketPawnsAudio?.playBtn?.();
     setVisibleById("character-select");
@@ -2276,24 +2255,23 @@ function bindEvents() {
     }, 0);
   });
 
-  document.getElementById("title-btn-credits").addEventListener("click", () => {
+  onClick("title-btn-credits", () => {
     window.PocketPawnsAudio?.playBtn?.();
     setVisibleById("credits-screen");
   });
-  document.getElementById("credits-btn-back").addEventListener("click", () => {
+  onClick("credits-btn-back", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     setVisibleById("title-screen");
   });
-  document.getElementById("btn-character-back").addEventListener("click", () => {
+  onClick("btn-character-back", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     setVisibleById("title-screen");
   });
-  document.getElementById("character-detail-back").addEventListener("click", () => {
+  onClick("character-detail-back", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     setVisibleById("character-select");
   });
-  document.getElementById("character-detail-confirm").addEventListener("click", () => {
-    // playBtn() 的回傳值不應影響是否進入戰鬥。
+  onClick("character-detail-confirm", () => {
     window.PocketPawnsAudio?.playBtn?.();
     void runCurtainTransition(async () => {
       if (selectedChar && !isRandomCharacter(selectedChar)) {
@@ -2313,13 +2291,14 @@ function bindEvents() {
     }, { fadeMs: 200 });
   });
 
-  document.querySelectorAll(".stat-sort-btn").forEach((btn) => {
+  const sortButtons = Array.from(document.querySelectorAll(".stat-sort-btn"));
+  sortButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       window.PocketPawnsAudio?.playBtn?.();
       const nextSort = btn.dataset.sortStat || null;
       const cancelCurrent = sortStat && sortStat === nextSort;
       sortStat = cancelCurrent ? null : nextSort;
-      document.querySelectorAll(".stat-sort-btn").forEach((b) => {
+      sortButtons.forEach((b) => {
         const isActive = !cancelCurrent && b === btn;
         b.classList.toggle("is-active", isActive);
       });
@@ -2327,31 +2306,29 @@ function bindEvents() {
     });
   });
 
-  // Menu overlay
-  document.getElementById("btn-menu").addEventListener("click", () => {
+  onClick("btn-menu", () => {
     window.PocketPawnsAudio?.playBtn?.();
     if (els.menuOverlay) els.menuOverlay.hidden = false;
     syncCardsDeckVisibility();
   });
-  document.getElementById("menu-btn-close").addEventListener("click", () => {
+  onClick("menu-btn-close", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     if (els.menuOverlay) els.menuOverlay.hidden = true;
     syncCardsDeckVisibility();
   });
-  document.getElementById("menu-btn-quit-battle").addEventListener("click", () => {
+  onClick("menu-btn-quit-battle", () => {
     window.PocketPawnsAudio?.playBtn?.();
     if (els.menuOverlay) els.menuOverlay.hidden = true;
     void finishBattle("quit");
   });
 
-  // Settlement
-  document.getElementById("settlement-btn-back").addEventListener("click", () => {
+  onClick("settlement-btn-back", () => {
     window.PocketPawnsAudio?.playBtn?.();
     void runCurtainTransition(() => {
       setVisibleById("title-screen");
     }, { fadeMs: 200 });
   });
-  document.getElementById("settlement-btn-record").addEventListener("click", async () => {
+  onClick("settlement-btn-record", async () => {
     window.PocketPawnsAudio?.playBtn?.();
     const id = session.pendingRecordCharacterId;
     if (!id) return;
@@ -2384,6 +2361,75 @@ async function loadDialogue() {
   } catch {
     dialogueData = { _default: { menuSelect: "準備出戰吧。" } };
   }
+}
+
+function hydrateNpcShells() {
+  const template = document.getElementById("npc-dialog-template");
+  if (!(template instanceof HTMLTemplateElement)) return;
+  document.querySelectorAll(".npc-shell").forEach((shell) => {
+    const faceId = shell.dataset.faceId;
+    const messageId = shell.dataset.messageId;
+    if (!faceId || !messageId) return;
+    if (document.getElementById(faceId) && document.getElementById(messageId)) return;
+    const fragment = template.content.cloneNode(true);
+    const faceEl = fragment.querySelector(".character-select-npc-face");
+    const messageEl = fragment.querySelector(".character-select-npc-message");
+    if (faceEl) faceEl.id = faceId;
+    if (messageEl) messageEl.id = messageId;
+    shell.replaceChildren(fragment);
+  });
+}
+
+function hydrateStatSortButtons() {
+  const rows = document.querySelectorAll("[data-stat-sort-row]");
+  rows.forEach((row) => {
+    if (row.querySelector(".stat-sort-btn")) return;
+    const rawStats = String(row.dataset.stats || "").trim();
+    const stats = rawStats
+      ? rawStats.split(",").map((s) => s.trim()).filter((s) => STATS_SET.has(s))
+      : STATS.slice();
+    stats.forEach((stat) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "stat-sort-btn";
+      btn.dataset.sortStat = stat;
+      btn.title = `依 ${stat} 排序`;
+      btn.textContent = stat;
+      row.appendChild(btn);
+    });
+  });
+}
+
+function hydrateActionButtons() {
+  const template = document.getElementById("action-button-template");
+  if (!(template instanceof HTMLTemplateElement)) return;
+  document.querySelectorAll("[data-action-buttons]").forEach((host) => {
+    if (host.querySelector("button")) return;
+    const raw = String(host.dataset.actionButtons || "").trim();
+    if (!raw) return;
+    const specs = raw.split(";").map((s) => s.trim()).filter(Boolean);
+    specs.forEach((spec) => {
+      const [id, className = "", text = "", sizerText = ""] = spec.split("|");
+      if (!id) return;
+      const fragment = template.content.cloneNode(true);
+      const btn = fragment.querySelector("button");
+      if (!btn) return;
+      btn.id = id;
+      btn.className = className;
+      btn.textContent = text;
+      btn.dataset.label = text || sizerText || id;
+      if (sizerText) {
+        btn.setAttribute("aria-label", text || sizerText);
+        btn.textContent = "";
+        const sizer = document.createElement("span");
+        sizer.className = "character-detail-confirm-btn-sizer";
+        sizer.setAttribute("aria-hidden", "true");
+        sizer.textContent = sizerText;
+        btn.appendChild(sizer);
+      }
+      host.appendChild(btn);
+    });
+  });
 }
 
 function initEls() {
@@ -2456,6 +2502,9 @@ function setupMobileTooltipCleanup() {
 }
 
 async function init() {
+  hydrateNpcShells();
+  hydrateStatSortButtons();
+  hydrateActionButtons();
   initEls();
   syncCardsDeckVisibility();
   setupMobileTooltipCleanup();
