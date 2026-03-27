@@ -7,6 +7,8 @@ const STATS = ["STR", "INT", "DEX", "AGI", "VIT", "LUK"];
 const STATS_SET = new Set(STATS);
 const ATTACK_STATS = ["STR", "INT", "DEX"];
 const DEFENSE_STATS = ["AGI", "VIT", "LUK"];
+const DEFAULT_CHAR_PORTRAIT_PATH = "assets/characters/char_default.png";
+const DEFAULT_CHAR_THUMB_PATH = "assets/characters/charmin_default.png";
 
 const FIELDS = [
   { id: "fire", name: "焦糖沙漠", boost: "STR" },
@@ -214,6 +216,38 @@ function emitBattleFx(type, payload = {}) {
 
 function asset(rel) {
   return new URL(rel, location.href).href;
+}
+
+const imageExistsCache = new Map();
+const backgroundApplyRequestId = new WeakMap();
+let nextBackgroundApplyRequestId = 1;
+
+function imageExists(src) {
+  if (imageExistsCache.has(src)) return imageExistsCache.get(src);
+  const p = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+  imageExistsCache.set(src, p);
+  return p;
+}
+
+async function setBackgroundImageWithFallback(el, relCandidates) {
+  if (!el) return;
+  const requestId = nextBackgroundApplyRequestId++;
+  backgroundApplyRequestId.set(el, requestId);
+  const candidates = (Array.isArray(relCandidates) ? relCandidates : [relCandidates]).filter(Boolean).map(asset);
+  for (const src of candidates) {
+    const ok = await imageExists(src);
+    if (!ok) continue;
+    if (backgroundApplyRequestId.get(el) !== requestId) return;
+    el.style.backgroundImage = `url("${src}")`;
+    return;
+  }
+  if (backgroundApplyRequestId.get(el) !== requestId) return;
+  el.style.backgroundImage = "";
 }
 
 /** 上次 renderHearts 成功畫出的 HP／上限（用與本次比對亮→暗、暗→亮） */
@@ -1287,7 +1321,7 @@ function renderFighters() {
     els.playerSprite.classList.remove("sprite--death-animate", "sprite--death-finished");
     els.playerSprite.classList.add("sprite--character-art");
     if (session.playerChar?.id) {
-      els.playerSprite.style.backgroundImage = `url("${asset(charPortraitPath(session.playerChar.id))}")`;
+      void setBackgroundImageWithFallback(els.playerSprite, [charPortraitPath(session.playerChar.id), DEFAULT_CHAR_PORTRAIT_PATH]);
     } else {
       els.playerSprite.style.backgroundImage = "";
     }
@@ -1296,7 +1330,7 @@ function renderFighters() {
     els.enemySprite.classList.remove("sprite--death-animate", "sprite--death-finished");
     els.enemySprite.classList.add("sprite--character-art");
     if (session.opponent?.id) {
-      els.enemySprite.style.backgroundImage = `url("${asset(charPortraitPath(session.opponent.id))}")`;
+      void setBackgroundImageWithFallback(els.enemySprite, [charPortraitPath(session.opponent.id), DEFAULT_CHAR_PORTRAIT_PATH]);
     } else {
       els.enemySprite.style.backgroundImage = "";
     }
@@ -1683,7 +1717,7 @@ function renderSelectCards() {
       btn.querySelector(".character-card-name").textContent = ch.name;
       btn.querySelector(".character-card-layer--bg").style.backgroundImage = `url("${asset("assets/img_list_ui_bg.png")}")`;
       btn.querySelector(".character-card-layer--fg").style.backgroundImage = `url("${asset("assets/img_list_ui.png")}")`;
-      btn.querySelector(".character-card-thumb").style.backgroundImage = `url("${asset(charThumbPath(ch.id))}")`;
+      void setBackgroundImageWithFallback(btn.querySelector(".character-card-thumb"), [charThumbPath(ch.id), DEFAULT_CHAR_THUMB_PATH]);
       btn.addEventListener("click", () => {
         window.PocketPawnsAudio?.playBtn?.();
         openDetail(ch);
@@ -2175,7 +2209,7 @@ function openDetail(ch) {
   if (els.characterDetailPortrait) {
     els.characterDetailPortrait.classList.add("character-detail-portrait--art");
   }
-  els.characterDetailPortrait.style.backgroundImage = `url("${asset(charPortraitPath(ch.id))}")`;
+  void setBackgroundImageWithFallback(els.characterDetailPortrait, [charPortraitPath(ch.id), DEFAULT_CHAR_PORTRAIT_PATH]);
   if (randomMode) {
     if (els.characterDetailStats) {
       els.characterDetailStats.innerHTML = "";
