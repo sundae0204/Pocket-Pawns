@@ -45,7 +45,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_006",
     name: "莎莉醬",
     sortIndex: 6,
-    initial: { stats: [6, 14, 4, 5, 9, 2], hearts: 2, maxHearts: 4 },
+    initial: { stats: [4, 11, 8, 12, 2, 13], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_007",
@@ -201,7 +201,7 @@ window.POCKET_PAWNS_CHARACTERS = [
     id: "char_032",
     name: "火焰炎",
     sortIndex: 32,
-    initial: { stats: [6, 6, 6, 6, 6, 6], hearts: 2, maxHearts: 4 },
+    initial: { stats: [10, 8, 6, 3, 10, 4], hearts: 2, maxHearts: 4 },
   },
   {
     id: "char_033",
