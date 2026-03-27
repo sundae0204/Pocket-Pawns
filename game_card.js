@@ -7,19 +7,29 @@ const STATS = ["STR", "INT", "DEX", "AGI", "VIT", "LUK"];
 const STATS_SET = new Set(STATS);
 
 const FIELDS = [
-  { id: "fire", name: "火", boost: "STR" },
-  { id: "water", name: "水", boost: "INT" },
-  { id: "wood", name: "木", boost: "DEX" },
-  { id: "wind", name: "風", boost: "AGI" },
-  { id: "earth", name: "土", boost: "VIT" },
-  { id: "metal", name: "金", boost: "LUK" },
-  { id: "light", name: "光", boost: null },
-  { id: "dark", name: "闇", boost: null },
+  { id: "fire", name: "焦糖沙漠", boost: "STR" },
+  { id: "water", name: "蝶豆花海", boost: "INT" },
+  { id: "wood", name: "抹茶森林", boost: "DEX" },
+  { id: "wind", name: "棉花糖雲海", boost: "AGI" },
+  { id: "earth", name: "仙草洞", boost: "VIT" },
+  { id: "metal", name: "金沙宮", boost: "LUK" },
+  { id: "light", name: "奶酪教堂", boost: null },
+  { id: "dark", name: "巧克力祭壇", boost: null },
+  { id: "fire_memory", name: "記憶沙漠", boost: "STR", kind: "memory" },
+  { id: "water_memory", name: "記憶海洋", boost: "INT", kind: "memory" },
+  { id: "wood_memory", name: "記憶森林", boost: "DEX", kind: "memory" },
+  { id: "wind_memory", name: "記憶天際", boost: "AGI", kind: "memory" },
+  { id: "earth_memory", name: "記憶洞穴", boost: "VIT", kind: "memory" },
+  { id: "metal_memory", name: "記憶王城", boost: "LUK", kind: "memory" },
+  { id: "light_memory", name: "記憶教堂", boost: null, kind: "memory" },
+  { id: "dark_memory", name: "記憶邪教", boost: null, kind: "memory" },
 ];
 
-/** 整場戰鬥固定：光 AGI·VIT·LUK、闇 STR·DEX·INT 為 X2，其餘場景見 FIELDS.boost */
+/** 標準場：光／闇為 X2；記憶教堂／邪教為 14−基礎值；其餘單屬性場見 FIELDS.boost */
 const FIELD_LIGHT_STATS = new Set(["AGI", "VIT", "LUK"]);
 const FIELD_DARK_STATS = new Set(["STR", "DEX", "INT"]);
+/** 記憶場景：受影響屬性改為 14−該屬性面板值（非倍率） */
+const MEMORY_FIELD_BASE = 14;
 
 const SPECIALS = ["heal", "boost", "zero", "seven77", "redheart", "phloss", "showy"];
 const SPECIAL_CARD_FILE = {
@@ -567,7 +577,7 @@ function getMissCloudyEntry(pageKey, stateKey) {
   const defaults = {
     characterSelect: { face: 0, text: "選擇你的角色。" },
     characterDetail: { face: 0, text: "確認後出戰吧。" },
-    "battle:report": { face: 0, text: "目前場景 {field}，直接屬性 x2。{phase}，請出牌。" },
+    "battle:report": { face: 0, text: "目前場景 {field}，{fieldRule}。{phase}，請出牌。" },
     "battle:victory": { face: 1, text: "太棒了！這局拿下了！" },
     "battle:defeat": { face: 2, text: "先穩住節奏，下一局扳回來！" },
   };
@@ -773,9 +783,41 @@ function formatEnemySpecialSettlement(on, kind, stat) {
   return name;
 }
 
+function fieldAppliesToStat(field, stat) {
+  if (!field) return false;
+  if (field.kind === "memory") {
+    if (field.id === "light_memory") return FIELD_LIGHT_STATS.has(stat);
+    if (field.id === "dark_memory") return FIELD_DARK_STATS.has(stat);
+    return field.boost === stat;
+  }
+  if (field.id === "light") return FIELD_LIGHT_STATS.has(stat);
+  if (field.id === "dark") return FIELD_DARK_STATS.has(stat);
+  return field.boost === stat;
+}
+
+/** 場景規則下的有效數值（含光／闇／單屬性 X2 與記憶場 14−基礎值）。wasZeroed：本回合歸零卡使該屬性貢獻為 0。 */
+function effectiveFieldStatValue(raw, stat, wasZeroed = false) {
+  if (wasZeroed) return 0;
+  if (!state.field) return Math.round(raw);
+  const f = state.field;
+  if (f.kind === "memory") {
+    if (!fieldAppliesToStat(f, stat)) return Math.round(raw);
+    return Math.round(MEMORY_FIELD_BASE - raw);
+  }
+  return Math.round(raw * boostValue(stat));
+}
+
+function isFieldBoostActive(stat) {
+  if (!state.field) return false;
+  const f = state.field;
+  if (f.kind === "memory") return fieldAppliesToStat(f, stat);
+  return boostValue(stat) > 1;
+}
+
 function boostValue(stat) {
   if (!state.field) return 1;
   const f = state.field;
+  if (f.kind === "memory") return 1;
   if (f.id === "light") return FIELD_LIGHT_STATS.has(stat) ? 2 : 1;
   if (f.id === "dark") return FIELD_DARK_STATS.has(stat) ? 2 : 1;
   return f.boost === stat ? 2 : 1;
@@ -783,9 +825,26 @@ function boostValue(stat) {
 
 function fieldBonusText(field) {
   if (!field) return "—";
+  if (field.kind === "memory") {
+    if (field.id === "light_memory") return "AGI·VIT·LUK 為 14−基礎值";
+    if (field.id === "dark_memory") return "STR·DEX·INT 為 14−基礎值";
+    return `${field.boost} 為 14−基礎值`;
+  }
   if (field.id === "light") return "AGI·VIT·LUK X2";
   if (field.id === "dark") return "STR·DEX·INT X2";
   return `${field.boost} X2`;
+}
+
+function renderFieldLabel() {
+  if (!els.fieldLabel || !state.field) return;
+  els.fieldLabel.replaceChildren();
+  const nameEl = document.createElement("span");
+  nameEl.className = "field-label-name";
+  nameEl.textContent = state.field.name;
+  const bonusEl = document.createElement("span");
+  bonusEl.className = "field-label-bonus";
+  bonusEl.textContent = `（${fieldBonusText(state.field)}）`;
+  els.fieldLabel.append(nameEl, bonusEl);
 }
 
 /** 僅統計玩家抽到的 777（makeSpecial），不含敵方 makeEnemySpecial。 */
@@ -1042,9 +1101,8 @@ function renderStats(el, stats) {
   STATS.forEach((s) => {
     const i = STATS.indexOf(s);
     const base = safeNumber(stats?.[i] ?? 0);
-    const mult = boostValue(s);
-    const val = Math.round(base * mult);
-    const boosted = mult > 1;
+    const val = effectiveFieldStatValue(base, s, false);
+    const boosted = state.field ? fieldAppliesToStat(state.field, s) : false;
     const row = document.createElement("div");
     row.className = `stat-cell stat-cell--${String(s || "").toLowerCase()}`;
     row.innerHTML = `<div class="stat-value stat-value--${String(s || "").toLowerCase()}${boosted ? " stat-boosted" : ""}">${val}</div><div class="stat-label">${s}</div>`;
@@ -1217,15 +1275,14 @@ function refreshBattleUI(options = {}) {
     });
   }
 
-  if (els.fieldLabel) {
-    els.fieldLabel.textContent = `場景：${state.field.name}（${fieldBonusText(state.field)}）`;
-  }
+  renderFieldLabel();
   if (els.phaseBadge) els.phaseBadge.textContent = state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段";
 
   if (els.npcPanel) els.npcPanel.hidden = false;
   const phaseText = state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段";
   applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
     field: state.field.name,
+    fieldRule: fieldBonusText(state.field),
     phase: phaseText,
   });
   syncCardsDeckVisibility();
@@ -1488,9 +1545,6 @@ function statValueFromCharacter(charObj, stat) {
   return safeNumber(charObj?.initial?.stats?.[i] ?? charObj?.stats?.[i] ?? 0);
 }
 
-function boostMultiplier(stat) {
-  return boostValue(stat);
-}
 
 /** 敵方本回合比拚用的屬性池：玩家攻擊時敵為守方（AGI/VIT/LUK）；玩家防禦時敵為攻方（STR/INT/DEX）。 */
 function enemyStatPoolForClash(isPlayerAttacking) {
@@ -1502,8 +1556,9 @@ function bestEnemyCombatValue(enemy, statPool, zeroStat = null) {
   let value = 0;
   let primaryStat = statPool[0];
   for (const s of statPool) {
-    const raw = zeroStat === s ? 0 : statValueFromCharacter(enemy, s);
-    const v = Math.round(raw * boostMultiplier(s));
+    const wasZeroed = zeroStat === s;
+    const raw = wasZeroed ? 0 : statValueFromCharacter(enemy, s);
+    const v = effectiveFieldStatValue(raw, s, wasZeroed);
     if (v > value) {
       value = v;
       primaryStat = s;
@@ -1855,11 +1910,10 @@ async function playRound(card) {
   const isPlayerAttacking = state.phase === "attack";
   const basePlayerOwn = statValueFromCharacter(state.player, stat);
   const baseEnemySameStat = statValueFromCharacter(state.enemy, stat);
-  const fieldMult = boostMultiplier(stat);
-  const enemyBuffedSameStat = Math.round(baseEnemySameStat * fieldMult);
+  const enemyBuffedSameStat = effectiveFieldStatValue(baseEnemySameStat, stat, false);
   const playerSourceBase = side === "E" ? enemyBuffedSameStat : basePlayerOwn;
 
-  let playerFinal = Math.round(playerSourceBase * (side === "E" ? 1 : fieldMult));
+  let playerFinal = side === "E" ? playerSourceBase : effectiveFieldStatValue(basePlayerOwn, stat, false);
   const enemyPool = enemyStatPoolForClash(isPlayerAttacking);
   const playerZeroStat =
     state.specialOn && state.special === "zero" && state.specialStat && enemyPool.includes(state.specialStat)
@@ -1951,7 +2005,7 @@ async function playRound(card) {
       if (usedSpecialKind === "redheart" && state.enemy.hearts <= 0 && playerHeartsBefore === 1) {
         session.match.redheartAttackWin = true;
       }
-      if (stat === "LUK" && boostMultiplier("LUK") > 1 && state.enemy.hearts <= 0) session.match.lukBoostWin = true;
+      if (stat === "LUK" && isFieldBoostActive("LUK") && state.enemy.hearts <= 0) session.match.lukBoostWin = true;
     } else if (!roundNote) {
       roundNote = "攻擊被擋下，未造成傷害";
     }
@@ -2114,6 +2168,7 @@ async function startBattle() {
     writeTotalPlays(session.totalPlays);
     applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
       field: state.field?.name || "",
+      fieldRule: state.field ? fieldBonusText(state.field) : "—",
       phase: state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段",
     });
     renderValueCards();
