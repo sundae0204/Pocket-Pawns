@@ -12,7 +12,7 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
   "char_001": {
     "menuSelect": "我阿茶啦幹",
     "battleOpen": "聽說你是來自鄉村的地瓜怪人，一決勝負吧!",
-    "victory": "看來你沒地瓜吃了，改吃山藥吧",
+    "victory": "敵羞！吾去脫他衣！",
     "defeat": "這裡有批地瓜好便宜的，需要就打電話給我...."
   },
   "char_002": {
@@ -196,10 +196,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "哇，掛了"
   },
   "char_032": {
-    "menuSelect": "我是火焰炎",
-    "battleOpen": "棋兵好好玩!",
-    "victory": "嘟嘟~贏了",
-    "defeat": "哇，掛了"
+    "menuSelect": "野火燒不盡，春風吹又生",
+    "battleOpen": "輪到我火焰炎上場啦!!!",
+    "victory": "只是正常發揮",
+    "defeat": "真有你的，我輸了，該去吃飯了"
   },
   "char_033": {
     "menuSelect": "我是瓦熊",
