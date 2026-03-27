@@ -30,25 +30,25 @@
     "defeat": "不能打公主！"
   },
   "char_005": {
-    "menuSelect": "防守就是最好的進攻。",
-    "battleOpen": "墨盾在前，儘管來攻。",
-    "victory": "盾還在，你就贏不了。",
-    "defeat": "盾……裂開了……"
+    "menuSelect": "我是阿卡貓",
+    "battleOpen": "紅妻萬歲!",
+    "victory": "嗚嘎烏嘎",
+    "defeat": "啊巴啊巴"
   },
   "char_006": {
-    "menuSelect": "速度決定一切。",
-    "battleOpen": "你追得上我嗎？",
-    "victory": "太慢囉～",
-    "defeat": "腳步亂了……"
+    "menuSelect": "我是莎莉醬",
+    "battleOpen": "早安，要忙了88",
+    "victory": "下車（踢）",
+    "defeat": "又一個奧客……"
   },
   "char_007": {
-    "menuSelect": "三步之內，勝負已定。",
+    "menuSelect": "我是Moonlight",
     "battleOpen": "棋局如戰局，我算過了。",
     "victory": "和計算的一樣。",
     "defeat": "變數……比想像多……"
   },
   "char_008": {
-    "menuSelect": "手滑一下也能贏，大概。",
+    "menuSelect": "我是神阪",
     "battleOpen": "看好了，這招很貴的。",
     "victory": "帥氣結算，謝謝收看！",
     "defeat": "手滑了……真的……"
@@ -60,16 +60,16 @@
     "defeat": "嗚……果然不可以太囂張……"
   },
   "char_010": {
-    "menuSelect": "站我後面，我扛。",
-    "battleOpen": "鐵衛在此，誰都別想過。",
-    "victory": "還站得住。",
-    "defeat": "防線……被突破了……"
+    "menuSelect": "我是暴豆豆。",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_011": {
-    "menuSelect": "你看到的是真的我嗎？",
-    "battleOpen": "幻步開始，別眨眼。",
-    "victory": "抓到真身了嗎？",
-    "defeat": "……被識破了嗎。"
+    "menuSelect": "我是陽月芒果",
+    "battleOpen": "水果好好吃!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_012": {
     "menuSelect": "盤上を掌握する者が、今、動く。",
@@ -78,22 +78,22 @@
     "defeat": "勝者を称える。次は残る側に立つ。"
   },
   "char_013": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是陌祤彤",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_014": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是死者書生",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_015": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是Smile",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_016": {
     "menuSelect": "這是哪裡尼是誰?窩是誰?",
@@ -126,10 +126,10 @@
     "defeat": "三八啦怎麼能打女生"
   },
   "char_021": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是麋安",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_022": {
     "menuSelect": "有需要妖界的貨到付款嗎~？",
@@ -138,10 +138,10 @@
     "defeat": "啊噠噠噠噠……（倒）"
   },
   "char_023": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是森雨悠娜",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_024": {
     "menuSelect": "被我選擇是你的榮幸！",
@@ -150,10 +150,10 @@
     "defeat": "我已經死了！"
   },
   "char_025": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是櫻貓",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_026": {
     "menuSelect": "......（蛤？）",
@@ -168,46 +168,46 @@
     "defeat": "我這麼可愛，一般情況下怎麼可能…"
   },
   "char_028": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是愛奧莉娜",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_029": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是陌祤彤",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_030": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是夜色色",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_031": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "安，靜靜，安靜",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_032": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是火焰炎",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_033": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是瓦熊",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_034": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是圈圈",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_035": {
     "menuSelect": "你是幼稚大人嗎OwO!!",
@@ -216,28 +216,28 @@
     "defeat": "怒啾雞!!!!!!!!!!"
   },
   "char_036": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是荻珥",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_037": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是煙米子二世",
+    "battleOpen": "出奶玩!",
+    "victory": "捏捏乳腿",
+    "defeat": "ㄐㄐ"
   },
   "char_038": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是歌姬",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_039": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "今天再買兩包雞蛋糕回去吧？",
+    "battleOpen": "（希望能早點結束）內心想",
+    "victory": "這是雞蛋糕，請你吃",
+    "defeat": "（在你面前把雞蛋糕吃掉）"
   },
   "char_040": {
     "menuSelect": "今天再買兩包雞蛋糕回去吧？",
@@ -258,22 +258,22 @@
     "defeat": "公主也要優雅地承受失敗..(哭)"
   },
   "char_043": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是珀晞",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_044": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是彈跳櫻花蝦",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_045": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是非人類非動物",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_046": {
     "menuSelect": "選擇幸運大橘，包你大吉大利一整天！",
@@ -288,22 +288,22 @@
     "defeat": "筋肉痛なんだよねぇT^T"
   },
   "char_048": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是藍凝燄",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_049": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是森奈",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_050": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是揪似艾",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_051": {
     "menuSelect": "必須快點結束，那孩子還在等我",
@@ -312,10 +312,10 @@
     "defeat": "看來今天不能帶回故事講給那孩子聽了"
   },
   "char_052": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是靈玉",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_053": {
     "menuSelect": "ヾ(•ω•`)o",
@@ -330,10 +330,10 @@
     "defeat": "再來一局吧"
   },
   "char_055": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是阿卡咪",
+    "battleOpen": "啾咪!",
+    "victory": "啊不要看我內褲!",
+    "defeat": "哇，掛了"
   },
   "char_056": {
     "menuSelect": "有需要現世的貨到付款嗎~？",
@@ -342,10 +342,10 @@
     "defeat": "我還沒玩夠！不！"
   },
   "char_057": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是緋櫻櫻",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_058": {
     "menuSelect": "你確定……準備好見證面具下的『真實』了嗎？",
@@ -354,40 +354,40 @@
     "defeat": "沒有永恆不變的容貌，正如沒有永恆不變的誓言"
   },
   "char_059": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是雷森",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_060": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是神阪",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_061": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是落羽",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_062": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+  "menuSelect": "我是芙卡咪小葵",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_063": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "噗",
+    "battleOpen": "噗噗！我愛虎皮蛋糕",
+    "victory": "虎皮蛋糕，賀呷",
+    "defeat": "噗（這蛋糕過期）"
   },
   "char_064": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是柯爾施",
+    "battleOpen": "天文望遠鏡，啟動!",
+    "victory": "又看見髒東西",
+    "defeat": "有……類星體…（固障）"
   },
   "char_065": {
     "menuSelect": "……",
@@ -402,28 +402,28 @@
     "defeat": "唉呀，我竟然輸了，再來一局吧"
   },
   "char_067": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+     "menuSelect": "我是睫毛貓頭鷹",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_068": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+     "menuSelect": "我是睫毛",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_069": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是陳警官",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_070": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是吳傑森",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_071": {
     "menuSelect": "推薦美景有很多，給你介紹介紹？",
@@ -450,10 +450,10 @@
     "defeat": "……（牽牛花手上的大便要丟到你的臉上了）"
   },
   "char_075": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+    "menuSelect": "我是霜星沁玥",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_076": {
     "menuSelect": "……嗯，你好",
@@ -468,10 +468,10 @@
     "defeat": "累積經驗下次會成功的，別氣餒。"
   },
   "char_078": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是向尋",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_079": {
     "menuSelect": "可愛的仙狐金穗會成為你的助力喔!",
@@ -480,10 +480,10 @@
     "defeat": "對方沒受傷真是太好了"
   },
   "char_080": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是死者書生",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_081": {
     "menuSelect": "你確..定...?!",
@@ -492,52 +492,52 @@
     "defeat": "都是十人的鍋!"
   },
   "char_082": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是靜永月",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_083": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是小笨狼",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_084": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是水母暮暮",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_085": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是斯洛姆",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_086": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是若泉",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_087": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是咖啡歐",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_088": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是茶抹抹",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_089": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是nanagi",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_090": {
     "menuSelect": "茶，還是現泡好",
@@ -546,34 +546,34 @@
     "defeat": "茶沒泡開，下次再來"
   },
   "char_091": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是扇子",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_092": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是律豆豆",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_093": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是猫島羽依",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_094": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "我是夜雪儿",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_095": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "一狗愛笛聲",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_096": {
     "menuSelect": "世界真有趣，你說是吧？",
@@ -588,10 +588,10 @@
     "defeat": "（就算輸了，對手的牌面還是大便）"
   },
   "char_098": {
-    "menuSelect": "預留",
-    "battleOpen": "預留",
-    "victory": "預留",
-    "defeat": "預留"
+   "menuSelect": "靈玉",
+    "battleOpen": "棋兵好好玩!",
+    "victory": "嘟嘟~贏了",
+    "defeat": "哇，掛了"
   },
   "char_099": {
     "menuSelect": "讓揉奇幫偉大!!",
@@ -612,3 +612,4 @@
     "defeat": "喵……"
   }
 }
+
