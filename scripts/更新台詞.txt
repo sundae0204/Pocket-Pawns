@@ -1,4 +1,5 @@
-先開啟 PowerShell，一個跟cmd很像的dos視窗。
+檢查角色
+run-check-characters
 
-cd "d:\file\Pocket Pawns"
-node scripts/sync-dialogue-data.js
+檢查台詞
+run-sync-dialogue-data
