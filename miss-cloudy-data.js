@@ -7,14 +7,20 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
   pages: {
     characterSelect: {
       face: "cheer",
-      text: "選擇你的角色玩吧~",
+      text: "歡迎來到芭塔塔收穫嘉年華！選一位隊長帶領隊伍參加演習吧",
     },
     characterDetail: {
-      face: "calm",
-      text: "確定要出戰嗎？",
+      intro: {
+        face: "calm",
+        text: "要讓這位隊長上場嗎？",
+      },
+      confirmFarewell: {
+        face: "cheer",
+        text: "祝你贏得這次的勝利！",
+      },
     },
     battle: {
-      report: {
+      battle: {
         face: "calm",
         text: "先右邊的餅乾再點素質卡~\n長按有說明。小偷符號是偷敵人的素質",
       },

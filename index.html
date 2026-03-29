@@ -43,7 +43,7 @@
         <h1 class="title-logo">口袋棋兵</h1>
         <p class="title-sub">Pocket Chess Soldiers</p>
         <p class="title-mobile-hint">
-          手機用戶請在瀏覽器選單裡手動開<br />「電腦版網站」以獲得最佳體驗
+          手機用戶請在瀏覽器選單裡手動開「電腦版網站」以獲得最佳體驗
         </p>
         <div
           class="title-actions"
@@ -54,9 +54,25 @@
 
     <div id="credits-screen" class="overlay-screen" hidden aria-label="製作名單">
       <div class="overlay-inner credits-inner">
-        <h2 class="overlay-title" id="credits-title">製作名單</h2>
-        <p class="credits-body">Pocket Pawns / Pocket Chess Soldiers</p>
-        <div data-action-buttons="credits-btn-back|settlement-btn|返回"></div>
+        <div class="character-select-list-panel credits-list-panel">
+          <h2 class="overlay-title" id="credits-title">製作名單</h2>
+          <div class="credits-body">
+            <p>朵雲公主雲姬：嚮導，叭啦叭啦</p>
+            <p>
+              紅妻：總建築師暨宮廷畫師，美術、企劃、雜質音效、跟 AI 吵架（寫程式）的負責人
+            </p>
+            <p>親王：首席宮廷樂長，提供高品質 BGM</p>
+            <p>遊蕩的棋兵團，不定期出沒，但每次出現都能讓專案多活幾天</p>
+            <p>特別鳴謝：那些在開發過程中提供意見的玩家（還有我的咖啡機）</p>
+            <p>
+              感謝所有在百忙之中，隨緣、隨喜加入協助的小夥伴。你們的每一份零碎時間，都是這款遊戲誕生的養分。
+            </p>
+          </div>
+        </div>
+        <div
+          class="credits-footer-actions"
+          data-action-buttons="credits-btn-back|character-select-back-btn|返回"
+        ></div>
       </div>
     </div>
 
@@ -65,7 +81,7 @@
       <div class="overlay-inner character-select-inner">
         <div class="character-select-list-panel" aria-label="角色清單">
           <header class="character-select-header">
-            <h1 class="overlay-title character-select-title">請選擇角色</h1>
+            <h1 class="overlay-title character-select-title"></h1>
             <div class="stat-sort-wrap" aria-label="屬性排序">
               <div class="stat-sort-row" data-stat-sort-row data-stats="STR,INT,DEX,AGI,VIT,LUK"></div>
             </div>

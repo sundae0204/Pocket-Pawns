@@ -589,23 +589,47 @@ function fillTemplate(text, vars) {
   return String(text || "").replace(/\{(\w+)\}/g, (_, key) => String(vars?.[key] ?? ""));
 }
 
+/** 朵雲公主台詞打字動畫：整句在 durationMs 內跑完；同一元素上的新呼叫會取消上一段動畫。 */
+const MISS_CLOUDY_TYPE_DURATION_MS = 200;
+const missCloudyTypewriterGenByEl = new WeakMap();
+
+function setMissCloudyLineTypewriter(el, text, durationMs = MISS_CLOUDY_TYPE_DURATION_MS) {
+  if (!el) return;
+  const gen = (missCloudyTypewriterGenByEl.get(el) || 0) + 1;
+  missCloudyTypewriterGenByEl.set(el, gen);
+  const full = String(text ?? "");
+  el.textContent = "";
+  if (full.length === 0) return;
+  const dur = Math.max(1, durationMs);
+  const t0 = typeof performance !== "undefined" ? performance.now() : Date.now();
+  function frame() {
+    if (missCloudyTypewriterGenByEl.get(el) !== gen) return;
+    const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const u = Math.min(1, (now - t0) / dur);
+    const n = Math.max(0, Math.ceil(full.length * u));
+    el.textContent = full.slice(0, n);
+    if (u < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
 function applyMissCloudy(target, entry, vars = {}) {
   if (!entry) return;
   const text = fillTemplate(entry.text, vars);
   const faceIndex = getMissCloudyFaceIndex(entry.face);
   if (target === "characterSelect") {
     if (els.characterSelectNpcFace) els.characterSelectNpcFace.src = asset(missCloudyFacePath(faceIndex));
-    if (els.characterSelectNpcMessage) els.characterSelectNpcMessage.textContent = text;
+    setMissCloudyLineTypewriter(els.characterSelectNpcMessage, text);
     return;
   }
   if (target === "characterDetail") {
     if (els.characterDetailNpcFace) els.characterDetailNpcFace.src = asset(missCloudyFacePath(faceIndex));
-    if (els.characterDetailNpcMessage) els.characterDetailNpcMessage.textContent = text;
+    setMissCloudyLineTypewriter(els.characterDetailNpcMessage, text);
     return;
   }
   if (target === "battle") {
     if (els.npcFace) els.npcFace.src = asset(missCloudyFacePath(faceIndex));
-    if (els.npcMessage) els.npcMessage.textContent = text;
+    setMissCloudyLineTypewriter(els.npcMessage, text);
   }
 }
 
@@ -613,14 +637,23 @@ function getMissCloudyEntry(pageKey, stateKey) {
   const defaults = {
     characterSelect: { face: 0, text: "選擇你的角色。" },
     characterDetail: { face: 0, text: "確認後出戰吧。" },
-    "battle:report": { face: 0, text: "目前場景 {field}，{fieldRule}。{phase}，請出牌。" },
+    "characterDetail:intro": { face: 0, text: "要讓這位隊長上場嗎？" },
+    "characterDetail:confirmFarewell": { face: 1, text: "祝你贏得這次的勝利！" },
+    "battle:battle": {
+      face: 0,
+      text: "先右邊的餅乾再點素質卡~\n長按有說明。小偷符號是偷敵人的素質",
+    },
     "battle:victory": { face: 1, text: "太棒了！這局拿下了！" },
     "battle:defeat": { face: 2, text: "先穩住節奏，下一局扳回來！" },
   };
   const cfg = getMissCloudyConfig();
   const pages = cfg.pages || {};
   const page = pages[pageKey] || {};
-  if (!stateKey) return page.text ? page : defaults[pageKey];
+  if (!stateKey) {
+    if (page.text) return page;
+    if (page.intro && page.intro.text) return page.intro;
+    return defaults[pageKey];
+  }
   const key = `${pageKey}:${stateKey}`;
   return page[stateKey] || defaults[key] || null;
 }
@@ -1033,6 +1066,7 @@ function setupRoundForCurrentOpponent() {
   state.over = false;
   lastRenderedHeartState.player = null;
   lastRenderedHeartState.enemy = null;
+  applyMissCloudy("battle", getMissCloudyEntry("battle", "battle"));
   renderValueCards();
   renderSpecialColumn();
   refreshBattleUI();
@@ -1305,12 +1339,6 @@ function refreshBattleUI(options = {}) {
   if (els.phaseBadge) els.phaseBadge.textContent = state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段";
 
   if (els.npcPanel) els.npcPanel.hidden = false;
-  const phaseText = state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段";
-  applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
-    field: state.field.name,
-    fieldRule: fieldBonusText(state.field),
-    phase: phaseText,
-  });
   syncCardsDeckVisibility();
 }
 
@@ -2092,8 +2120,6 @@ async function playRound(card) {
   if (defenderHitShakeSide) {
     requestAnimationFrame(() => playDefenderHitShake(defenderHitShakeSide));
   }
-  if (els.npcMessage && roundNote) els.npcMessage.textContent = roundNote;
-
   if ((state.enemy.hearts || 0) <= 0) {
     await playDeathFade("enemy");
     setNpcSpeech("victory");
@@ -2177,11 +2203,7 @@ async function startBattle() {
     setupRoundCardsAndSpecials("attack");
     session.totalPlays = readTotalPlays() + 1;
     writeTotalPlays(session.totalPlays);
-    applyMissCloudy("battle", getMissCloudyEntry("battle", "report"), {
-      field: state.field?.name || "",
-      fieldRule: state.field ? fieldBonusText(state.field) : "—",
-      phase: state.phase === "attack" ? "玩家攻擊階段" : "玩家防禦階段",
-    });
+    applyMissCloudy("battle", getMissCloudyEntry("battle", "battle"));
     renderValueCards();
     renderSpecialColumn();
     refreshBattleUI();
@@ -2307,22 +2329,36 @@ function bindEvents() {
   });
   onClick("character-detail-confirm", () => {
     window.PocketPawnsAudio?.playBtn?.();
-    void runCurtainTransition(async () => {
-      if (selectedChar && !isRandomCharacter(selectedChar)) {
-        try {
-          const st = await window.PocketPawnsSupabase?.fetchCharacterStats?.(selectedChar.id);
-          const raw = Number(st?.max_combo ?? 0);
-          session.recordBaselineFromDetail = Number.isFinite(raw) ? Math.max(0, raw) : 0;
-        } catch {
-          const fallback = Number(session.detailPageMaxCombo);
-          session.recordBaselineFromDetail =
-            Number.isFinite(fallback) && session.detailPageMaxCombo != null ? Math.max(0, fallback) : 0;
-        }
-      } else {
-        session.recordBaselineFromDetail = 0;
+    const confirmBtn = document.getElementById("character-detail-confirm");
+    const backBtn = document.getElementById("character-detail-back");
+    if (confirmBtn?.disabled) return;
+    void (async () => {
+      if (confirmBtn) confirmBtn.disabled = true;
+      if (backBtn) backBtn.disabled = true;
+      try {
+        applyMissCloudy("characterDetail", getMissCloudyEntry("characterDetail", "confirmFarewell"));
+        await sleep(1500);
+        await runCurtainTransition(async () => {
+          if (selectedChar && !isRandomCharacter(selectedChar)) {
+            try {
+              const st = await window.PocketPawnsSupabase?.fetchCharacterStats?.(selectedChar.id);
+              const raw = Number(st?.max_combo ?? 0);
+              session.recordBaselineFromDetail = Number.isFinite(raw) ? Math.max(0, raw) : 0;
+            } catch {
+              const fallback = Number(session.detailPageMaxCombo);
+              session.recordBaselineFromDetail =
+                Number.isFinite(fallback) && session.detailPageMaxCombo != null ? Math.max(0, fallback) : 0;
+            }
+          } else {
+            session.recordBaselineFromDetail = 0;
+          }
+          await startBattle();
+        }, { fadeMs: 200 });
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (backBtn) backBtn.disabled = false;
       }
-      await startBattle();
-    }, { fadeMs: 200 });
+    })();
   });
 
   const sortButtons = Array.from(document.querySelectorAll(".stat-sort-btn"));
