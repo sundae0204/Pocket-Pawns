@@ -1,0 +1,286 @@
+/* Artists' Cards — CardIndex_Export（手機單頁、右下縮小預覽；請與 artcard-shell.css 一併引用） */
+
+:root {
+  --bg: #1a1520;
+  --text: #ece8f0;
+  --muted: #9a90a8;
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.artcard-shell--export {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  /* 右下預覽浮層：在共用底欄留白上再多 160px，捲到底時文字不會被擋 */
+  padding-bottom: calc(var(--artcard-bottom-h) + env(safe-area-inset-bottom, 0px) + 12px + 160px);
+}
+
+.export-wrap {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 16px 14px 8px;
+}
+
+.export-title {
+  margin: 0 0 8px;
+  font-size: 1.28rem;
+  font-weight: 800;
+}
+
+.export-wrap > .lead {
+  margin: 0 0 16px;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.export-flow {
+  padding-bottom: 8px;
+}
+
+/* 右下固定：桌面約 50%（230×320）；手機再縮一半 → 25%（115×160），不攔截捲動 */
+.preview-float {
+  position: fixed;
+  right: max(10px, env(safe-area-inset-right, 0px));
+  bottom: calc(var(--artcard-bottom-h) + env(safe-area-inset-bottom, 0px) + 10px);
+  z-index: 50;
+  width: 230px;
+  height: 320px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  line-height: 0;
+}
+
+.preview-float canvas {
+  width: 230px;
+  height: 320px;
+  display: block;
+  vertical-align: top;
+}
+
+@media (max-width: 768px) {
+  .preview-float {
+    width: 115px;
+    height: 160px;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  }
+
+  .preview-float canvas {
+    width: 115px !important;
+    height: 160px !important;
+  }
+}
+
+.form-row {
+  margin-bottom: 14px;
+}
+
+/* 僅限列內「欄位標題」label；勿用 .form-row label 否則會蓋掉 .pick-list 內 .pick-row 的 flex */
+.form-row > label {
+  display: block;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+
+.form-row__label {
+  display: block;
+  font-size: 0.82rem;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.input-center {
+  text-align: center;
+}
+
+.form-row input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text);
+  font: inherit;
+}
+
+.frame-info-line {
+  margin: 12px 0 0;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.export-back-top {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 14px auto 0;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #ece8f0;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.export-back-top:hover {
+  border-color: rgba(201, 162, 39, 0.45);
+  background: rgba(201, 162, 39, 0.08);
+}
+
+.export-back-top:focus-visible {
+  outline: 2px solid rgba(201, 162, 39, 0.6);
+  outline-offset: 2px;
+}
+
+.export-error-line {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: #ff8a8a;
+}
+
+.export-error-line[hidden] {
+  display: none !important;
+}
+
+.missing-image {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.missing-image a {
+  color: #c9a227;
+}
+
+/* 職業／屬性：左欄（核選在上、與 icon 置中）＋右欄文字 */
+.pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: none;
+  overflow: visible;
+}
+
+label.pick-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px 14px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+label.pick-row:has(input:checked) {
+  border-color: rgba(201, 162, 39, 0.45);
+  background: rgba(201, 162, 39, 0.07);
+}
+
+.pick-row__thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  gap: 8px;
+  width: max-content;
+}
+
+.pick-row__thumb input[type="radio"],
+.pick-row__thumb input[type="checkbox"] {
+  flex-shrink: 0;
+  margin: 0;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  accent-color: #c9a227;
+}
+
+.pick-row__icon {
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.pick-row__icon img {
+  display: block;
+  border-radius: 4px;
+}
+
+.pick-row__icon--job img {
+  width: 105px;
+  height: auto;
+}
+
+.pick-row__icon--el img {
+  width: 74px;
+  height: auto;
+}
+
+/* 說明文字：手機 1.5 倍、PC 2 倍（相對原 0.78 / 0.9 / 0.72rem） */
+.pick-desc {
+  flex: 1;
+  min-width: 0;
+  font-size: calc(0.78rem * 1.5);
+  line-height: 1.5;
+  color: rgba(236, 232, 240, 0.94);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.pick-desc--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pick-desc__title {
+  font-size: calc(0.9rem * 1.5);
+  font-weight: 800;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.pick-desc__body {
+  font-size: calc(0.72rem * 1.5);
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(236, 232, 240, 0.88);
+}
+
+@media (min-width: 769px) {
+  .pick-desc {
+    font-size: calc(0.78rem * 2);
+    max-height: 360px;
+  }
+
+  .pick-desc__title {
+    font-size: calc(0.9rem * 2);
+  }
+
+  .pick-desc__body {
+    font-size: calc(0.72rem * 2);
+  }
+}
+
+.attr-order-hint {
+  margin: 0 0 10px;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #c9a227;
+  min-height: 1.35em;
+}

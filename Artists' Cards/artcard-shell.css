@@ -1,0 +1,62 @@
+/**
+ * Artists' Cards — 手機優先：底部常駐操作列（上傳頁／匯出頁共用）
+ */
+:root {
+  --artcard-bottom-h: 56px;
+}
+
+.artcard-shell {
+  min-height: 100vh;
+  padding-bottom: calc(var(--artcard-bottom-h) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+.artcard-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 10px;
+  padding: 10px 14px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  background: rgba(14, 11, 20, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.artcard-bottom-bar button {
+  flex: 1;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+}
+
+.artcard-bottom-bar .btn-back {
+  flex: 1;
+  background: transparent;
+  color: #ece8f0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.artcard-bottom-bar .btn-primary {
+  flex: 1;
+  background: linear-gradient(180deg, #b8923a 0%, #8a6528 100%);
+  color: #1a1208;
+}
+
+.artcard-bottom-bar .btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.artcard-bottom-bar--single .btn-primary {
+  max-width: 100%;
+}

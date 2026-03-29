@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artists' Cards — 匯出設定</title>
+    <link rel="stylesheet" href="artcard-shell.css" />
+    <link rel="stylesheet" href="card-export.css" />
+  </head>
+  <body class="artcard-shell artcard-shell--export">
+    <div id="export-root" class="export-wrap">
+      <div id="missing-image" class="missing-image" hidden>
+        <p>找不到上傳的圖片，請先回到上一步。</p>
+        <p><a href="CardIndex.html">返回上傳頁</a></p>
+      </div>
+
+      <div id="export-main" hidden>
+        <h1 class="export-title">角色卡片 — 匯出</h1>
+        <p class="lead">
+          預覽為縮小示意（右下），實際輸出仍為 460×640。下載時框體自 card_n／card_r／card_s 隨機；此頁不再調整照片位置。
+        </p>
+
+        <div class="export-flow">
+          <div class="form-row">
+            <label for="field-name">角色名稱（最多 9 字）</label>
+            <input type="text" id="field-name" class="input-center" maxlength="12" autocomplete="off" />
+          </div>
+          <div class="form-row">
+            <label for="field-intro">角色簡介（最多 14 字）</label>
+            <input type="text" id="field-intro" class="input-center" maxlength="20" autocomplete="off" />
+          </div>
+
+          <div class="form-row">
+            <span class="form-row__label">職業（12 選 1）</span>
+            <div id="job-list" class="pick-list" role="radiogroup" aria-label="職業"></div>
+          </div>
+
+          <div class="form-row">
+            <span class="form-row__label">屬性（13 選 1～4，勾選順序由右至左；最多 4 個）</span>
+            <p id="attr-order-hint" class="attr-order-hint" aria-live="polite"></p>
+            <div id="attr-list" class="pick-list pick-list--attr" role="group" aria-label="屬性"></div>
+          </div>
+
+          <p id="frame-info" class="frame-info-line"></p>
+          <button type="button" id="btn-top" class="export-back-top">回頂部</button>
+          <p id="export-error" class="export-error-line" hidden></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="preview-float" class="preview-float" hidden aria-hidden="true">
+      <canvas id="preview-canvas" width="460" height="640" aria-label="卡牌預覽"></canvas>
+    </div>
+
+    <footer class="artcard-bottom-bar" aria-label="主要操作">
+      <button type="button" id="btn-back" class="btn-back">返回上傳</button>
+      <button type="button" id="btn-download" class="btn-primary">下載 PNG</button>
+    </footer>
+
+    <script src="artcard-data.js"></script>
+    <script src="card-export.js"></script>
+  </body>
+</html>

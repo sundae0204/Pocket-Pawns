@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artists' Cards — 上傳與剪裁</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="artcard-shell.css" />
+    <link rel="stylesheet" href="card-index.css" />
+  </head>
+  <body class="artcard-shell">
+    <div class="artcard-wrap">
+      <div class="artcard-title-bg" aria-hidden="true">
+        <img src="artcard_object/titlebg.png" alt="" />
+      </div>
+      <header class="artcard-header">
+        <h1>角色卡片 — 上傳圖片</h1>
+        <p>
+          裁切比例固定為卡牌尺寸 <strong>460×640</strong>，輸出亦同。底部半透明區為 <strong>460×144</strong>（角色詳細／文字圖示區），請將角色重點安排在上方區域。
+        </p>
+      </header>
+
+      <div class="artcard-flow">
+        <div class="artcard-toolbar">
+          <label class="btn-file">
+            選擇圖片
+            <input id="file-input" type="file" accept="image/*" />
+          </label>
+          <span class="hint">支援常見圖片格式</span>
+        </div>
+        <p id="index-error" hidden></p>
+
+        <div class="crop-stage">
+          <img id="crop-image" alt="" />
+        </div>
+
+        <p class="artcard-note">
+          完成裁切後請用下方按鈕前往匯出。本工具為附屬功能，與遊戲本體無連結。
+        </p>
+      </div>
+    </div>
+
+    <footer class="artcard-bottom-bar artcard-bottom-bar--single" aria-label="主要操作">
+      <button id="btn-next" type="button" class="btn-primary" disabled>下一步（匯出）</button>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js" crossorigin="anonymous"></script>
+    <script src="card-index.js"></script>
+  </body>
+</html>
