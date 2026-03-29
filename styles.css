@@ -1468,8 +1468,9 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     padding: 14px 14px 18px;
   }
 
+  #credits-screen #credits-title,
   #credits-screen .credits-list-panel .overlay-title {
-    font-size: 1.15rem;
+    font-size: 0.92rem;
   }
 
   #credits-screen .credits-body {
