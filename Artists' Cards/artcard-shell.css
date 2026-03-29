@@ -5,6 +5,16 @@
   --artcard-bottom-h: 56px;
 }
 
+body.artcard-shell {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #2a1f18;
+  background-image: url("artcard_object/bg.jpg");
+  background-repeat: repeat;
+  background-position: 0 0;
+  background-attachment: scroll;
+}
+
 .artcard-shell {
   min-height: 100vh;
   padding-bottom: calc(var(--artcard-bottom-h) + env(safe-area-inset-bottom, 0px) + 12px);
@@ -39,24 +49,75 @@
   border: none;
 }
 
+/* 上一步／返回：褐底黃字 */
 .artcard-bottom-bar .btn-back {
   flex: 1;
-  background: transparent;
-  color: #ece8f0;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(180deg, #64492c 0%, #ab8369 100%);
+  color: #f7eec4;
+  border: none;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(0, 0, 0, 0.15);
 }
 
+.artcard-bottom-bar .btn-back:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+/* 下一步／主要前進：紅底黃字 */
 .artcard-bottom-bar .btn-primary {
   flex: 1;
-  background: linear-gradient(180deg, #b8923a 0%, #8a6528 100%);
-  color: #1a1208;
+  background: linear-gradient(180deg, #882424 0%, #e54444 100%);
+  color: #ffd964;
+  border: none;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.45),
+    0 2px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.artcard-bottom-bar .btn-primary:disabled {
-  opacity: 0.45;
+.artcard-bottom-bar .btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* 停用：灰階漸層（勿用 opacity 一律壓灰） */
+.artcard-bottom-bar button:disabled {
+  opacity: 1;
   cursor: not-allowed;
+  filter: none;
+  background: linear-gradient(180deg, #343434 0%, #4d4d4d 100%);
+  color: #5d5d5d;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .artcard-bottom-bar--single .btn-primary {
   max-width: 100%;
+}
+
+/* 上傳角色／回頂部：粉紅底白字 */
+.btn-upload-pink {
+  background: linear-gradient(180deg, #c24dbd 0%, #f138b3 100%);
+  color: #fff;
+  border: none;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    0 2px 0 rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-upload-pink:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+button.btn-upload-pink:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+  filter: none;
+  background: linear-gradient(180deg, #343434 0%, #4d4d4d 100%);
+  color: #5d5d5d;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }

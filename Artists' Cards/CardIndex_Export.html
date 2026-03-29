@@ -23,11 +23,25 @@
         <div class="export-flow">
           <div class="form-row">
             <label for="field-name">角色名稱（最多 9 字）</label>
-            <input type="text" id="field-name" class="input-center" maxlength="12" autocomplete="off" />
+            <input
+              type="text"
+              id="field-name"
+              class="input-center"
+              maxlength="12"
+              autocomplete="off"
+              placeholder=" "
+            />
           </div>
           <div class="form-row">
             <label for="field-intro">角色簡介（最多 14 字）</label>
-            <input type="text" id="field-intro" class="input-center" maxlength="20" autocomplete="off" />
+            <input
+              type="text"
+              id="field-intro"
+              class="input-center"
+              maxlength="20"
+              autocomplete="off"
+              placeholder=" "
+            />
           </div>
 
           <div class="form-row">
@@ -42,7 +56,7 @@
           </div>
 
           <p id="frame-info" class="frame-info-line"></p>
-          <button type="button" id="btn-top" class="export-back-top">回頂部</button>
+          <button type="button" id="btn-top" class="export-back-top btn-upload-pink">回頂部</button>
           <p id="export-error" class="export-error-line" hidden></p>
         </div>
       </div>
@@ -54,7 +68,7 @@
 
     <footer class="artcard-bottom-bar" aria-label="主要操作">
       <button type="button" id="btn-back" class="btn-back">返回上傳</button>
-      <button type="button" id="btn-download" class="btn-primary">下載 PNG</button>
+      <button type="button" id="btn-download" class="btn-primary" disabled>下載 PNG</button>
     </footer>
 
     <script src="artcard-data.js"></script>

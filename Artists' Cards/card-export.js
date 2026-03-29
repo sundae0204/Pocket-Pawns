@@ -186,6 +186,7 @@
     }
     updateAttrOrderHint();
     scheduleRedraw();
+    syncDownloadButton();
   }
 
   /** 字元數（含 emoji 等） */
@@ -378,6 +379,25 @@
     }
   }
 
+  /** 與下載前驗證一致；通過才可啟用「下載 PNG」 */
+  function canExportForm() {
+    if (!userPhoto) return false;
+    const name = String(els.name?.value || "").trim();
+    const intro = String(els.intro?.value || "").trim();
+    if (!name || uLen(name) > 9) return false;
+    if (!intro || uLen(intro) > 14) return false;
+    const jv = parseInt(getJobValue(), 10);
+    if (!Number.isFinite(jv) || jv < 1 || jv > 12) return false;
+    const slots = getAttrSlots();
+    if (slots.length < 1 || slots.length > 4) return false;
+    if (new Set(slots).size !== slots.length) return false;
+    return true;
+  }
+
+  function syncDownloadButton() {
+    if (els.btnDl) els.btnDl.disabled = !canExportForm();
+  }
+
   async function init() {
     const dataUrl = sessionStorage.getItem(STORAGE_KEY);
     if (!dataUrl || !dataUrl.startsWith("data:image")) {
@@ -387,6 +407,7 @@
         els.previewFloat.hidden = true;
         els.previewFloat.setAttribute("aria-hidden", "true");
       }
+      if (els.btnDl) els.btnDl.disabled = true;
       return;
     }
 
@@ -400,7 +421,12 @@
     attrSelectionOrder = [];
     buildPickListsFromData();
     updateAttrOrderHint();
-    document.getElementById("job-list")?.addEventListener("change", scheduleRedraw);
+
+    function onFormChange() {
+      scheduleRedraw();
+      syncDownloadButton();
+    }
+    document.getElementById("job-list")?.addEventListener("change", onFormChange);
     document.getElementById("attr-list")?.addEventListener("change", onAttrCheckboxChange);
 
     userPhoto = await loadImage(dataUrl);
@@ -413,9 +439,11 @@
     await redrawPreview();
 
     ["input", "change"].forEach((ev) => {
-      els.name?.addEventListener(ev, scheduleRedraw);
-      els.intro?.addEventListener(ev, scheduleRedraw);
+      els.name?.addEventListener(ev, onFormChange);
+      els.intro?.addEventListener(ev, onFormChange);
     });
+
+    syncDownloadButton();
 
     document.getElementById("btn-back")?.addEventListener("click", () => {
       window.location.href = "CardIndex.html";

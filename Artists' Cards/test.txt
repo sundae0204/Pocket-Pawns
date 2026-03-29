@@ -1,0 +1,4 @@
+cd /d "d:\file\Pocket Pawns\Artists' Cards"
+npx --yes serve . -p 8080
+
+網頁開http://127.0.0.1:8080/

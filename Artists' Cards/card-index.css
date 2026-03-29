@@ -1,7 +1,7 @@
 /* Artists' Cards — CardIndex 頁面 */
 :root {
   --bg: #1a1520;
-  --text: #ece8f0;
+  --text: #f0eae7;
   --muted: #9a90a8;
   --accent: #c9a227;
 }
@@ -11,10 +11,7 @@
 }
 
 body.artcard-shell {
-  margin: 0;
-  min-height: 100vh;
   font-family: "Segoe UI", "Microsoft JhengHei", "PingFang TC", sans-serif;
-  background: var(--bg);
   color: var(--text);
 }
 
@@ -49,7 +46,7 @@ body.artcard-shell {
 .artcard-header p {
   margin: 0 0 20px;
   font-size: 0.88rem;
-  color: var(--muted);
+  color: #feccab;
   line-height: 1.5;
 }
 
@@ -61,16 +58,14 @@ body.artcard-shell {
   margin-bottom: 14px;
 }
 
-.artcard-toolbar label.btn-file {
+.artcard-toolbar label.btn-file.btn-upload-pink {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  padding: 10px 16px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #4a4080 0%, #352a58 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-weight: 700;
-  font-size: 0.9rem;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.95rem;
 }
 
 .artcard-toolbar input[type="file"] {
@@ -82,7 +77,7 @@ body.artcard-shell {
 
 .artcard-toolbar .hint {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: #feccab;
 }
 
 #index-error {
@@ -148,6 +143,6 @@ body.artcard-shell {
 .artcard-note {
   margin-top: 14px;
   font-size: 0.8rem;
-  color: var(--muted);
+  color: #feccab;
   line-height: 1.45;
 }
