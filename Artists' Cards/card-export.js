@@ -56,6 +56,9 @@
     { id: "s", file: "artcard_object/card_s.png" },
   ];
 
+  /** 最底層實心底圖（460×640），避免上傳含透明 PNG 時匯出區域透明；請放 artcard_object/card_bg.png */
+  const CARD_BG_FILE = "artcard_object/card_bg.png";
+
   const els = {
     wrap: document.getElementById("export-root"),
     missing: document.getElementById("missing-image"),
@@ -269,6 +272,22 @@
 
   let cachedFrameImg = null;
   let cachedFrameMeta = null;
+  /** @type {undefined | null | HTMLImageElement} */
+  let cachedCardBgImg = undefined;
+
+  async function ensureCardBgImage() {
+    if (cachedCardBgImg !== undefined) return cachedCardBgImg;
+    try {
+      cachedCardBgImg = await loadImage(CARD_BG_FILE);
+    } catch {
+      cachedCardBgImg = null;
+    }
+    return cachedCardBgImg;
+  }
+
+  function drawCardBackground(ctx) {
+    if (cachedCardBgImg) ctx.drawImage(cachedCardBgImg, 0, 0, CARD_W, CARD_H);
+  }
 
   async function ensureFrameImage() {
     if (cachedFrameImg && cachedFrameMeta && cachedFrameMeta.id === "n") {
@@ -287,7 +306,8 @@
     const frameImg = await loadImage(pick.file);
 
     ctx.clearRect(0, 0, CARD_W, CARD_H);
-
+    await ensureCardBgImage();
+    drawCardBackground(ctx);
     drawUserPhoto(ctx);
 
     ctx.drawImage(frameImg, 0, 0, CARD_W, CARD_H);
@@ -338,6 +358,8 @@
     const ctx = els.canvas.getContext("2d");
     if (!userPhoto) return;
     ctx.clearRect(0, 0, CARD_W, CARD_H);
+    await ensureCardBgImage();
+    drawCardBackground(ctx);
     drawUserPhoto(ctx);
     try {
       const { img: frameImg, meta } = await ensureFrameImage();
