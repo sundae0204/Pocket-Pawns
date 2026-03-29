@@ -1,0 +1,31 @@
+.ico：傳統格式，一個檔裡可含多種尺寸（16、32、48…），舊瀏覽器／書籤最相容。
+.png：現代瀏覽器都支援，常用 32×32 或 180×180（給手機主畫面）。
+.svg：向量、可縮放，Chrome / Firefox / Safari 新版多支援，但舊環境不建議單靠它。
+實務上：至少準備一個 favicon.ico（或 32×32 的 favicon.png），再視需要加 180×180 給手機。
+
+怎麼「製作」
+在繪圖軟體做方圖
+
+畫布建議 512×512 或 1024×1024（之後縮小較清晰）。
+內容置中、四邊留一點安全邊，避免圓角圖示被裁掉。
+匯出 PNG。
+轉成 .ico
+
+用線上工具（搜尋 “favicon generator” / “png to ico”），上傳 PNG，下載 multi-size .ico。
+或設計工具若可直接匯出 ICO 也可以。
+兩個專案各一顆
+
+口袋棋兵：主專案根目錄放一顆（例如 favicon.ico）。
+創作者卡片：放在 Artists' Cards/（或該工具實際的根路徑）再放另一顆，圖案可和主遊戲不同以便辨識。
+網頁裡怎麼掛（你之後可請我幫你改 HTML）
+根目錄的 index.html 通常在 <head> 加：
+
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+若工具頁在子資料夾，href 用相對路徑即可，例如 Artists' Cards/CardIndex.html 用 href="favicon.ico"。
+
+小建議
+圖示要小，避免細線、太多字，遠看才分得清。
+深色／淺色瀏覽器分頁列都會出現，對比要夠。
+同一品牌兩套工具：可 同一吉祥物、不同底色或角標，使用者較好記。
+如果你已經有 PNG，我可以依你專案結構幫你寫好兩邊的 <link> 路徑；若還沒圖，也可以描述想要的風格，我幫你列構圖重點（仍須你自己或用繪圖／AI 產出檔案）。

@@ -96,7 +96,7 @@ body.artcard-shell--export {
 .form-row > label {
   display: block;
   font-size: 0.82rem;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #f5e6c8;
 }
 
@@ -107,18 +107,15 @@ body.artcard-shell--export {
   color: #f5e6c8;
 }
 
-.input-center {
-  text-align: center;
-}
-
 .form-row input[type="text"] {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 10px;
   border: 2px solid #a87d50;
   background: rgba(0, 0, 0, 0.18);
   color: #fff8f0;
   font: inherit;
+  text-align: left;
 }
 
 .form-row input[type="text"]::placeholder {
