@@ -2315,6 +2315,11 @@ function bindEvents() {
     window.PocketPawnsAudio?.playBtn?.();
     setVisibleById("credits-screen");
   });
+  /** 前往 Artists' Cards 工具（同站路徑，會離開主遊戲畫面） */
+  onClick("title-btn-artcard", () => {
+    window.PocketPawnsAudio?.playBtn?.();
+    window.location.href = "Artists%27%20Cards/CardIndex.html";
+  });
   onClick("credits-btn-back", () => {
     window.PocketPawnsAudio?.playBtnBack?.();
     setVisibleById("title-screen");
