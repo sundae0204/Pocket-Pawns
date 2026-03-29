@@ -7,6 +7,7 @@ window.POCKET_PAWNS_MISS_CLOUDY = {
   pages: {
     characterSelect: {
       face: "cheer",
+      title: "選擇你的隊長（左右換頁）",
       text: "歡迎來到芭塔塔收穫嘉年華！選一位隊長帶領隊伍參加演習吧",
     },
     characterDetail: {

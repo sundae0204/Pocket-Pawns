@@ -618,6 +618,10 @@ function applyMissCloudy(target, entry, vars = {}) {
   const text = fillTemplate(entry.text, vars);
   const faceIndex = getMissCloudyFaceIndex(entry.face);
   if (target === "characterSelect") {
+    if (els.characterSelectTitle) {
+      const t = typeof entry.title === "string" && entry.title.trim() ? entry.title.trim() : "選擇你的隊長";
+      els.characterSelectTitle.textContent = t;
+    }
     if (els.characterSelectNpcFace) els.characterSelectNpcFace.src = asset(missCloudyFacePath(faceIndex));
     setMissCloudyLineTypewriter(els.characterSelectNpcMessage, text);
     return;
@@ -635,7 +639,7 @@ function applyMissCloudy(target, entry, vars = {}) {
 
 function getMissCloudyEntry(pageKey, stateKey) {
   const defaults = {
-    characterSelect: { face: 0, text: "選擇你的角色。" },
+    characterSelect: { face: 0, title: "選擇你的隊長", text: "選擇你的角色。" },
     characterDetail: { face: 0, text: "確認後出戰吧。" },
     "characterDetail:intro": { face: 0, text: "要讓這位隊長上場嗎？" },
     "characterDetail:confirmFarewell": { face: 1, text: "祝你贏得這次的勝利！" },
@@ -1715,6 +1719,22 @@ function applyBattleFieldBackground() {
   els.gameRoot.style.backgroundRepeat = "no-repeat";
 }
 
+/** 與 styles.css 角色清單斷點一致：<390 視為 390（與縮放設計寬對齊） */
+function characterListLayoutWidthForPagination() {
+  const iw = window.innerWidth;
+  return iw < 390 ? 390 : iw;
+}
+
+/** 寬版 5×2 為每頁 10 人；直式窄版 2×4 為每頁 8 人；中等 4×3 為每頁 12 人 */
+function getCharacterListPageSize() {
+  const w = characterListLayoutWidthForPagination();
+  if (w >= 900) return 10;
+  if (w >= 520) return 12;
+  return 8;
+}
+
+let lastCharacterSelectPageSize = null;
+
 function renderSelectCards() {
   const list = window.POCKET_PAWNS_CHARACTERS || [];
   const regularList = list.filter((x) => !isRandomCharacter(x));
@@ -1726,8 +1746,16 @@ function renderSelectCards() {
     : regularList.slice().sort((a, b) => a.sortIndex - b.sortIndex);
   sorted.unshift(RANDOM_CHARACTER_ENTRY);
 
+  const scrollOuter = els.characterStrip?.closest?.(".character-scroll-outer");
+  let scrollPageIndex = 0;
+  if (scrollOuter && scrollOuter.clientWidth > 0) {
+    scrollPageIndex = Math.max(0, Math.round(scrollOuter.scrollLeft / scrollOuter.clientWidth));
+  }
+
   els.characterStrip.innerHTML = "";
-  const pageSize = 10;
+  const pageSize = getCharacterListPageSize();
+  lastCharacterSelectPageSize = pageSize;
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   for (let start = 0; start < sorted.length; start += pageSize) {
     const page = document.createElement("div");
     page.className = "character-page";
@@ -1760,6 +1788,14 @@ function renderSelectCards() {
       page.appendChild(holder);
     }
     els.characterStrip.appendChild(page);
+  }
+
+  if (scrollOuter) {
+    requestAnimationFrame(() => {
+      if (!scrollOuter.clientWidth) return;
+      const idx = Math.min(scrollPageIndex, totalPages - 1);
+      scrollOuter.scrollLeft = idx * scrollOuter.clientWidth;
+    });
   }
 }
 
@@ -2301,6 +2337,18 @@ async function loadGlobalRecordInfo() {
 function bindEvents() {
   const onClick = (id, handler) => document.getElementById(id)?.addEventListener("click", handler);
 
+  let characterSelectResizeTimer = 0;
+  window.addEventListener("resize", () => {
+    window.clearTimeout(characterSelectResizeTimer);
+    characterSelectResizeTimer = window.setTimeout(() => {
+      const sel = document.getElementById("character-select");
+      if (!sel || sel.hidden) return;
+      const next = getCharacterListPageSize();
+      if (lastCharacterSelectPageSize === next) return;
+      renderSelectCards();
+    }, 120);
+  });
+
   onClick("title-btn-play", async () => {
     window.PocketPawnsAudio?.init?.();
     window.PocketPawnsAudio?.playBtn?.();
@@ -2540,6 +2588,7 @@ function initEls() {
   els.stageBand = document.getElementById("stage-band");
 
   els.characterStrip = document.getElementById("character-strip");
+  els.characterSelectTitle = document.querySelector("#character-select .character-select-title");
 
   els.characterSelectNpcFace = document.getElementById("character-select-npc-face");
   els.characterSelectNpcMessage = document.getElementById("character-select-npc-message");
