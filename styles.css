@@ -8,6 +8,8 @@
 html {
   /* 全域文字約 2×（rem 相對根字級）；可再調整或改回 100% */
   font-size: 200%;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* ---- Theme tokens ---- */
@@ -91,18 +93,45 @@ body {
   display: block;
   min-height: 100vh;
   padding: 0;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
-/* 戰鬥可視區域：不再固定 16:9，改為吃滿視窗 */
+/* 戰鬥可視區域：不再固定 16:9；寬用 100% 避免 100vw 含捲軸寬導致橫向溢出 */
 .viewport-16x9 {
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   height: 100vh;
+  height: 100dvh;
   aspect-ratio: auto;
-  max-width: none;
   max-height: none;
   overflow: hidden;
   position: relative;
   transform-origin: center center;
+  box-sizing: border-box;
+}
+
+/*
+ * 場景圖必須畫在「未做 transform: scale 的層」，否則與 .game-root 的縮放疊加後，
+ * background-size: cover 會像在等比滿版上再被放大一段（窄視窗特別明顯）。
+ * 由 JS 設定 --pp-battle-field-bg；無場景時僅見底色。
+ */
+#viewport.viewport-16x9 {
+  background-color: #0d0820;
+  overflow-x: clip;
+}
+
+#viewport.viewport-16x9::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--pp-battle-field-bg, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 .viewport-16x9.screen-shake {
@@ -161,8 +190,9 @@ body {
   width: calc(100% / var(--pp-battle-ui-scale));
   height: calc(100% / var(--pp-battle-ui-scale));
   min-height: 0;
+  min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(0, 1fr) minmax(0, max-content);
   grid-template-rows: auto minmax(120px, 1fr) auto;
   grid-template-areas:
     "top top"
@@ -171,7 +201,10 @@ body {
   gap: 8px;
   padding: 8px;
   position: relative;
-  background-color: #0d0820;
+  z-index: 1;
+  /* 場景圖改由 #viewport::before 滿版 cover，此層透明以免重疊兩次縮放 */
+  background-color: transparent;
+  overflow-x: hidden;
   overflow-y: auto;
   transform: scale(var(--pp-battle-ui-scale));
   transform-origin: top center;
@@ -262,15 +295,33 @@ body {
   border-radius: 10px;
   padding: 12px 22px 14px 26px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  width: 573px;
-  min-width: 573px;
-  height: 159px;
+  width: min(573px, 100%);
+  min-width: 0;
+  max-width: 100%;
   min-height: 159px;
-  flex: 0 0 auto;
+  height: auto;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   overflow: visible;
+}
+
+/*
+ * PC／寬視窗：敵方底板勿被 flex 擠縮；素質列 gap 勿跟 2vw 漂移、避免換行造成寬度跳動。
+ * 窄屏戰鬥 RWD 仍由 @media (max-width:520px) #viewport 覆寫。
+ */
+@media (min-width: 521px) {
+  .enemy-hud {
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  .enemy-hud .stat-row {
+    flex-wrap: nowrap;
+    gap: 30px;
+    justify-content: center;
+  }
 }
 
 .menu-btn {
@@ -294,8 +345,8 @@ body {
 .stat-row {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  flex-wrap: nowrap;
+  gap: clamp(8px, 2vw, 30px);
+  flex-wrap: wrap;
 }
 
 .stat-cell {
@@ -445,20 +496,21 @@ body {
 
 .stage-band {
   width: 100%;
-  max-width: 720px;
+  max-width: min(720px, 100%);
   height: 200px;
   min-height: 200px;
   background: rgba(0, 0, 0, 0.68);
   border-radius: 0;
-  padding: 16px 24px;
+  padding: 16px clamp(8px, 3vw, 24px);
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 16px;
+  gap: clamp(8px, 2vw, 16px);
   position: relative;
   z-index: 1;
   overflow: visible;
   transform: translateY(30px);
+  box-sizing: border-box;
 }
 
 /* 最終值：與名字同 z-index(8)，DOM 置於名字之後以便中央重疊時蓋在最上；皆高於立繪(.fighter z-index:2) */
@@ -527,6 +579,12 @@ body {
   transform: translate(-50%, -50%) scale(1.5);
   pointer-events: none;
   z-index: 7;
+}
+
+/* 掛在 .fighter 內（見 game_card.js），與立繪同一座標系；勿再相對 #stage-band 用 px，否則遇 scale 會偏位 */
+.fighter .defender-battle-fx {
+  left: 50%;
+  top: 58%;
 }
 
 .defender-battle-fx-canvas {
@@ -835,12 +893,13 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   padding: 0;
   display: block;
   min-height: 0;
+  min-width: 0;
   box-shadow: none;
   position: absolute;
   left: 8px;
   bottom: 8px;
-  width: 670px;
-  max-width: 670px;
+  width: min(670px, calc(100% - 16px));
+  max-width: min(670px, calc(100% - 16px));
   overflow: visible;
   z-index: 10;
 }
@@ -917,9 +976,11 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   border-radius: 18px 0 0 0;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   min-height: 0;
+  min-width: 0;
   position: relative;
   z-index: 10;
-  width: 647px;
+  width: min(647px, 100%);
+  max-width: 100%;
   height: 341px;
   flex-shrink: 0;
   align-self: end;
@@ -1147,6 +1208,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   left: 50%;
   top: 38%;
   transform: translate(-50%, -50%);
+  isolation: isolate;
   background: rgba(0, 0, 0, 0.82);
   color: #fff;
   padding: 10px 16px;
@@ -1210,28 +1272,542 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   display: none;
 }
 
-@media (max-width: 640px) {
-  .viewport-16x9 {
-    width: 100vw;
-    height: 100vh;
-  }
-
+/* 窄螢幕：手牌區再縮排（以寬度為準，不依賴 orientation，避免部分手機未回報 portrait 時仍用 max-content 右欄而溢出） */
+@media (max-width: 520px) {
   .game-root {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto 1fr;
-    grid-template-areas:
-      "top"
-      "stage"
-      "npc"
-      "player";
+    padding: 6px 0;
+    gap: 6px 0;
   }
 
-  .player-panel {
-    width: 647px;
+  .stage-band {
+    padding: 12px 6px;
   }
 
-  .npc-panel {
-    right: 8px;
+  .card {
+    width: min(143px, 29vw);
+    min-height: unset;
+    height: auto;
+    aspect-ratio: 143 / 200;
+    max-width: 100%;
+  }
+
+  .card-special-mini {
+    width: min(143px, 88vw);
+    max-width: 100%;
+    min-height: unset;
+    aspect-ratio: 143 / 200;
+  }
+
+  .special-column {
+    width: 100%;
+    max-width: none;
+  }
+
+  #npc-panel .character-select-npc-text {
+    margin-left: min(120px, 32vw);
+    width: calc(100% - min(120px, 34vw));
+    padding-right: 8px;
+  }
+
+  .heart-wrap {
+    transform: scale(0.85);
+    transform-origin: center bottom;
+  }
+
+  #viewport .hearts {
+    gap: 0;
+  }
+
+  .enemy-hud .hearts {
+    gap: 0;
+  }
+}
+
+/*
+ * 戰鬥專用：窄螢幕（≤520px；含常見 414/428 與略寬手機，避免 481–520px 未套用而退回預設窄底板）
+ * 勿再加 orientation: portrait：否則底層仍為「npc | player」且第二欄 max-content 會依玩家區固定寬（~647px+）整片往右超出。
+ * 此處單欄堆疊、各區 100%、縮放與 60% 字級等一律以寬度為準。
+ */
+@media (max-width: 520px) {
+  #viewport {
+    --pp-battle-narrow-scale: 0.6;
+    /* 列內「間距」目標 -20px：flex gap 不支援負值，改見 .heart-wrap margin-right */
+    --pp-heart-gap: 0px;
+    --pp-heart-tuck: 20px;
+  }
+
+  /* 視窗本身 flex，讓 .game-root 吃滿高度，底部操作區才能貼齊螢幕下緣 */
+  #viewport.viewport-16x9 {
+    --pp-battle-ui-scale: min(1, calc(100vw / 390));
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+    overflow-x: visible;
+    overflow-y: hidden;
+  }
+
+  @supports (width: 1dvi) {
+    #viewport.viewport-16x9 {
+      --pp-battle-ui-scale: min(1, calc(100dvi / 390));
+    }
+  }
+
+  /*
+   * 單欄改為 flex：中間 .stage flex:1 吃滿剩餘高度，朵雲 + 玩家固定貼在視窗下緣（不懸在畫面中間）
+   * （grid 的 1fr 在部分情況下未吃滿高度，下兩塊不會穩定靠底）
+   */
+  /* 覆寫全域 .game-root 的固定 height，改由 flex 吃滿 #viewport，底部手牌區才能貼底 */
+  #viewport .game-root {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+    align-self: stretch;
+    width: 100%;
+    height: auto;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 8px 0;
+    box-sizing: border-box;
+    /* 戰鬥帶寬度需大於 100% 以抵銷 scale(0.6)，不可裁切否則看起來仍偏窄 */
+    overflow-x: visible;
+    max-width: 100%;
+  }
+
+  #viewport .top-bar {
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: visible;
+  }
+
+  /*
+   * 舞台勿 flex:1 吃滿高度。margin-top:auto 設在 .stage（非 .npc-panel），
+   * 多餘垂直空間會出現在頂列下方，戰鬥演出 + 朵雲 + 玩家控制區整塊置底一起下移。
+   */
+  #viewport .stage {
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: visible;
+    padding-left: 0;
+    padding-right: 0;
+    margin-top: auto;
+    margin-bottom: 40px;
+  }
+
+  #viewport .top-bar-right {
+    order: -1;
+  }
+
+  #viewport .npc-panel {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    top: auto;
+    flex: 0 0 auto;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* 390 寬實測底板最佳高度 254px；與戰鬥演出／朵雲一併由 #viewport .stage margin-top:auto 置底 */
+  #viewport .player-panel {
+    flex: 0 0 auto;
+    height: 254px;
+    min-height: 254px;
+    max-height: 254px;
+    justify-self: stretch;
+    align-self: stretch;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    /* 勿 clip：否則愛心列（負 margin）會被左右切掉；橫向溢出改由 game-root 外層處理 */
+    overflow-x: visible;
+    overflow-y: visible;
+    border-radius: 0;
+    padding: calc(8px + 35px) 10px 10px;
+    box-sizing: border-box;
+  }
+
+  #viewport .player-panel .hearts {
+    margin-top: -84px;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #viewport .hearts {
+    gap: var(--pp-heart-gap, 0px);
+  }
+
+  /* 負間距：前一顆愛心向右拉出 -20px，與下一顆重疊／靠攏（gap 無法設負值） */
+  #viewport .hearts .heart-wrap:not(:last-child) {
+    margin-right: calc(-1 * var(--pp-heart-tuck, 20px));
+  }
+
+  /* 敵方愛心：置中、滿寬列；勿 shrink；特效層較寬時由 top-bar 可視溢出避免切邊 */
+  #viewport .enemy-hud .hearts {
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-shrink: 0;
+    margin-top: calc(8px - 37px);
+    margin-bottom: -92px;
+    overflow-x: visible;
+    overflow-y: visible;
+    scrollbar-width: none;
+  }
+
+  #viewport .enemy-hud .hearts::-webkit-scrollbar {
+    display: none;
+  }
+
+  #viewport .enemy-hud .heart-wrap {
+    transform: scale(calc(var(--pp-battle-narrow-scale) * 0.9));
+    transform-origin: center bottom;
+  }
+
+  #viewport .cards-deck {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #viewport .value-cards {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #viewport .special-column {
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* 素質格 min-width:2rem × html 200% 在窄屏可超過視窗寬 */
+  #viewport .stat-cell {
+    min-width: 0;
+  }
+
+  #viewport .top-bar,
+  #viewport .enemy-hud,
+  #viewport .stage,
+  #viewport .npc-panel,
+  #viewport .player-panel {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #viewport .enemy-hud {
+    align-self: stretch;
+    border-radius: 0;
+    /* 愛心列可橫向捲動時勿裁切捲動區 */
+    overflow-x: visible;
+    /* 底板視覺高度 −37px（原 min-height 159px） */
+    min-height: calc(159px - 37px);
+  }
+
+  #viewport .enemy-stats.stat-row,
+  #viewport .player-stats.stat-row {
+    max-width: 100%;
+  }
+
+  #viewport #npc-panel .character-select-npc {
+    border-radius: 0;
+  }
+
+  /* 頂列：grid「戰場文字 | 系統鈕」等高（stretch） */
+  #viewport .top-bar-right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #viewport .battle-context-panel {
+    min-width: 0;
+    max-width: 100%;
+    padding: 6px 8px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: stretch;
+    box-sizing: border-box;
+  }
+
+  #viewport .field-label,
+  #viewport .phase-badge {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  #viewport .field-label {
+    font-size: calc(1.02rem * var(--pp-battle-narrow-scale));
+    margin-bottom: 2px;
+  }
+
+  #viewport .phase-badge {
+    font-size: calc(1.08rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .top-bar-right > :last-child {
+    justify-self: end;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+
+  /* 圓角正方形：覆寫共用 .Btn 的 min-width（108px）才不會變橫向長條 */
+  #viewport #btn-menu.Btn.character-detail-confirm-btn {
+    font-size: calc(1.125rem * var(--pp-battle-narrow-scale));
+    min-width: 0 !important;
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 1;
+    height: 100%;
+    min-height: 0;
+    padding: calc(6px * var(--pp-battle-narrow-scale));
+    flex: 0 0 auto;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: calc(10px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport #btn-menu.Btn.character-detail-confirm-btn::before {
+    border-radius: calc(7px * var(--pp-battle-narrow-scale));
+  }
+
+  /* 素質：字級不變，在敵我底板上左右置中 */
+  #viewport .enemy-hud .stat-row,
+  #viewport .player-panel .stat-row {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #viewport .enemy-stats.stat-row,
+  #viewport .player-stats.stat-row {
+    justify-content: center;
+  }
+
+  #viewport .enemy-hud .stat-value,
+  #viewport .player-panel .stat-value {
+    font-size: 1.05rem;
+  }
+
+  #viewport .enemy-hud .stat-label,
+  #viewport .player-panel .stat-label {
+    font-size: 0.55rem;
+  }
+
+  /*
+   * 黑色底板：視覺寬 ≈ 100vw（抵銷 scale），勿再用 150vw 以免左右超出畫面。
+   * .stage 為 flex，子項須 flex-shrink:0，否則寬度會被壓扁。
+   */
+  #viewport .stage-band {
+    justify-content: center;
+    gap: clamp(20px, 12vw, 52px);
+    padding-left: max(4px, env(safe-area-inset-left, 0px));
+    padding-right: max(4px, env(safe-area-inset-right, 0px));
+    padding-top: 16px;
+    padding-bottom: 16px;
+    transform: scale(var(--pp-battle-narrow-scale, 0.6));
+    transform-origin: top center;
+    margin-top: calc(30px * var(--pp-battle-narrow-scale, 0.6));
+    margin-bottom: calc(-200px * (1 - var(--pp-battle-narrow-scale, 0.6)));
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: calc(100vw / var(--pp-battle-narrow-scale, 0.6));
+    min-width: calc(100vw / var(--pp-battle-narrow-scale, 0.6));
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 0;
+  }
+
+  #viewport .enemy-fighter,
+  #viewport .player-fighter {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 50%;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  #viewport .fighter-label--enemy {
+    left: 20%;
+  }
+
+  #viewport .fighter-label--player {
+    left: 80%;
+  }
+
+  /* 愛心與疊加特效 60% */
+  #viewport .heart-wrap {
+    transform: scale(var(--pp-battle-narrow-scale));
+    transform-origin: center bottom;
+  }
+
+  /* 朵雲公主：頭像 60%、文字區配合內縮；對話字級 60% */
+  #viewport #npc-panel .character-select-npc {
+    --pp-npc-face-scale: var(--pp-battle-narrow-scale);
+    min-height: calc(194px * var(--pp-battle-narrow-scale));
+    height: auto;
+  }
+
+  #viewport #npc-panel .character-select-npc-face {
+    width: calc(203px * var(--pp-battle-narrow-scale));
+    height: calc(239px * var(--pp-battle-narrow-scale));
+    max-width: calc(203px * var(--pp-battle-narrow-scale));
+    max-height: calc(239px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport #npc-panel .character-select-npc-text {
+    --pp-npc-text-inset: calc((203px + 10px) * var(--pp-battle-narrow-scale));
+    margin-left: var(--pp-npc-text-inset);
+    width: calc(100% - var(--pp-npc-text-inset));
+    padding-right: 8px;
+  }
+
+  #viewport #npc-panel .character-select-npc-name {
+    font-size: calc(0.85rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport #npc-panel .character-select-npc-tag {
+    font-size: calc(0.62rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport #npc-panel .character-select-npc-message,
+  #viewport #npc-panel .npc-message {
+    font-size: calc(0.78rem * var(--pp-battle-narrow-scale));
+  }
+
+  /* 橫幅、手牌與牌面文字 60%；牌尺寸 60% 以利 390px 內排四張 */
+  #viewport .combat-banner {
+    font-size: calc(0.9rem * var(--pp-battle-narrow-scale));
+    /* 開戰／回合中央字：高於立繪與面板，並置於戰鬥區垂直中央 */
+    top: 50%;
+    z-index: 300;
+  }
+
+  #viewport .combat-banner.combat-banner--round-flash {
+    font-size: clamp(
+      calc(1.35rem * var(--pp-battle-narrow-scale)),
+      calc(3.6vw * var(--pp-battle-narrow-scale)),
+      calc(2.05rem * var(--pp-battle-narrow-scale))
+    );
+    top: 50%;
+    z-index: 300;
+  }
+
+  #viewport .game-root .card {
+    width: calc(143px * var(--pp-battle-narrow-scale));
+    height: calc(200px * var(--pp-battle-narrow-scale));
+    min-height: calc(200px * var(--pp-battle-narrow-scale));
+    max-width: calc(143px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-label {
+    font-size: calc(0.64rem * var(--pp-battle-narrow-scale));
+    margin-bottom: calc(8px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-note {
+    font-size: calc(0.72rem * var(--pp-battle-narrow-scale));
+    margin-bottom: calc(18px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-icon {
+    width: calc(36px * var(--pp-battle-narrow-scale));
+    height: calc(36px * var(--pp-battle-narrow-scale));
+    font-size: calc(1.35rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-tag {
+    font-size: calc(0.68rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-sub {
+    font-size: calc(0.55rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-special-mini {
+    width: calc(143px * var(--pp-battle-narrow-scale));
+    max-width: calc(143px * var(--pp-battle-narrow-scale));
+    min-height: calc(200px * var(--pp-battle-narrow-scale));
+    height: calc(200px * var(--pp-battle-narrow-scale));
+    font-size: calc(0.65rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-special-mini .card-sub-stat {
+    font-size: calc(0.52rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-special-mini .card-icon {
+    width: calc(28px * var(--pp-battle-narrow-scale));
+    height: calc(28px * var(--pp-battle-narrow-scale));
+    font-size: calc(1.1rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .card-special-mini .card-tag {
+    font-size: calc(0.58rem * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .special-column {
+    width: calc(143px * var(--pp-battle-narrow-scale));
+  }
+
+  #viewport .special-placeholder,
+  #viewport .special-slot {
+    font-size: calc(0.65rem * var(--pp-battle-narrow-scale));
+  }
+
+  /*
+   * 戰鬥對話氣泡（fixed，掛在 body）：直式窄屏寬 40vw，減少兩顆重疊；字級 60%
+   */
+  body:has(#viewport:not([hidden])) .speech-bubble {
+    width: 40vw;
+    min-width: 0;
+    max-width: 40vw;
+    box-sizing: border-box;
+    font-size: calc(0.68rem * 0.6);
+    line-height: 1.35;
+    padding: 6px 8px;
+  }
+
+  body:has(#viewport:not([hidden])) .speech-bubble-text {
+    font-size: inherit;
   }
 }
 
@@ -1407,6 +1983,43 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   box-shadow: none;
 }
 
+/* 窄屏：標題按鈕壓在底圖／立繪視覺之上，整塊於畫面垂直置中 */
+@media (max-width: 520px) {
+  #title-screen.overlay-screen {
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px))
+      max(16px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
+    box-sizing: border-box;
+  }
+
+  #title-screen .title-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+    flex: 0 1 auto;
+    margin-block: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  #title-screen .title-logo-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  #title-screen .title-actions {
+    position: relative;
+    z-index: 3;
+  }
+}
+
 /* 製作名單：與標題畫面相同底圖，無漸層 */
 #credits-screen.overlay-screen {
   background: #120a18 url("assets/fields/bg_title.png") center / cover no-repeat;
@@ -1527,47 +2140,6 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   width: min(100%, 640px);
   max-width: 100%;
   height: auto;
-}
-
-/* 僅手機／觸控為主時顯示，不佔版面、不需互動 */
-.title-mobile-hint {
-  display: none;
-  margin: 0 auto 14px;
-  max-width: 20rem;
-  padding: 8px 12px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1.45;
-  color: #111;
-  background: rgba(0, 0, 0, 0.3);
-  border: none;
-  border-radius: 6px;
-  box-sizing: border-box;
-  opacity: 1;
-  /* 深色字＋ #ece0d8 描邊（1px＋2px 共約 2px 粗） */
-  text-shadow:
-    -1px -1px 0 #ece0d8,
-    1px -1px 0 #ece0d8,
-    -1px 1px 0 #ece0d8,
-    1px 1px 0 #ece0d8,
-    -1px 0 0 #ece0d8,
-    1px 0 0 #ece0d8,
-    0 -1px 0 #ece0d8,
-    0 1px 0 #ece0d8,
-    -2px -2px 0 #ece0d8,
-    2px -2px 0 #ece0d8,
-    -2px 2px 0 #ece0d8,
-    2px 2px 0 #ece0d8,
-    -2px 0 0 #ece0d8,
-    2px 0 0 #ece0d8,
-    0 -2px 0 #ece0d8,
-    0 2px 0 #ece0d8;
-}
-
-@media (max-width: 900px) and (pointer: coarse) {
-  .title-mobile-hint {
-    display: block;
-  }
 }
 
 /* ---- Button blocks ---- */
@@ -2050,6 +2622,9 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
 #settlement-btn-back.character-select-back-btn {
   display: block;
+  width: 90%;
+  max-width: 90%;
+  box-sizing: border-box;
   margin: var(--space-14) auto 0;
 }
 
@@ -2467,10 +3042,21 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   background-size: contain;
 }
 
+/* 結算層：整卡於視窗垂直＋水平置中（窄屏另有 scale，見下方 media） */
+#settlement.overlay-screen {
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
 .overlay-settlement .settlement-inner {
   max-width: 780px;
   width: min(780px, 96vw);
   box-sizing: border-box;
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 .settlement-ending {
@@ -2481,14 +3067,20 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   text-align: center;
 }
 
+/* 預定素材：assets/ending/img_ending*.png，設計尺寸 540×140（窄屏整卡再見 #settlement .settlement-inner 縮放） */
 .ending-art {
   width: 100%;
   max-width: 540px;
-  height: 210px;
+  aspect-ratio: 540 / 140;
+  height: auto;
+  min-height: 80px;
   margin: 0 auto 12px;
   border-radius: 12px;
   border: 2px solid rgba(255, 255, 255, 0.15);
   box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.35);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .ending-art--777 {
@@ -2715,6 +3307,31 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
 .settlement-btn:hover {
   filter: brightness(1.08);
+}
+
+/*
+ * 結算 UI 窄屏 RWD（與戰鬥 #viewport 同斷點）：整卡 0.6 倍，結算圖與文字一併縮放。
+ * 版面寬先放大 1/0.6 再 transform:scale(0.6)，視覺上貼齊螢幕寬且不裁切。
+ */
+@media (max-width: 520px) {
+  #settlement.overlay-screen {
+    align-items: center;
+    justify-content: center;
+    padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
+      max(16px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+  }
+
+  #settlement .settlement-inner {
+    --pp-settlement-scale: 0.6;
+    flex: 0 0 auto;
+    width: calc(100% / var(--pp-settlement-scale));
+    max-width: calc(780px / var(--pp-settlement-scale));
+    transform: scale(var(--pp-settlement-scale));
+    /* 須與 overlay 的 align-items:center 搭配，否則 top origin 會讓視覺整塊偏上 */
+    transform-origin: center center;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ---- Tooltip blocks ---- */

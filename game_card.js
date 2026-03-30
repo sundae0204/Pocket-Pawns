@@ -1372,7 +1372,7 @@ function renderFighters() {
 }
 
 function ensureDefenderBattleFxEls() {
-  if (!els.stageBand) return;
+  if (!els.enemyFighter || !els.playerFighter) return;
   if (!els.enemyDefFxWrap) {
     const wrap = document.createElement("div");
     wrap.className = "defender-battle-fx defender-battle-fx--enemy";
@@ -1388,7 +1388,7 @@ function ensureDefenderBattleFxEls() {
     text.hidden = true;
     wrap.appendChild(canvas);
     wrap.appendChild(text);
-    els.stageBand.appendChild(wrap);
+    els.enemyFighter.appendChild(wrap);
     els.enemyDefFxWrap = wrap;
     els.enemyDefFxCanvas = canvas;
     els.enemyDefFxText = text;
@@ -1408,23 +1408,25 @@ function ensureDefenderBattleFxEls() {
     text.hidden = true;
     wrap.appendChild(canvas);
     wrap.appendChild(text);
-    els.stageBand.appendChild(wrap);
+    els.playerFighter.appendChild(wrap);
     els.playerDefFxWrap = wrap;
     els.playerDefFxCanvas = canvas;
     els.playerDefFxText = text;
   }
+  /* 舊版掛在 #stage-band 上，改掛到 .fighter 後對齊 transform:scale 後的座標系 */
+  if (els.enemyDefFxWrap && els.enemyDefFxWrap.parentNode !== els.enemyFighter) els.enemyFighter.appendChild(els.enemyDefFxWrap);
+  if (els.playerDefFxWrap && els.playerDefFxWrap.parentNode !== els.playerFighter) els.playerFighter.appendChild(els.playerDefFxWrap);
 }
 
+/** 錨在角色 .fighter 上（見 ensureDefenderBattleFxEls），用百分比避免 stage-band 的 scale 與 getBoundingClientRect 座標系不一致 */
 function placeDefenderBattleFx(side) {
   const fighter = side === "enemy" ? els.enemyFighter : els.playerFighter;
   const wrap = side === "enemy" ? els.enemyDefFxWrap : els.playerDefFxWrap;
-  if (!fighter || !wrap || !els.stageBand) return;
-  const fr = fighter.getBoundingClientRect();
-  const sr = els.stageBand.getBoundingClientRect();
-  const centerX = fr.left - sr.left + fr.width / 2;
-  const centerY = fr.top - sr.top + fr.height * 0.58;
-  wrap.style.left = `${centerX}px`;
-  wrap.style.top = `${centerY}px`;
+  if (!fighter || !wrap) return;
+  wrap.style.left = "50%";
+  wrap.style.top = "58%";
+  wrap.style.right = "auto";
+  wrap.style.bottom = "auto";
 }
 
 function showDefenderBattleFxText(side, text) {
@@ -1704,19 +1706,22 @@ function fieldBackgroundPath(fieldId) {
 
 function applyBattleFieldBackground() {
   if (!els.gameRoot) return;
+  const vp = els.viewport || document.getElementById("viewport");
   if (!state.field?.id) {
     els.gameRoot.style.backgroundImage = "";
     els.gameRoot.style.backgroundSize = "";
     els.gameRoot.style.backgroundPosition = "";
     els.gameRoot.style.backgroundRepeat = "";
+    if (vp) vp.style.removeProperty("--pp-battle-field-bg");
     return;
   }
   const bg = asset(fieldBackgroundPath(state.field.id));
-  /* 僅平鋪場景圖；勿再疊 linear-gradient，否則會比原圖偏暗、像半透明罩一層 */
-  els.gameRoot.style.backgroundImage = `url("${bg}")`;
-  els.gameRoot.style.backgroundSize = "cover";
-  els.gameRoot.style.backgroundPosition = "center";
-  els.gameRoot.style.backgroundRepeat = "no-repeat";
+  /* 場景圖在 styles.css #viewport::before 以 cover 滿版，勿再套在會 scale 的 .game-root 上 */
+  if (vp) vp.style.setProperty("--pp-battle-field-bg", `url("${bg}")`);
+  els.gameRoot.style.backgroundImage = "";
+  els.gameRoot.style.backgroundSize = "";
+  els.gameRoot.style.backgroundPosition = "";
+  els.gameRoot.style.backgroundRepeat = "";
 }
 
 /** 與 styles.css 角色清單斷點一致：<390 視為 390（與縮放設計寬對齊） */
