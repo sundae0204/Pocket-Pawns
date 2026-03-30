@@ -1326,17 +1326,17 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 /*
  * 戰鬥專用：窄螢幕（≤520px；含常見 414/428 與略寬手機，避免 481–520px 未套用而退回預設窄底板）
  * 勿再加 orientation: portrait：否則底層仍為「npc | player」且第二欄 max-content 會依玩家區固定寬（~647px+）整片往右超出。
- * 此處單欄堆疊、各區 100%、縮放與 60% 字級等一律以寬度為準。
+ * 此處單欄堆疊、各區 100%、縮放與 50% 字級等一律以寬度為準。
  */
 @media (max-width: 520px) {
   #viewport {
-    --pp-battle-narrow-scale: 0.6;
-    /* 列內「間距」目標 -20px：flex gap 不支援負值，改見 .heart-wrap margin-right */
+    --pp-battle-narrow-scale: 0.5;
+    /* 列內「間距」目標 -30px：flex gap 不支援負值，改見 .heart-wrap margin-right */
     --pp-heart-gap: 0px;
-    --pp-heart-tuck: 20px;
+    --pp-heart-tuck: 30px;
   }
 
-  /* 視窗本身 flex，讓 .game-root 吃滿高度，底部操作區才能貼齊螢幕下緣 */
+  /* 視窗本身 flex；底部安全區改由 #72564a 玩家底板內距處理，整條棕色可貼齊螢幕下緣 */
   #viewport.viewport-16x9 {
     --pp-battle-ui-scale: min(1, calc(100vw / 390));
     display: flex;
@@ -1344,7 +1344,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     min-height: 100dvh;
     height: 100dvh;
     max-height: 100dvh;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: 0;
     box-sizing: border-box;
     overflow-x: visible;
     overflow-y: hidden;
@@ -1360,30 +1360,40 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
    * 單欄改為 flex：中間 .stage flex:1 吃滿剩餘高度，朵雲 + 玩家固定貼在視窗下緣（不懸在畫面中間）
    * （grid 的 1fr 在部分情況下未吃滿高度，下兩塊不會穩定靠底）
    */
-  /* 覆寫全域 .game-root 的固定 height，改由 flex 吃滿 #viewport，底部手牌區才能貼底 */
+  /*
+   * 須限制在視窗內：若 height:auto 會隨內容無限變高，底部玩家區整段被 #viewport overflow 裁掉。
+   * flex:1 + min-height:0 + overflow:hidden 讓中段 .stage 可被壓縮，手牌區始終留在可視區底部。
+   */
   #viewport .game-root {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
     align-self: stretch;
     width: 100%;
-    height: auto;
-    padding-left: 0;
-    padding-right: 0;
-    gap: 8px 0;
+    height: 100%;
+    max-height: 100%;
+    /* 覆寫窄螢幕 .game-root { padding: 6px 0 }，否則底部會露出場景縫隙 */
+    padding: 0;
+    gap: 0;
     box-sizing: border-box;
-    /* 戰鬥帶寬度需大於 100% 以抵銷 scale(0.6)，不可裁切否則看起來仍偏窄 */
     overflow-x: visible;
+    overflow-y: hidden;
     max-width: 100%;
+  }
+
+  /* 與 #viewport::before 場景分工；避免上下漸層與敵方底板／玩家棕底重疊搶戲 */
+  #viewport .game-root::before,
+  #viewport .game-root::after {
+    display: none;
   }
 
   #viewport .top-bar {
     flex: 0 0 auto;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 0;
     width: 100%;
     min-width: 0;
     max-width: 100%;
@@ -1391,26 +1401,25 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   }
 
   /*
-   * 舞台勿 flex:1 吃滿高度。margin-top:auto 設在 .stage（非 .npc-panel），
-   * 多餘垂直空間會出現在頂列下方，戰鬥演出 + 朵雲 + 玩家控制區整塊置底一起下移。
+   * 中段戰鬥演出：可縮小佔高（flex:1 + min-height:0），勿再用 margin-top:auto 把整列推超出版心。
    */
   #viewport .stage {
-    flex: 0 1 auto;
+    flex: 1 1 0;
     min-height: 0;
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    overflow-x: visible;
+    overflow: hidden;
     padding-left: 0;
     padding-right: 0;
-    margin-top: auto;
-    margin-bottom: 40px;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  #viewport .top-bar-right {
-    order: -1;
-  }
-
+  /* 朵雲＋玩家區：auto 上緣吃滿剩餘空間，讓 #72564a 玩家底板貼齊視窗下緣 */
   #viewport .npc-panel {
     position: relative;
     left: auto;
@@ -1419,46 +1428,58 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     top: auto;
     flex: 0 0 auto;
     margin: 0;
+    margin-top: auto;
     width: 100%;
     max-width: 100%;
     min-width: 0;
   }
 
-  /* 390 寬實測底板最佳高度 254px；與戰鬥演出／朵雲一併由 #viewport .stage margin-top:auto 置底 */
+  /* 玩家控制區：高度須容納縮放後手牌（~100px）＋素質／愛心；安全區在底板內 */
   #viewport .player-panel {
     flex: 0 0 auto;
-    height: 254px;
-    min-height: 254px;
-    max-height: 254px;
+    height: auto;
+    min-height: 200px;
+    max-height: none;
     justify-self: stretch;
     align-self: stretch;
     max-width: 100%;
     width: 100%;
     min-width: 0;
-    /* 勿 clip：否則愛心列（負 margin）會被左右切掉；橫向溢出改由 game-root 外層處理 */
     overflow-x: visible;
     overflow-y: visible;
     border-radius: 0;
-    padding: calc(8px + 35px) 10px 10px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: calc(2px + 14px) 8px max(4px, env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
   }
 
   #viewport .player-panel .hearts {
-    margin-top: -84px;
+    margin-top: -56px;
+    margin-bottom: 0;
     justify-content: center;
+    align-items: flex-end;
     width: 100%;
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
+    min-height: 0;
+    height: auto;
+  }
+
+  /* 玩家區：愛心格取消固定 height，避免 100×88 版面框過高（視覺仍靠 transform scale） */
+  #viewport .player-panel .heart-wrap {
+    height: auto;
+    min-height: 0;
   }
 
   #viewport .hearts {
     gap: var(--pp-heart-gap, 0px);
   }
 
-  /* 負間距：前一顆愛心向右拉出 -20px，與下一顆重疊／靠攏（gap 無法設負值） */
+  /* 負間距：前一顆愛心向右拉出 -30px，與下一顆重疊／靠攏（gap 無法設負值） */
   #viewport .hearts .heart-wrap:not(:last-child) {
-    margin-right: calc(-1 * var(--pp-heart-tuck, 20px));
+    margin-right: calc(-1 * var(--pp-heart-tuck, 30px));
   }
 
   /* 敵方愛心：置中、滿寬列；勿 shrink；特效層較寬時由 top-bar 可視溢出避免切邊 */
@@ -1470,8 +1491,9 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     max-width: 100%;
     min-width: 0;
     flex-shrink: 0;
-    margin-top: calc(8px - 37px);
-    margin-bottom: -92px;
+    /* 與底板 min-height 搭配：愛心列與戰場重疊量略減，底板底緣較接近愛心垂直中心 */
+    margin-top: calc(6px - 28px);
+    margin-bottom: -76px;
     overflow-x: visible;
     overflow-y: visible;
     scrollbar-width: none;
@@ -1523,10 +1545,24 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   #viewport .enemy-hud {
     align-self: stretch;
     border-radius: 0;
-    /* 愛心列可橫向捲動時勿裁切捲動區 */
     overflow-x: visible;
-    /* 底板視覺高度 −37px（原 min-height 159px） */
-    min-height: calc(159px - 37px);
+    overflow-y: visible;
+    /* label_enemy：等比不拉伸，置頂水平置中；勿再加半透明底（愛心後方會像多一塊黑方） */
+    background-color: transparent;
+    background-image: url("assets/label_enemy.png");
+    background-position: center top;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    /* 關閉共用 .enemy-hud 的 box-shadow，否則透明區塊仍會像一塊無色底板＋下方影子橫在愛心與戰場之間 */
+    box-shadow: none;
+    min-height: 158px;
+    padding: 8px 10px 12px 12px;
+    box-sizing: border-box;
+  }
+
+  /* 箭頭②：敵方素質列與愛心列之間 */
+  #viewport .enemy-hud .enemy-stats.stat-row {
+    margin-bottom: -6px;
   }
 
   #viewport .enemy-stats.stat-row,
@@ -1534,30 +1570,38 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     max-width: 100%;
   }
 
-  #viewport #npc-panel .character-select-npc {
-    border-radius: 0;
-  }
-
-  /* 頂列：grid「戰場文字 | 系統鈕」等高（stretch） */
+  /* 回合資訊整列：滿寬 48px 方條、無圓角，漸層包住戰場文字與系統鈕（order 見下） */
   #viewport .top-bar-right {
+    order: -1;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: stretch;
     gap: 8px;
     width: 100%;
     min-width: 0;
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #2b2726 0%, #58473f 100%);
+    border-radius: 0;
+    padding-left: max(0px, env(safe-area-inset-left, 0px));
+    padding-right: max(0px, env(safe-area-inset-right, 0px));
   }
 
   #viewport .battle-context-panel {
     min-width: 0;
     max-width: 100%;
-    padding: 6px 8px;
+    padding: 2px 6px;
     text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-self: stretch;
     box-sizing: border-box;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   #viewport .field-label,
@@ -1569,11 +1613,13 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
   #viewport .field-label {
     font-size: calc(1.02rem * var(--pp-battle-narrow-scale));
-    margin-bottom: 2px;
+    margin-bottom: 0;
+    line-height: 1.15;
   }
 
   #viewport .phase-badge {
     font-size: calc(1.08rem * var(--pp-battle-narrow-scale));
+    line-height: 1.15;
   }
 
   #viewport .top-bar-right > :last-child {
@@ -1621,6 +1667,12 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     justify-content: center;
   }
 
+  /* 箭頭④：玩家愛心列與素質列之間 */
+  #viewport .player-panel .player-stats.stat-row {
+    margin-top: -6px;
+    margin-bottom: 2px;
+  }
+
   #viewport .enemy-hud .stat-value,
   #viewport .player-panel .stat-value {
     font-size: 1.05rem;
@@ -1632,24 +1684,29 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   }
 
   /*
-   * 黑色底板：視覺寬 ≈ 100vw（抵銷 scale），勿再用 150vw 以免左右超出畫面。
-   * .stage 為 flex，子項須 flex-shrink:0，否則寬度會被壓扁。
+   * 戰鬥帶：允許縮高度（覆寫全域 min-height:200px），必要時裁切上下以免擠掉手牌。
+   * 關閉預設深色底：否則縮放後頂緣會像多一條黑漸層／黑帶橫在愛心與立繪之間。
    */
   #viewport .stage-band {
+    background: transparent !important;
+    box-shadow: none;
     justify-content: center;
-    gap: clamp(20px, 12vw, 52px);
+    gap: clamp(12px, 6vw, 36px);
     padding-left: max(4px, env(safe-area-inset-left, 0px));
     padding-right: max(4px, env(safe-area-inset-right, 0px));
-    padding-top: 16px;
-    padding-bottom: 16px;
-    transform: scale(var(--pp-battle-narrow-scale, 0.6));
+    padding-top: 6px;
+    padding-bottom: 6px;
+    transform: scale(var(--pp-battle-narrow-scale, 0.5));
     transform-origin: top center;
-    margin-top: calc(30px * var(--pp-battle-narrow-scale, 0.6));
-    margin-bottom: calc(-200px * (1 - var(--pp-battle-narrow-scale, 0.6)));
+    margin-top: calc(8px * var(--pp-battle-narrow-scale, 0.5));
+    margin-bottom: calc(-200px * (1 - var(--pp-battle-narrow-scale, 0.5)));
     box-sizing: border-box;
-    flex-shrink: 0;
-    width: calc(100vw / var(--pp-battle-narrow-scale, 0.6));
-    min-width: calc(100vw / var(--pp-battle-narrow-scale, 0.6));
+    flex-shrink: 1;
+    min-height: 0;
+    height: auto;
+    max-height: min(128px, 30dvh);
+    width: calc(100vw / var(--pp-battle-narrow-scale, 0.5));
+    min-width: calc(100vw / var(--pp-battle-narrow-scale, 0.5));
     max-width: none;
     margin-left: auto;
     margin-right: auto;
@@ -1673,24 +1730,31 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     left: 80%;
   }
 
-  /* 愛心與疊加特效 60% */
+  /* 愛心與疊加特效（窄屏基準倍率）；敵方另見 .enemy-hud .heart-wrap；玩家格高度見上列 .player-panel .heart-wrap */
   #viewport .heart-wrap {
     transform: scale(var(--pp-battle-narrow-scale));
     transform-origin: center bottom;
   }
 
-  /* 朵雲公主：頭像 60%、文字區配合內縮；對話字級 60% */
+  /* 朵雲：臉圖 absolute bottom，容器過矮 + overflow:hidden 會切掉頭頂光環 */
   #viewport #npc-panel .character-select-npc {
     --pp-npc-face-scale: var(--pp-battle-narrow-scale);
-    min-height: calc(194px * var(--pp-battle-narrow-scale));
+    border-radius: 0;
+    min-height: 84px;
     height: auto;
+    max-height: 112px;
+    padding-top: 8px;
+    padding-bottom: 4px;
+    overflow: visible;
   }
 
   #viewport #npc-panel .character-select-npc-face {
     width: calc(203px * var(--pp-battle-narrow-scale));
-    height: calc(239px * var(--pp-battle-narrow-scale));
+    height: auto;
     max-width: calc(203px * var(--pp-battle-narrow-scale));
-    max-height: calc(239px * var(--pp-battle-narrow-scale));
+    max-height: min(84px, calc(239px * var(--pp-battle-narrow-scale)));
+    object-fit: contain;
+    object-position: left bottom;
   }
 
   #viewport #npc-panel .character-select-npc-text {
@@ -1794,14 +1858,14 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
   }
 
   /*
-   * 戰鬥對話氣泡（fixed，掛在 body）：直式窄屏寬 40vw，減少兩顆重疊；字級 60%
+   * 戰鬥對話氣泡（fixed，掛在 body）：直式窄屏寬 40vw，減少兩顆重疊；字級 50%
    */
   body:has(#viewport:not([hidden])) .speech-bubble {
     width: 40vw;
     min-width: 0;
     max-width: 40vw;
     box-sizing: border-box;
-    font-size: calc(0.68rem * 0.6);
+    font-size: calc(0.68rem * 0.5);
     line-height: 1.35;
     padding: 6px 8px;
   }
