@@ -1730,6 +1730,11 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
     left: 80%;
   }
 
+  /* 最終值（中央比數）：手機窄屏黑框線加粗一倍（全站 .clash-num 為 5px） */
+  #viewport .clash-num {
+    -webkit-text-stroke: 10px #000;
+  }
+
   /* 愛心與疊加特效（窄屏基準倍率）；敵方另見 .enemy-hud .heart-wrap；玩家格高度見上列 .player-panel .heart-wrap */
   #viewport .heart-wrap {
     transform: scale(var(--pp-battle-narrow-scale));
