@@ -1701,7 +1701,7 @@ function specialCardPath(kind) {
 }
 
 function fieldBackgroundPath(fieldId) {
-  return `assets/fields/${fieldId}.png`;
+  return `assets/fields/${fieldId}.webp`;
 }
 
 function applyBattleFieldBackground() {

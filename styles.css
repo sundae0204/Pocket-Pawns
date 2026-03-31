@@ -2035,7 +2035,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 #character-select.overlay-screen.overlay-character-select,
 #character-detail.overlay-screen.overlay-character-select {
   background-color: #0d0820;
-  background-image: linear-gradient(rgba(8, 4, 24, 0.42), rgba(8, 4, 24, 0.52)), url("assets/fields/bg_character.png");
+  background-image: linear-gradient(rgba(8, 4, 24, 0.42), rgba(8, 4, 24, 0.52)), url("assets/fields/bg_character.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2043,7 +2043,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
 /* 標題畫面：滿版底圖，內容區透明 */
 #title-screen.overlay-screen {
-  background: #120a18 url("assets/fields/bg_title.png") center / cover no-repeat;
+  background: #120a18 url("assets/fields/bg_title.webp") center / cover no-repeat;
 }
 
 #title-screen .title-inner {
@@ -2091,7 +2091,7 @@ body:has(#player-sprite.fighter.dead) #player-speech-bubble {
 
 /* 製作名單：與標題畫面相同底圖，無漸層 */
 #credits-screen.overlay-screen {
-  background: #120a18 url("assets/fields/bg_title.png") center / cover no-repeat;
+  background: #120a18 url("assets/fields/bg_title.webp") center / cover no-repeat;
   /* 內容較高時勿垂直置中，否則頂部會被裁切；頂部預留安全區 */
   align-items: flex-start;
   justify-content: center;

@@ -556,10 +556,10 @@ window.__POCKET_PAWNS_DIALOGUE__ = {
     "defeat": "哇，掛了"
   },
   "char_092": {
-    "menuSelect": "我是律豆豆",
-    "battleOpen": "棋兵好好玩!",
-    "victory": "嘟嘟~贏了",
-    "defeat": "哇，掛了"
+    "menuSelect": "既然對上眼了，一起加油吧!",
+    "battleOpen": "我想想~該如何解決你呢?",
+    "victory": "有我在!這是必然的結果!",
+    "defeat": "我……沒能為你帶來勝利"
   },
   "char_093": {
     "menuSelect": "我是猫島羽依",
